@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>PDF Reader</title>
+    <script src="pdf.js/build/pdf.mjs" type="module"></script>
+    <script src="homepage.js" type="module"></script>
+    <link rel="stylesheet" href="homepage.css" />
+  </head>
+  <body>
+    <div id="topMenu">
+      <button id="file">File</button>
+      <button id="tools">Tools</button>
+      <button id="view">View</button>
+      <button id="help">Help</button>
+    </div>
+    <div id="mainContent">
+      <center>
+        <div id="pdf">
+          <button id="prev">Previous</button>
+          <button id="next">Next</button>
+          &nbsp; &nbsp;
+          <span
+            >Page: <span id="page_num"></span> / <span id="page_count"></span
+          ></span>
+          <br />
+          <canvas id="the-canvas"></canvas>
+          <br />
+          <div id="pdf-content"></div>
+        </div>
+      </center>
+      <div id="sideMenu">
+        <button id="speedread">Speedread</button>
+        <button id="dyslexia">Dyslexia</button>
+        <button id="zoom">Zoom</button>
+      </div>
+      
+    </div>
+    
+  </body>
+</html>

@@ -1,0 +1,57 @@
+/* Top Menu */
+
+#topMenu {
+  display: flex; /* Arrange buttons horizontally */
+  justify-content: space-between; /* Space buttons evenly */
+  background-color: #f0f0f0; /* Light gray background */
+  padding: 10px; /* Add some padding */
+  border-bottom: 1px solid #ddd; /* Add a bottom border */
+}
+
+#topMenu button {
+  background-color: transparent; /* Remove default button styling */
+  border: none; /* Remove borders */
+  padding: 5px 10px; /* Add some padding */
+  cursor: pointer; /* Indicate clickable element */
+  font-size: 16px; /* Set button text size */
+}
+
+#topMenu button:hover {
+  background-color: #e0e0e0; /* Change background on hover */
+}
+
+
+#mainContent {
+  display: flex; /* Arrange side menu and main content horizontally */
+  height: 100vh; /* Set main content height to 100% viewport */
+}
+
+/* Side Menu */
+
+#sideMenu {
+  top: 0; /* Start at the top */
+  right: 0; /* Align to the right (instead of left: 0) */
+  width: 15%; /* Set sidebar width */
+  height: 100vh; /* Set sidebar height to 100% viewport */
+  background-color: #e0e0e0; /* Light gray background */
+  padding: 10px; /* Add some padding */
+}
+
+#sideMenu button {
+  background-color: transparent; /* Remove default button styling */
+  border: none; /* Remove borders */
+  padding: 10px; /* Add some padding */
+  cursor: pointer; /* Indicate clickable element */
+  font-size: 14px; /* Set button text size */
+  text-align: left; /* Align text to the left */
+  display: block; /* Make buttons take full width */
+  margin-bottom: 5px; /* Add some space between buttons */
+}
+
+#sideMenu button:hover {
+  background-color: #d0d0d0; /* Change background on hover */
+}
+
+#pdf-content{
+  
+}
