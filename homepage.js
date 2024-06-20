@@ -4,7 +4,7 @@ var { pdfjsLib } = globalThis;
 // The workerSrc property shall be specified.
 pdfjsLib.GlobalWorkerOptions.workerSrc = "pdf.js/build/pdf.worker.mjs";
 
-// Initialize global variables
+// Initialize global variablestest
 let pdfDoc = null,
   pageNum = 1,
   pageRendering = false,
