@@ -1,0 +1,185 @@
+body{
+  background-color: #9DB4C0;
+  overflow-y: hidden;
+  font-family: 'Comic Sans MS';
+}
+
+#container{
+  display: flex;
+  flex-direction: column;
+}
+
+/* Top Menu */
+
+#topMenu {
+  display: flex;
+  justify-content: space-around;
+  background-color: #5C6B73;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000; /* Ensure topMenu is above other content */
+}
+
+#topMenu button {
+  background-color: transparent; /* Remove default button styling */
+  border: none; /* Remove borders */
+  padding: 5px 10px; /* Add some padding */
+  cursor: pointer; /* Indicate clickable element */
+  font-size: 24px; /* Set button text size */
+  color: rgb(215, 215, 215);
+  font-family: 'Comic Sans MS';
+}
+
+#topMenu button:hover {
+  background-color: #545c60; /* Change background on hover */
+}
+
+#mainContent {
+  display: flex;
+  flex-direction: row;
+}
+
+#pdf{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+
+  width: 100%;
+}
+
+#navigate{
+  color: #253237;
+  font-size: 20px;
+}
+
+#navigate button{
+  font-size: 20px;
+  font-family: 'Comic Sans MS';
+
+  padding: 5px;
+  margin: 10px;
+
+  border-radius: 10px;
+  border-color: transparent;
+}
+
+#sideMenu {
+  display: flex;
+  flex-direction: column;
+  width: 15%;
+  height: max-content;
+  height: calc(100vh - 50px); /* Adjust for the height of topMenu */
+  background-color: #5C6B73;
+  padding: 10px;
+  position: relative;
+  top: 50px;
+  right: 0px;
+}
+
+#sideMenu button {
+  background-color: transparent; /* Remove default button styling */
+  border: none; /* Remove borders */
+  padding: 20px; /* Add some padding */
+  cursor: pointer; /* Indicate clickable element */
+  font-size: 24px; /* Set button text size */
+  text-align: left; /* Align text to the left */
+  display: block; /* Make buttons take full width */
+  margin: 10px; /* Add some space between buttons */
+  color: rgb(215, 215, 215);
+  font-family: 'Comic Sans MS';
+
+}
+
+#sideMenu button:hover {
+  background-color: #545c60; /* Change background on hover */
+}
+
+/* Button style */
+#speedread {
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 4px;
+}
+
+#speedread:hover {
+  background-color: #0056b3;
+}
+
+/* Speedread overlay */
+#speedreadOverlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* semi-transparent black */
+  z-index: 1000; /* ensure it's above other content */
+}
+
+#speedreadBox {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 80%;
+  max-width: 800px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  padding: 20px;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: calc(66vh + 40px);
+  z-index: 1001; /* Ensure it's above other content including sideMenu */
+}
+
+/* Menu inside speedread box */
+#speedreadMenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+#speedreadMenu label {
+  margin-right: 10px;
+}
+
+#speedreadMenu select,
+#speedreadMenu input[type="number"] {
+  padding: 5px;
+  font-size: 14px;
+}
+
+/* Text container inside speedread box */
+#speedreadTextContainer {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#speedreadText {
+  text-align: center;
+  line-height: 1.6;
+  overflow: auto; /* allow scrolling if content overflows */
+  font-size: 36px;
+  font-family: Arial, sans-serif;
+}
+
+/* Disable scrolling on the body when speedread overlay is active */
+body.speedread-active {
+  overflow: hidden;
+}
