@@ -10,13 +10,14 @@
     <link rel="stylesheet" href="homepage.css" />
   </head>
   <body>
-    <div id="topMenu">
-      <button id="file">File</button>
-      <button id="tools">Tools</button>
-      <button id="view">View</button>
-      <button id="help">Help</button>
-    </div>
-    <div id="mainContent">
+    <div id="container">
+      <div id="topMenu">
+        <button id="file">File</button>
+        <button id="tools">Tools</button>
+        <button id="view">View</button>
+        <button id="help">Help</button>
+      </div>
+      <div id="mainContent">
         <div id="pdf">
           <div id="navigate">
             <button id="prev">Previous</button>
@@ -30,33 +31,33 @@
           <canvas id="the-canvas"></canvas>
           <br />
         </div>
-      <div id="sideMenu">
-        <button id="speedread">Speedread</button>
-        <button id="dyslexia">Dyslexia</button>
-        <button id="zoom">Zoom</button>
+        <div id="sideMenu">
+          <button id="speedread">Speedread</button>
+          <button id="dyslexia">Dyslexia</button>
+          <button id="zoom">Zoom</button>
+        </div>
       </div>
     </div>
-
     <!-- Overlay for Speedread Mode -->
     <div id="speedreadOverlay">
       <div id="speedreadBox">
         <div id="speedreadMenu">
-            <label for="fontChooser">Font:</label>
-            <select id="fontChooser">
-                <option value="Arial">Arial</option>
-                <option value="Times New Roman">Times New Roman</option>
-                <option value="Verdana">Verdana</option>
-                <!-- Add more font options as needed -->
-            </select>
-            <label for="fontSize">Font Size:</label>
-            <input type="number" id="fontSize" value="16" min="10" max="36">
-            <label for="wpm">Words Per Minute:</label>
-            <input type="number" id="wpm" value="300" min="50" max="1000">
+          <label for="fontChooser">Font:</label>
+          <select id="fontChooser">
+            <option value="Arial">Arial</option>
+            <option value="Times New Roman">Times New Roman</option>
+            <option value="Verdana">Verdana</option>
+            <!-- Add more font options as needed -->
+          </select>
+          <label for="fontSize">Font Size:</label>
+          <input type="number" id="fontSize" value="16" min="10" max="36" />
+          <label for="wpm">Words Per Minute:</label>
+          <input type="number" id="wpm" value="300" min="50" max="1000" />
         </div>
         <div id="speedreadTextContainer">
-            <div id="speedreadText"></div>
+          <div id="speedreadText"></div>
         </div>
-    </div>
+      </div>
     </div>
   </body>
 </html>
