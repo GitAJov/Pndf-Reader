@@ -20,6 +20,11 @@ if (isset($_SESSION['user_id'])) {
     <div id="form-login-container">
         <div class="header-login">
             <label id="header-text">Login</label>
+            <?php if (isset($_GET['error'])): ?>
+                <div class="error-text" style="color: red; font-size: 20px; margin-top:15px">
+                    <label><?php echo $_GET['error']; ?></label>
+                </div>
+            <?php endif; ?>
         </div>
         <form action="authenticate.php" id="form-login" method="POST">
             <input type="text" id="email-username" name="email-username"
