@@ -2,7 +2,7 @@
 var { pdfjsLib } = globalThis;
 
 // The workerSrc property shall be specified.
-pdfjsLib.GlobalWorkerOptions.workerSrc = "pdf.js/build/pdf.worker.mjs";
+pdfjsLib.GlobalWorkerOptions.workerSrc = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
 
 // Initialize global variablestest
 let pdfDoc = null,
