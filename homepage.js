@@ -100,15 +100,24 @@ function onNextPage() {
 async function main() {
   const url = "innotech.pdf";
 
-  document.getElementById("prev").addEventListener("click", onPrevPage);
-  document.getElementById("next").addEventListener("click", onNextPage);
+  document
+    .getElementById("prev")
+    .addEventListener("click", onPrevPage);
+  document
+    .getElementById("next")
+    .addEventListener("click", onNextPage);
   document
     .getElementById("speedread")
     .addEventListener("click", toggleSpeedread);
   document
     .getElementById("speedreadOverlay")
     .addEventListener("click", exitSpeedread);
-
+  document
+    .getElementById("fontChooser")
+    .addEventListener("change", chooseFont);
+  document
+    .getElementById("fontSize")
+    .addEventListener("change", chooseFont);
   pdfDoc = await loadPDF(url);
   if (pdfDoc) {
     document.getElementById("page_count").textContent = pdfDoc.numPages;
@@ -163,11 +172,13 @@ async function toggleSpeedread() {
     let splitParagraph = paragraph.split(" ").filter(function (el) {
       return el != "";
     });
-
     for (let i = 0; i < splitParagraph.length; i++) {
       let word = splitParagraph[i];
       speedreadTextElement.textContent = word;
-      await new Promise((resolve) => setTimeout(resolve, 120));
+      let wpm = document.getElementById("wpm").value;
+      let delay = 60000/wpm;
+      console.log(delay);
+      await new Promise((resolve) => setTimeout(resolve, delay));
     }
   } catch (error) {
     console.error("Error extracting paragraph:", error);
@@ -185,4 +196,12 @@ function exitSpeedread(event) {
     let speedreadOverlay = document.getElementById("speedreadOverlay");
     speedreadOverlay.style.display = "none";
   }
+}
+
+function chooseFont(){
+  let font = document.getElementById("fontChooser").value;
+  let size = document.getElementById("fontSize").value;
+  let speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.style.fontFamily = font;
+  speedreadTextElement.style.fontSize = size + "px";
 }
