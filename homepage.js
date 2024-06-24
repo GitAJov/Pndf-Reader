@@ -1,23 +1,23 @@
-// Loaded via <script> tag, create shortcut to access PDF.js exports.
+//create shortcut to access PDF.js exports.
 var { pdfjsLib } = globalThis;
 
-// The workerSrc property shall be specified.
+// specify workerSrc property (worker of pdf.js), worker is used to render the pdf pages.
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
 
-let pdfDoc = null,
-  pageNum = 1,
-  pageRendering = false,
-  pageNumPending = null,
-  scale = 0.8,
-  canvas = document.getElementById("the-canvas"),
-  ctx = canvas.getContext("2d");
+let pdfDoc = null, // PDF document
+  pageNum = 1, // Current page number
+  pageRendering = false, // Flag for rendering the page
+  pageNumPending = null, // Page number that is pending to be rendered
+  scale = 0.8, // Scale of the PDF
+  canvas = document.getElementById("the-canvas"), // Canvas element
+  ctx = canvas.getContext("2d");  
 
 // Function to load the PDF document
 async function loadPDF(url) {
   try {
-    const loadingTask = pdfjsLib.getDocument(url);
-    const pdf = await loadingTask.promise;
+    const loadingTask = pdfjsLib.getDocument(url); // Load the PDF document
+    const pdf = await loadingTask.promise; 
     console.log("PDF loaded");
     return pdf;
   } catch (error) {
@@ -34,16 +34,16 @@ async function renderPage(
 ) {
   try {
     const page = await pdf.getPage(pageNumber);
-    console.log("Page loaded");
+    console.log("Page loaded"); 
 
-    const viewport = page.getViewport({ scale: scale });
+    const viewport = page.getViewport({ scale: scale });  // Get the viewport of the page
 
     const canvas = document.getElementById(canvasId);
     const context = canvas.getContext("2d");
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
-    const renderContext = {
+    const renderContext = { // Render the page on the canvas
       canvasContext: context,
       viewport: viewport,
     };
@@ -54,9 +54,10 @@ async function renderPage(
 
     // Update page counters
     document.getElementById("page_num").textContent = pageNumber;
-
-    pageRendering = false;
-    if (pageNumPending !== null) {
+ 
+    // Update the page number input field
+    pageRendering = false; // Set the flag to false
+    if (pageNumPending !== null) { // Check if there is a pending page to render
       const nextPage = pageNumPending;
       pageNumPending = null;
       renderPage(pdf, nextPage, canvasId, scale);
@@ -98,9 +99,9 @@ function onNextPage() {
 
 // Main function to initialize the PDF viewer
 async function main() {
-  const url = "innotech.pdf";
+  let url = "innotech.pdf";
 
-  document
+  document // Add event listeners for the buttons, not using html onclick bc it doesn't work with async functions (somehow)
     .getElementById("prev")
     .addEventListener("click", onPrevPage);
   document
@@ -118,6 +119,9 @@ async function main() {
   document
     .getElementById("fontSize")
     .addEventListener("change", chooseFont);
+  document
+    .getElementById("file")
+    .addEventListener("click", chooseFile);
   pdfDoc = await loadPDF(url);
   if (pdfDoc) {
     document.getElementById("page_count").textContent = pdfDoc.numPages;
@@ -143,7 +147,7 @@ async function extractParagraphs(pdfUrl, pageNumber) {
   }
 }
 
-function blurPage(blur) {
+function blurPage(blur) { // Function to blur the entire page except the speedread overlay
   var elementsToBlur = document.body.children;
   for (var i = 0; i < elementsToBlur.length; i++) {
     var element = elementsToBlur[i];
@@ -169,14 +173,14 @@ async function toggleSpeedread() {
 
     // Extract a paragraph of text from the PDF
     let paragraph = await extractParagraphs("innotech.pdf", 2);
-    let splitParagraph = paragraph.split(" ").filter(function (el) {
+    let splitParagraph = paragraph.split(" ").filter(function (el) { // Split the paragraph into words, remove empty strings
       return el != "";
     });
     for (let i = 0; i < splitParagraph.length; i++) {
       let word = splitParagraph[i];
       speedreadTextElement.textContent = word;
       let wpm = document.getElementById("wpm").value;
-      let delay = 60000/wpm;
+      let delay = 60000/wpm; // Calculate the delay based on the WPM
       console.log(delay);
       await new Promise((resolve) => setTimeout(resolve, delay));
     }

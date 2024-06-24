@@ -47,7 +47,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
         </div>
       </div>
     </div>
-    <!-- Overlay for Speedread Mode -->
+
     <div id="speedreadOverlay">
       <div id="speedreadBox">
         <div id="speedreadMenu">
@@ -56,7 +56,6 @@ $isLoggedIn = isset($_SESSION['user_id']);
             <option value="Arial">Arial</option>
             <option value="Times New Roman">Times New Roman</option>
             <option value="Verdana">Verdana</option>
-            <!-- Add more font options as needed -->
           </select>
           <label for="fontSize">Font Size:</label>
           <input type="number" id="fontSize" value="36" min="10" max="72" />
