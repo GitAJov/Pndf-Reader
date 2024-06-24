@@ -17,7 +17,6 @@ body{
   background-color: #5C6B73;
   padding: 10px;
   border-bottom: 1px solid #ddd;
-  position: fixed;
   top: 0;
   left: 0;
   right: 0;
@@ -81,7 +80,6 @@ body{
   background-color: #5C6B73;
   padding: 10px;
   position: relative;
-  top: 50px;
   right: 0px;
 }
 
