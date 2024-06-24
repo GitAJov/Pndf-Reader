@@ -68,6 +68,10 @@ body{
   border-color: transparent;
 }
 
+#navigate button:hover{
+  background-color: #ddd;
+}
+
 #sideMenu {
   display: flex;
   flex-direction: column;
