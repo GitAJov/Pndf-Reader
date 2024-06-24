@@ -7,6 +7,10 @@ body{
 #container{
   display: flex;
   flex-direction: column;
+  top: 0px;
+  left: 0px;
+  right: 0px;
+  bottom: 0px;
 }
 
 /* Top Menu */
@@ -17,10 +21,6 @@ body{
   background-color: #5C6B73;
   padding: 10px;
   border-bottom: 1px solid #ddd;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1000; /* Ensure topMenu is above other content */
 }
 
 #topMenu button {
@@ -45,7 +45,7 @@ body{
 #pdf{
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: space-arounds;
   align-items: center;
 
   width: 100%;
