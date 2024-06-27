@@ -117,7 +117,7 @@ body{
 }
 
 /* Speedread overlay */
-#speedreadOverlay {
+#grayOverlay {
   display: none;
   position: fixed;
   top: 0;
@@ -128,7 +128,7 @@ body{
   z-index: 1000; /* ensure it's above other content */
 }
 
-#speedreadBox {
+#textBox {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -148,19 +148,19 @@ body{
 }
 
 /* Menu inside speedread box */
-#speedreadMenu {
+#textMenu {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
 
-#speedreadMenu label {
+#textMenu label {
   margin-right: 10px;
 }
 
-#speedreadMenu select,
-#speedreadMenu input[type="number"] {
+#textMenu select,
+#textMenu input[type="number"] {
   padding: 5px;
   font-size: 14px;
 }
