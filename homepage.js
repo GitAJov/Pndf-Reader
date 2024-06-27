@@ -10,7 +10,6 @@ let pdfDoc = null,
   scale = 1.5,
   canvases = [],
   renderTasks = [],
-  maxCanvases = 3,
   overlayActive = false;
 
 // PDF Loading
@@ -22,6 +21,18 @@ async function loadPDF(url) {
     return pdf;
   } catch (error) {
     console.error("Error loading PDF:", error);
+  }
+}
+
+async function initializePDF(url) {
+  pdfDoc = await loadPDF(url);
+  if (pdfDoc) {
+    document.getElementById("page_count").textContent = pdfDoc.numPages;
+    await renderAllPages(pdfDoc, scale); // Render all pages at once
+
+    // Add scroll event listener to update pageNum based on visible page
+    const canvasContainer = document.getElementById("canvas-container");
+    canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
   }
 }
 
@@ -157,13 +168,9 @@ function toggleOverlay() {
   grayOverlay.style.display = overlayActive ? "block" : "none";
 }
 
-async function extractParagraphs(pdfUrl, pageNumber) {
+async function extractParagraphs(pageNumber) {
   try {
-    const pdfDocument = await pdfjsLib.getDocument(pdfUrl).promise;
-    console.log("PDF loaded for text extraction");
-    const page = await pdfDocument.getPage(pageNumber);
-    console.log("Page loaded for text extraction");
-
+    const page = await pdfDoc.getPage(pageNumber);
     const textContent = await page.getTextContent();
     const text = textContent.items.map((item) => item.str).join(" ");
     console.log(text);
@@ -176,7 +183,7 @@ async function extractParagraphs(pdfUrl, pageNumber) {
 async function displayText() {
   try {
     let speedreadTextElement = document.getElementById("speedreadText");
-    let paragraph = await extractParagraphs("innotech.pdf", pageNum);
+    let paragraph = await extractParagraphs(pageNum);
     let splitParagraph = paragraph.split(" ").filter(function (el) {
       return el != "";
     });
@@ -243,12 +250,9 @@ function chooseFile() {
       const file = files[0];
       const url = URL.createObjectURL(file);
 
-      pdfDoc = await loadPDF(url);
-      if (pdfDoc) {
-        document.getElementById("page_count").textContent = pdfDoc.numPages;
-        pageNum = 1;
-        queueRenderPage(pageNum);
-      }
+      canvases = [];
+      document.getElementById("canvas-container").innerHTML = "";
+      initializePDF(url);
     }
   });
 
@@ -315,25 +319,20 @@ function clearTextMenu() {
   }
 }
 
-// Main Function
-async function main() {
-  const url = "innotech.pdf";
+function addEventListeners() {
   //document.getElementById("prev").addEventListener("click", onPrevPage);
   //document.getElementById("next").addEventListener("click", onNextPage);
   document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
   document.getElementById("file").addEventListener("click", chooseFile);
   document.getElementById("dyslexia").addEventListener("click", dyslexia);
+}
 
-  pdfDoc = await loadPDF(url);
-  if (pdfDoc) {
-      document.getElementById("page_count").textContent = pdfDoc.numPages;
-      await renderAllPages(pdfDoc, scale); // Render all pages at once
-
-      // Add scroll event listener to update pageNum based on visible page
-      const canvasContainer = document.getElementById("canvas-container");
-      canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
-  }
+// Main Function
+async function main() {
+  const url = "innotech.pdf";
+  addEventListeners();
+  initializePDF(url);
 }
 
 main();
