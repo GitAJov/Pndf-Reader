@@ -38,7 +38,7 @@ if (isset($_SESSION['user_id'])) {
 <body>
     <!-- Brand Title -->
     <div id="brand-title">
-        <h1>PNDF Reader</h1>
+        <img src="Resources/Logo-Pndf-Txt.png" alt="PNDF Reader">
     </div>
 
     <div id="form-login-container">
