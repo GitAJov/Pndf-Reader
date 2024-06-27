@@ -53,7 +53,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_insert->bind_param("sss", $username, $email, $password_hash);
         
         if ($stmt_insert->execute()) {
-            header('Location: login.php');
+            header('Location: login.php?success=Registration successful! Please login.');
             exit();
         } else {
             header('Location: register.php?error=Error: ' . $stmt_insert->error);

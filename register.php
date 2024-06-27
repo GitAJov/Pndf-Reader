@@ -65,11 +65,15 @@ if (isset($_SESSION['user_id'])) {
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         }
 
-        // Check for error parameter in URL onload
+        // Check for error or success parameter in URL onload
         window.onload = function () {
             var error = getParameterByName('error');
+            var success = getParameterByName('success');
             if (error) {
                 document.getElementById('error-message').innerHTML = error;
+            }
+            if (success) {
+                alert(success);
             }
         };
     </script>
@@ -87,15 +91,13 @@ if (isset($_SESSION['user_id'])) {
             <input type="email" id="email" name="email" placeholder="Enter your email address" required>
             <input type="text" id="username" name="username" placeholder="Choose a username" required>
             <input type="password" id="password" name="password" placeholder="Create a password" required>
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password"
-                required>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
             <input type="submit" id="submit-register" name="reg_user" value="Register">
             <p id="body-text">Already have an account? <a href="login.php">Login here</a></p>
         </form>
 
         <img id="panda" src="Resources/panda-regis.png" alt="Panda">
     </div>
-
 </body>
 
 </html>
