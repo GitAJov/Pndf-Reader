@@ -80,6 +80,11 @@ if (isset($_SESSION['user_id'])) {
 </head>
 
 <body>
+    <!-- Brand Title -->
+    <div id="brand-title">
+        <h1>PNDF Reader</h1>
+    </div>
+
     <div id="form-regis-container">
         <div class="header-register">
             <label id="header-text">Register</label>
