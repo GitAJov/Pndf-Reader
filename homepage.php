@@ -50,7 +50,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
           <button id="prev">Previous</button>
           <button id="next">Next</button>
           &nbsp; &nbsp;
-          <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+          <span>Page: <span id="page_num">loading</span> / <span id="page_count">-</span></span>
           <br />
         </div>
         <div id="canvas-container">

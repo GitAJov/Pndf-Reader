@@ -79,10 +79,33 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
     renderTasks[pageNumber - 1] = page.render(renderContext);
     await renderTasks[pageNumber - 1].promise;
     console.log(`Page ${pageNumber} rendered`);
-
-    document.getElementById("page_num").textContent = pageNumber;
   } catch (error) {
     console.error("Error rendering page:", error);
+  }
+}
+
+function updatePageNumBasedOnScroll() {
+  const canvasContainer = document.getElementById("canvas-container");
+  const scrollPosition = canvasContainer.scrollTop;
+  let visiblePage = 1;
+
+  // Calculate the visible page based on scroll position
+  for (let i = 0; i < canvases.length; i++) {
+    const canvas = canvases[i];
+    const pageHeight = canvas.height;
+    if (
+      scrollPosition >= canvas.offsetTop &&
+      scrollPosition < canvas.offsetTop + pageHeight
+    ) {
+      visiblePage = i + 1; // Pages are 1-indexed
+      break;
+    }
+  }
+
+  if (visiblePage !== pageNum) {
+    pageNum = visiblePage;
+    console.log(`Visible page: ${pageNum}`);
+    document.getElementById("page_num").textContent = pageNum;
   }
 }
 
@@ -304,8 +327,12 @@ async function main() {
 
   pdfDoc = await loadPDF(url);
   if (pdfDoc) {
-    document.getElementById("page_count").textContent = pdfDoc.numPages;
-    await renderAllPages(pdfDoc, scale); // Render all pages at once
+      document.getElementById("page_count").textContent = pdfDoc.numPages;
+      await renderAllPages(pdfDoc, scale); // Render all pages at once
+
+      // Add scroll event listener to update pageNum based on visible page
+      const canvasContainer = document.getElementById("canvas-container");
+      canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
   }
 }
 
