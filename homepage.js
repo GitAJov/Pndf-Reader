@@ -7,9 +7,10 @@ let pdfDoc = null,
   pageNum = 1,
   pageRendering = false,
   pageNumPending = null,
-  scale = 0.8,
-  canvas = document.getElementById("the-canvas"),
-  ctx = canvas.getContext("2d"),
+  scale = 1.5,
+  canvases = [],
+  renderTasks = [],
+  maxCanvases = 3,
   overlayActive = false;
 
 // PDF Loading
@@ -24,44 +25,64 @@ async function loadPDF(url) {
   }
 }
 
+async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
+  try {
+    const numPages = pdf.numPages;
+    for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+      await renderPage(pdf, pageNumber, scale);
+    }
+    console.log("All pages rendered");
+  } catch (error) {
+    console.error("Error rendering pages:", error);
+  }
+}
+
 // PDF Rendering
-async function renderPage(
-  pdf = pdfDoc,
-  pageNumber = pageNum,
-  canvasId = "the-canvas",
-  scale = 0.8
-) {
+async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
   try {
     const page = await pdf.getPage(pageNumber);
     console.log("Page loaded");
 
     const viewport = page.getViewport({ scale: scale });
 
-    const canvas = document.getElementById(canvasId);
-    const context = canvas.getContext("2d");
+    // Create a new canvas element for this page
+    const canvas = document.createElement("canvas");
+    canvas.id = `page-${pageNumber}`;
+    canvas.className = "pdf-page"; // Optional: add a class for styling
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
+    // Insert the new canvas at the correct position
+    const canvasContainer = document.getElementById("canvas-container");
+    const existingCanvas = document.getElementById(`page-${pageNumber}`);
+    if (existingCanvas) {
+      canvasContainer.insertBefore(canvas, existingCanvas.nextSibling);
+      existingCanvas.remove(); // Remove the old canvas
+    } else {
+      canvasContainer.appendChild(canvas); // Append new canvas if it doesn't exist
+    }
+
+    canvases.push(canvas); // Add canvas to the array
+
+    const context = canvas.getContext("2d");
     const renderContext = {
       canvasContext: context,
       viewport: viewport,
     };
 
-    const renderTask = page.render(renderContext);
-    await renderTask.promise;
-    console.log("Page rendered");
+    // Ensure previous rendering task is completed or canceled
+    if (renderTasks[pageNumber - 1]) {
+      await renderTasks[pageNumber - 1].promise;
+    }
+
+    // Start rendering the page to the canvas
+    renderTasks[pageNumber - 1] = page.render(renderContext);
+    await renderTasks[pageNumber - 1].promise;
+    console.log(`Page ${pageNumber} rendered`);
 
     document.getElementById("page_num").textContent = pageNumber;
-
-    pageRendering = false;
-    if (pageNumPending !== null) {
-      const nextPage = pageNumPending;
-      pageNumPending = null;
-      renderPage(pdf, nextPage, canvasId, scale);
-    }
   } catch (error) {
     console.error("Error rendering page:", error);
-    pageRendering = false;
   }
 }
 
@@ -70,16 +91,16 @@ function queueRenderPage(num) {
     pageNumPending = num;
   } else {
     pageRendering = true;
-    renderPage(pdfDoc, num, "the-canvas", scale);
+    renderPage(pdfDoc, num, scale);
   }
 }
 
 // Navigation
 function onPrevPage() {
-  if (pageNum <= 1) {
+  if (pageNum >= pdfDoc.numPages) {
     return;
   }
-  pageNum--;
+  pageNum++;
   queueRenderPage(pageNum);
 }
 
@@ -274,8 +295,8 @@ function clearTextMenu() {
 // Main Function
 async function main() {
   const url = "innotech.pdf";
-  document.getElementById("prev").addEventListener("click", onPrevPage);
-  document.getElementById("next").addEventListener("click", onNextPage);
+  //document.getElementById("prev").addEventListener("click", onPrevPage);
+  //document.getElementById("next").addEventListener("click", onNextPage);
   document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
   document.getElementById("file").addEventListener("click", chooseFile);
@@ -284,7 +305,7 @@ async function main() {
   pdfDoc = await loadPDF(url);
   if (pdfDoc) {
     document.getElementById("page_count").textContent = pdfDoc.numPages;
-    queueRenderPage(pageNum);
+    await renderAllPages(pdfDoc, scale); // Render all pages at once
   }
 }
 
