@@ -65,7 +65,7 @@ if (isset($_SESSION['user_id'])) {
             return decodeURIComponent(results[2].replace(/\+/g, ' '));
         }
 
-        // Check for error or success parameter in URL onload
+        // Cek "error" atau "success" dalam parameter dalam URL
         window.onload = function () {
             var error = getParameterByName('error');
             var success = getParameterByName('success');
