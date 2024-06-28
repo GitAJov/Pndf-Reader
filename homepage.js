@@ -7,9 +7,9 @@ let pdfDoc = null,
   pageNum = 1,
   pageRendering = false,
   pageNumPending = null,
-  scale = 0.8,
-  canvas = document.getElementById("the-canvas"),
-  ctx = canvas.getContext("2d"),
+  scale = 1.5,
+  canvases = [],
+  renderTasks = [],
   overlayActive = false;
 
 // PDF Loading
@@ -24,44 +24,99 @@ async function loadPDF(url) {
   }
 }
 
+async function initializePDF(url) {
+  pdfDoc = await loadPDF(url);
+  if (pdfDoc) {
+    document.getElementById("page_count").textContent = pdfDoc.numPages;
+    await renderAllPages(pdfDoc, scale); // Render all pages at once
+
+    // Add scroll event listener to update pageNum based on visible page
+    const canvasContainer = document.getElementById("canvas-container");
+    canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
+  }
+}
+
+async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
+  try {
+    const numPages = pdf.numPages;
+    for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+      await renderPage(pdf, pageNumber, scale);
+    }
+    console.log("All pages rendered");
+  } catch (error) {
+    console.error("Error rendering pages:", error);
+  }
+}
+
 // PDF Rendering
-async function renderPage(
-  pdf = pdfDoc,
-  pageNumber = pageNum,
-  canvasId = "the-canvas",
-  scale = 0.8
-) {
+async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
   try {
     const page = await pdf.getPage(pageNumber);
     console.log("Page loaded");
 
     const viewport = page.getViewport({ scale: scale });
 
-    const canvas = document.getElementById(canvasId);
-    const context = canvas.getContext("2d");
+    // Create a new canvas element for this page
+    const canvas = document.createElement("canvas");
+    canvas.id = `page-${pageNumber}`;
+    canvas.className = "pdf-page"; // Optional: add a class for styling
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
+    // Insert the new canvas at the correct position
+    const canvasContainer = document.getElementById("canvas-container");
+    const existingCanvas = document.getElementById(`page-${pageNumber}`);
+    if (existingCanvas) {
+      canvasContainer.insertBefore(canvas, existingCanvas.nextSibling);
+      existingCanvas.remove(); // Remove the old canvas
+    } else {
+      canvasContainer.appendChild(canvas); // Append new canvas if it doesn't exist
+    }
+
+    canvases.push(canvas); // Add canvas to the array
+
+    const context = canvas.getContext("2d");
     const renderContext = {
       canvasContext: context,
       viewport: viewport,
     };
 
-    const renderTask = page.render(renderContext);
-    await renderTask.promise;
-    console.log("Page rendered");
-
-    document.getElementById("page_num").textContent = pageNumber;
-
-    pageRendering = false;
-    if (pageNumPending !== null) {
-      const nextPage = pageNumPending;
-      pageNumPending = null;
-      renderPage(pdf, nextPage, canvasId, scale);
+    // Ensure previous rendering task is completed or canceled
+    if (renderTasks[pageNumber - 1]) {
+      await renderTasks[pageNumber - 1].promise;
     }
+
+    // Start rendering the page to the canvas
+    renderTasks[pageNumber - 1] = page.render(renderContext);
+    await renderTasks[pageNumber - 1].promise;
+    console.log(`Page ${pageNumber} rendered`);
   } catch (error) {
     console.error("Error rendering page:", error);
-    pageRendering = false;
+  }
+}
+
+function updatePageNumBasedOnScroll() {
+  const canvasContainer = document.getElementById("canvas-container");
+  const scrollPosition = canvasContainer.scrollTop;
+  let visiblePage = 1;
+
+  // Calculate the visible page based on scroll position
+  for (let i = 0; i < canvases.length; i++) {
+    const canvas = canvases[i];
+    const pageHeight = canvas.height;
+    if (
+      scrollPosition >= canvas.offsetTop &&
+      scrollPosition < canvas.offsetTop + pageHeight
+    ) {
+      visiblePage = i + 1; // Pages are 1-indexed
+      break;
+    }
+  }
+
+  if (visiblePage !== pageNum) {
+    pageNum = visiblePage;
+    console.log(`Visible page: ${pageNum}`);
+    document.getElementById("page_num").textContent = pageNum;
   }
 }
 
@@ -70,16 +125,16 @@ function queueRenderPage(num) {
     pageNumPending = num;
   } else {
     pageRendering = true;
-    renderPage(pdfDoc, num, "the-canvas", scale);
+    renderPage(pdfDoc, num, scale);
   }
 }
 
 // Navigation
 function onPrevPage() {
-  if (pageNum <= 1) {
+  if (pageNum >= pdfDoc.numPages) {
     return;
   }
-  pageNum--;
+  pageNum++;
   queueRenderPage(pageNum);
 }
 
@@ -113,13 +168,9 @@ function toggleOverlay() {
   grayOverlay.style.display = overlayActive ? "block" : "none";
 }
 
-async function extractParagraphs(pdfUrl, pageNumber) {
+async function extractParagraphs(pageNumber) {
   try {
-    const pdfDocument = await pdfjsLib.getDocument(pdfUrl).promise;
-    console.log("PDF loaded for text extraction");
-    const page = await pdfDocument.getPage(pageNumber);
-    console.log("Page loaded for text extraction");
-
+    const page = await pdfDoc.getPage(pageNumber);
     const textContent = await page.getTextContent();
     const text = textContent.items.map((item) => item.str).join(" ");
     console.log(text);
@@ -132,7 +183,7 @@ async function extractParagraphs(pdfUrl, pageNumber) {
 async function displayText() {
   try {
     let speedreadTextElement = document.getElementById("speedreadText");
-    let paragraph = await extractParagraphs("innotech.pdf", pageNum);
+    let paragraph = await extractParagraphs(pageNum);
     let splitParagraph = paragraph.split(" ").filter(function (el) {
       return el != "";
     });
@@ -199,12 +250,9 @@ function chooseFile() {
       const file = files[0];
       const url = URL.createObjectURL(file);
 
-      pdfDoc = await loadPDF(url);
-      if (pdfDoc) {
-        document.getElementById("page_count").textContent = pdfDoc.numPages;
-        pageNum = 1;
-        queueRenderPage(pageNum);
-      }
+      canvases = [];
+      document.getElementById("canvas-container").innerHTML = "";
+      initializePDF(url);
     }
   });
 
@@ -271,21 +319,20 @@ function clearTextMenu() {
   }
 }
 
-// Main Function
-async function main() {
-  const url = "innotech.pdf";
-  document.getElementById("prev").addEventListener("click", onPrevPage);
-  document.getElementById("next").addEventListener("click", onNextPage);
+function addEventListeners() {
+  //document.getElementById("prev").addEventListener("click", onPrevPage);
+  //document.getElementById("next").addEventListener("click", onNextPage);
   document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
   document.getElementById("file").addEventListener("click", chooseFile);
   document.getElementById("dyslexia").addEventListener("click", dyslexia);
+}
 
-  pdfDoc = await loadPDF(url);
-  if (pdfDoc) {
-    document.getElementById("page_count").textContent = pdfDoc.numPages;
-    queueRenderPage(pageNum);
-  }
+// Main Function
+async function main() {
+  const url = "innotech.pdf";
+  addEventListeners();
+  initializePDF(url);
 }
 
 main();
