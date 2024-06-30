@@ -10,6 +10,7 @@ let pdfDoc = null,
   scale = 1.5,
   canvases = [],
   renderTasks = [],
+  renderingPdf = false,
   overlayActive = false;
 
 // PDF Loading
@@ -25,7 +26,8 @@ async function loadPDF(url) {
 }
 
 async function initializePDF(url) {
-  pdfDoc = await loadPDF(url);
+  let tempDoc = await loadPDF(url);
+  pdfDoc = tempDoc; 
   if (pdfDoc) {
     document.getElementById("page_count").textContent = pdfDoc.numPages;
     await renderAllPages(pdfDoc, scale); // Render all pages at once
@@ -36,24 +38,46 @@ async function initializePDF(url) {
   }
 }
 
+function reset(){
+  pageNum = 1,
+  pageRendering = false,
+  pageNumPending = null,
+  scale = 1.5,
+  canvases = [],
+  renderTasks = [],
+  document.getElementById("canvas-container").innerHTML = "";
+  console.log("Reset done");
+}
+
 async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
   try {
     const numPages = pdf.numPages;
+    renderingPdf = true; 
     for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+      if(pdfDoc.constructor === String){
+        console.log("Pdf Changed in renderAllPages");
+        reset();
+        initializePDF(pdfDoc);
+        return;
+      }
       await renderPage(pdf, pageNumber, scale);
     }
+    renderingPdf = false; 
     console.log("All pages rendered");
   } catch (error) {
     console.error("Error rendering pages:", error);
   }
 }
 
-// PDF Rendering
 async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
   try {
+    //if pdfdoc type is string
+    if(pdfDoc.constructor === String){
+      console.log("Pdf Changed in renderPage");
+      reset();
+      return;
+    }
     const page = await pdf.getPage(pageNumber);
-    console.log("Page loaded");
-
     const viewport = page.getViewport({ scale: scale });
 
     // Create a new canvas element for this page
@@ -129,7 +153,6 @@ function queueRenderPage(num) {
   }
 }
 
-// Navigation
 function onPrevPage() {
   if (pageNum >= pdfDoc.numPages) {
     return;
@@ -146,7 +169,6 @@ function onNextPage() {
   queueRenderPage(pageNum);
 }
 
-// Overlay and Text Extraction
 function blurPage(blur) {
   var elementsToBlur = document.body.children;
   for (var i = 0; i < elementsToBlur.length; i++) {
@@ -180,56 +202,18 @@ async function extractParagraphs(pageNumber) {
   }
 }
 
-async function displayText() {
-  try {
-    let speedreadTextElement = document.getElementById("speedreadText");
-    let paragraph = await extractParagraphs(pageNum);
-    let splitParagraph = paragraph.split(" ").filter(function (el) {
-      return el != "";
-    });
-    for (let i = 0; i < splitParagraph.length; i++) {
-      if (!overlayActive) break;
-      let word = splitParagraph[i];
-      speedreadTextElement.textContent = word;
-      let wpm = document.getElementById("wpm").value;
-      let delay = 60000 / wpm;
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
-  } catch (error) {
-    console.error("Error displaying text:", error);
-  }
-}
-
-// Speed Read and Dyslexia Features
-async function speedread() {
-  speedTextMenu();
-  toggleOverlay();
-  if (overlayActive) {
-    displayText();
-  }
-}
-
-function dyslexia() {
-  toggleOverlay();
-  if (overlayActive) {
-    let speedreadTextElement = document.getElementById("speedreadText");
-    speedreadTextElement.textContent = "Hello";
-    speedreadTextElement.style.fontFamily = "OpenDyslexic";
-    speedreadTextElement.style.fontSize = "24px";
-  }
-}
-
 function exitOverlay(event) {
   if (event.target.id === "grayOverlay") {
     overlayActive = false;
     blurPage(false);
     let grayOverlay = document.getElementById("grayOverlay");
     grayOverlay.style.display = "none";
+    let speedreadTextElement = document.getElementById("speedreadText");
+    speedreadTextElement.style.letterSpacing = "";
     clearTextMenu();
   }
 }
 
-// Font and File Selection
 function chooseFont() {
   let font = document.getElementById("fontChooser").value;
   let size = document.getElementById("fontSize").value;
@@ -248,21 +232,17 @@ function chooseFile() {
     const files = event.target.files;
     if (files.length > 0) {
       const file = files[0];
-      const url = URL.createObjectURL(file);
-
-      canvases = [];
-      document.getElementById("canvas-container").innerHTML = "";
-      initializePDF(url);
+      pdfDoc = URL.createObjectURL(file);
+      if(!renderingPdf){
+        initializePDF(pdfDoc);
+      }
     }
   });
 
   inputElement.click();
 }
 
-// Text Menu for Speed Reading
-function speedTextMenu() {
-  let textMenu = document.getElementById("textMenu");
-
+function createFontSizeElements() {
   const fontLabel = document.createElement("label");
   fontLabel.setAttribute("for", "fontChooser");
   fontLabel.textContent = "Font:";
@@ -270,7 +250,7 @@ function speedTextMenu() {
   const fontChooser = document.createElement("select");
   fontChooser.id = "fontChooser";
 
-  const fonts = ["Arial", "Times New Roman", "Verdana"];
+  const fonts = ["Arial", "Times New Roman", "Verdana", "OpenDyslexic"];
   fonts.forEach((font) => {
     const option = document.createElement("option");
     option.value = font;
@@ -288,6 +268,26 @@ function speedTextMenu() {
   fontSizeInput.value = 36;
   fontSizeInput.min = 10;
   fontSizeInput.max = 72;
+
+  fontChooser.addEventListener("change", chooseFont);
+  fontSizeInput.addEventListener("change", chooseFont);
+
+  return { fontLabel, fontChooser, fontSizeLabel, fontSizeInput };
+}
+
+async function speedread() {
+  speedTextMenu();
+  toggleOverlay();
+  if (overlayActive) {
+    displaySpeedreadText();
+  }
+}
+
+function speedTextMenu() {
+  let textMenu = document.getElementById("textMenu");
+
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
+    createFontSizeElements();
 
   const wpmLabel = document.createElement("label");
   wpmLabel.setAttribute("for", "wpm");
@@ -307,9 +307,137 @@ function speedTextMenu() {
   textMenu.appendChild(fontSizeInput);
   textMenu.appendChild(wpmLabel);
   textMenu.appendChild(wpmInput);
+}
 
-  fontChooser.addEventListener("change", chooseFont);
-  fontSizeInput.addEventListener("change", chooseFont);
+async function displaySpeedreadText() {
+  try {
+    let speedreadTextElement = document.getElementById("speedreadText");
+    let paragraph = await extractParagraphs(pageNum);
+    let splitParagraph = paragraph.split(" ").filter(function (el) {
+      return el != "";
+    });
+    for (let i = 0; i < splitParagraph.length; i++) {
+      if (!overlayActive) break;
+      let word = splitParagraph[i];
+      speedreadTextElement.textContent = word;
+      let wpm = document.getElementById("wpm").value;
+      let delay = 60000 / wpm;
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  } catch (error) {
+    console.error("Error displaying text:", error);
+  }
+}
+
+function dyslexia() {
+  dyslexiaMenu();
+  toggleOverlay();
+  if (overlayActive) {
+    displayDyslexiaText();
+  }
+}
+
+function dyslexiaMenu() {
+  let textMenu = document.getElementById("textMenu");
+
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
+    createFontSizeElements();
+
+  textMenu.appendChild(fontLabel);
+  textMenu.appendChild(fontChooser);
+  textMenu.appendChild(fontSizeLabel);
+  textMenu.appendChild(fontSizeInput);
+
+  const spacingLabel = document.createElement("label");
+  spacingLabel.setAttribute("for", "spacing");
+  spacingLabel.textContent = "Spacing:";
+
+  const spacingInput = document.createElement("input");
+  spacingInput.type = "number";
+  spacingInput.id = "spacing";
+  spacingInput.value = 1;
+  spacingInput.min = 0;
+  spacingInput.max = 10;
+
+  textMenu.appendChild(spacingLabel);
+  textMenu.appendChild(spacingInput);
+
+  spacingInput.addEventListener("change", updateSpacing);
+
+  const alignmentLabel = document.createElement("label");
+  alignmentLabel.setAttribute("for", "alignmentChooser");
+  alignmentLabel.textContent = "Text Alignment:";
+
+  const alignmentChooser = document.createElement("select");
+  alignmentChooser.id = "alignmentChooser";
+
+  const alignments = ["left", "center", "right", "justify"];
+  alignments.forEach((alignment) => {
+    const option = document.createElement("option");
+    option.value = alignment;
+    option.textContent = alignment.charAt(0).toUpperCase() + alignment.slice(1);
+    alignmentChooser.appendChild(option);
+  });
+
+  textMenu.appendChild(alignmentLabel);
+  textMenu.appendChild(alignmentChooser);
+
+  alignmentChooser.addEventListener("change", updateAlignment);
+
+  // Adding Bold and Italic controls
+  const boldLabel = document.createElement("label");
+  boldLabel.textContent = "Bold:";
+  boldLabel.style.marginLeft = "10px";
+
+  const boldCheckbox = document.createElement("input");
+  boldCheckbox.type = "checkbox";
+  boldCheckbox.id = "boldCheckbox";
+
+  textMenu.appendChild(boldLabel);
+  textMenu.appendChild(boldCheckbox);
+
+  boldCheckbox.addEventListener("change", function () {
+    const speedreadText = document.getElementById("speedreadText");
+    speedreadText.style.fontWeight = boldCheckbox.checked ? "bold" : "normal";
+  });
+
+  const italicLabel = document.createElement("label");
+  italicLabel.speedreadText = "Italic:";
+  italicLabel.style.marginLeft = "10px";
+
+  const italicCheckbox = document.createElement("input");
+  italicCheckbox.type = "checkbox";
+  italicCheckbox.id = "italicCheckbox";
+
+  textMenu.appendChild(italicLabel);
+  textMenu.appendChild(italicCheckbox);
+
+  italicCheckbox.addEventListener("change", function () {
+    const speedreadText = document.getElementById("speedreadText");
+    speedreadText.style.fontStyle = italicCheckbox.checked ? "italic" : "normal";
+  });
+}
+
+function updateSpacing() {
+  let spacing = document.getElementById("spacing").value;
+  let speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.style.wordSpacing = spacing + "px";
+}
+
+function updateAlignment() {
+  let alignmentChooser = document.getElementById("alignmentChooser");
+  let speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.style.textAlign = alignmentChooser.value;
+}
+
+async function displayDyslexiaText() {
+  try {
+    let speedreadTextElement = document.getElementById("speedreadText");
+    let paragraph = await extractParagraphs(pageNum);
+    speedreadTextElement.textContent = paragraph;
+  } catch (error) {
+    console.error("Error displaying text:", error);
+  }
 }
 
 function clearTextMenu() {
@@ -331,6 +459,7 @@ function addEventListeners() {
 // Main Function
 async function main() {
   const url = "innotech.pdf";
+  // const url = "asdfasdf.pdf";
   addEventListeners();
   initializePDF(url);
 }

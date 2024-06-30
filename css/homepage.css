@@ -191,3 +191,14 @@ body.speedread-active {
   overflow: auto;
   border: 1px solid #ccc; /* Optional: add a border for better visibility */
 }
+
+#speedreadText {
+  max-height: 400px; /* or any height you prefer */
+  overflow-y: auto;
+  padding: 10px;
+}
+
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('../Resources/Fonts/OpenDyslexic-Regular.otf') format('opentype');
+}

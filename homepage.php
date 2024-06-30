@@ -13,6 +13,7 @@ $isLoggedIn = isset($_SESSION['user_id']);
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
   <script src="homepage.js" type="module"></script>
   <link rel="stylesheet" href="css/homepage.css" />
+
   <script>
     function getParameterByName(name, url = window.location.href) {
       name = name.replace(/[\[\]]/g, '\\$&');
