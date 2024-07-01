@@ -15,7 +15,7 @@ if ($user && password_verify($password, $user['password'])) {
     // Password cocok, buat sesi
     $_SESSION['user_id'] = $user['id'];
     $username = $user['username']; // Retrieve the username
-    header('Location: index.php?success=Welcome back, ' . htmlspecialchars($username) . '!');
+    header('Location: index.php');
     exit();
 } else {
     // Password tidak cocok, redirect dengan pesan error

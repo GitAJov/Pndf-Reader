@@ -30,18 +30,19 @@ if ($isLoggedIn) {
 </head>
 
 <body>
+
     <div class="container">
         <div id="topMenu">
             <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
             <div class="nav-right">
                 <div class="dropdown">
                     <button class="dropbtn" onclick="toggleDropdown()">
-                        <?php 
+                        <?php
                         if ($isLoggedIn) {
                             echo htmlspecialchars($username);
                         } else {
                             echo "Guest";
-                        } 
+                        }
                         ?>
                         <img src="Resources/Profile_Icon.png" alt="Profile Icon" class="profile-icon">
                     </button>
@@ -56,35 +57,36 @@ if ($isLoggedIn) {
                 </div>
             </div>
         </div>
+        <div id="mainMenu">
+            <div class="welcome-message">
+                <div class="text-large-bold">
+                    <?php
+                    if ($isLoggedIn) {
+                        echo "Welcome, " . htmlspecialchars($username) . "!";
+                    } else {
+                        echo "Welcome, Guest";
+                    }
+                    ?>
+                </div>
+            </div>
 
-        <div class="welcome-message">
-            <div class="text-large-bold">
-                <?php
-                if ($isLoggedIn) {
-                    echo "Welcome, " . htmlspecialchars($username) . "!";
-                } else {
-                    echo "Welcome, Guest";
-                }
-                ?>
+            <div class="container-view-pdf">
+                <div class="text-large-bold">
+                    <label>View PDF</label>
+                </div>
+                <div class="text-ssp">
+                    <label>View PDF you want with the easiest PDF viewer available</label>
+                </div>
             </div>
-        </div>
 
-        <div class="container-view-pdf">
-            <div class="text-large-bold">
-                <label>View PDF</label>
+            <div class="upload-container">
+                <div class="upload-box">
+                    <button class="choose-file-button">Choose File</button>
+                    <p>... or drop a file here</p>
+                    <p>Files stay private. Automatically deletes after 2 hours</p>
+                </div>
+                <img src="Resources/panda-upload.png" alt="Panda Image" class="panda-upload">
             </div>
-            <div class="text-ssp">
-                <label>View PDF you want with the easiest PDF viewer available</label>
-            </div>
-        </div>
-
-        <div class="upload-container">
-            <div class="upload-box">
-                <button class="choose-file-button">Choose File</button>
-                <p>... or drop a file here</p>
-                <p>Files stay private. Automatically deletes after 2 hours</p>
-            </div>
-            <img src="Resources/panda-upload.png" alt="Panda Image" class="panda-upload">
         </div>
     </div>
 </body>

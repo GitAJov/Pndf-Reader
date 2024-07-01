@@ -11,22 +11,29 @@ body {
 
 .container {
   min-height: 100vh;
+  min-width: -webkit-fill-available;
+  margin: 0;
   display: flex;
   flex-direction: column;
-  align-items: center;
 }
 
 #topMenu {
   display: flex;
-  width: 100%;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
   background-color: #ffffff;
-  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
+  border-bottom: 4px solid #ddd;
 }
 
-#pndf-logo{
+#mainMenu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
+#pndf-logo {
   height: 100px;
 }
 
