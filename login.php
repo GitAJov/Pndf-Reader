@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION['user_id'])) {
-    header("Location: homepage.html");
+    header("Location: homepage.php");
     exit();
 }
 ?>
@@ -14,9 +14,33 @@ if (isset($_SESSION['user_id'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login</title>
     <link rel="stylesheet" type="text/css" href="css/style.css">
+    <script>
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // Cek untuk "success" dalam parameter
+        window.onload = function () {
+            var success = getParameterByName('success');
+            if (success) {
+                alert(success);
+            }
+        };
+    </script>
 </head>
 
 <body>
+    <!-- Brand Title -->
+    <div id="brand-title">
+        <img src="Resources/Logo-Pndf-Txt.png" alt="PNDF Reader">
+    </div>
+
     <div id="form-login-container">
         <div class="header-login">
             <label id="header-text">Login</label>

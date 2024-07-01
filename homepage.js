@@ -1,7 +1,5 @@
-// Loaded via <script> tag, create shortcut to access PDF.js exports.
 var { pdfjsLib } = globalThis;
 
-// The workerSrc property shall be specified.
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
 
@@ -9,11 +7,13 @@ let pdfDoc = null,
   pageNum = 1,
   pageRendering = false,
   pageNumPending = null,
-  scale = 0.8,
-  canvas = document.getElementById("the-canvas"),
-  ctx = canvas.getContext("2d");
+  scale = 1.5,
+  canvases = [],
+  renderTasks = [],
+  renderingPdf = false,
+  overlayActive = false;
 
-// Function to load the PDF document
+// PDF Loading
 async function loadPDF(url) {
   try {
     const loadingTask = pdfjsLib.getDocument(url);
@@ -25,69 +25,142 @@ async function loadPDF(url) {
   }
 }
 
-// render a page of the PDF onto a canvas
-async function renderPage(
-  pdf = pdfDoc,
-  pageNumber = pageNum,
-  canvasId = "the-canvas",
-  scale = 0.8
-) {
-  try {
-    const page = await pdf.getPage(pageNumber);
-    console.log("Page loaded");
+async function initializePDF(url) {
+  let tempDoc = await loadPDF(url);
+  pdfDoc = tempDoc; 
+  if (pdfDoc) {
+    document.getElementById("page_count").textContent = pdfDoc.numPages;
+    await renderAllPages(pdfDoc, scale); // Render all pages at once
 
+    // Add scroll event listener to update pageNum based on visible page
+    const canvasContainer = document.getElementById("canvas-container");
+    canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
+  }
+}
+
+function reset(){
+  pageNum = 1,
+  pageRendering = false,
+  pageNumPending = null,
+  scale = 1.5,
+  canvases = [],
+  renderTasks = [],
+  document.getElementById("canvas-container").innerHTML = "";
+  console.log("Reset done");
+}
+
+async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
+  try {
+    const numPages = pdf.numPages;
+    renderingPdf = true; 
+    for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+      if(pdfDoc.constructor === String){
+        console.log("Pdf Changed in renderAllPages");
+        reset();
+        initializePDF(pdfDoc);
+        return;
+      }
+      await renderPage(pdf, pageNumber, scale);
+    }
+    renderingPdf = false; 
+    console.log("All pages rendered");
+  } catch (error) {
+    console.error("Error rendering pages:", error);
+  }
+}
+
+async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
+  try {
+    //if pdfdoc type is string
+    if(pdfDoc.constructor === String){
+      console.log("Pdf Changed in renderPage");
+      reset();
+      return;
+    }
+    const page = await pdf.getPage(pageNumber);
     const viewport = page.getViewport({ scale: scale });
 
-    const canvas = document.getElementById(canvasId);
-    const context = canvas.getContext("2d");
+    // Create a new canvas element for this page
+    const canvas = document.createElement("canvas");
+    canvas.id = `page-${pageNumber}`;
+    canvas.className = "pdf-page"; // Optional: add a class for styling
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
+    // Insert the new canvas at the correct position
+    const canvasContainer = document.getElementById("canvas-container");
+    const existingCanvas = document.getElementById(`page-${pageNumber}`);
+    if (existingCanvas) {
+      canvasContainer.insertBefore(canvas, existingCanvas.nextSibling);
+      existingCanvas.remove(); // Remove the old canvas
+    } else {
+      canvasContainer.appendChild(canvas); // Append new canvas if it doesn't exist
+    }
+
+    canvases.push(canvas); // Add canvas to the array
+
+    const context = canvas.getContext("2d");
     const renderContext = {
       canvasContext: context,
       viewport: viewport,
     };
 
-    const renderTask = page.render(renderContext);
-    await renderTask.promise;
-    console.log("Page rendered");
-
-    // Update page counters
-    document.getElementById("page_num").textContent = pageNumber;
-
-    pageRendering = false;
-    if (pageNumPending !== null) {
-      const nextPage = pageNumPending;
-      pageNumPending = null;
-      renderPage(pdf, nextPage, canvasId, scale);
+    // Ensure previous rendering task is completed or canceled
+    if (renderTasks[pageNumber - 1]) {
+      await renderTasks[pageNumber - 1].promise;
     }
+
+    // Start rendering the page to the canvas
+    renderTasks[pageNumber - 1] = page.render(renderContext);
+    await renderTasks[pageNumber - 1].promise;
+    console.log(`Page ${pageNumber} rendered`);
   } catch (error) {
     console.error("Error rendering page:", error);
-    pageRendering = false;
   }
 }
 
-// Function to queue the rendering of a page
-// queue because rendering is async and we need to wait for the previous page to finish rendering
+function updatePageNumBasedOnScroll() {
+  const canvasContainer = document.getElementById("canvas-container");
+  const scrollPosition = canvasContainer.scrollTop;
+  let visiblePage = 1;
+
+  // Calculate the visible page based on scroll position
+  for (let i = 0; i < canvases.length; i++) {
+    const canvas = canvases[i];
+    const pageHeight = canvas.height;
+    if (
+      scrollPosition >= canvas.offsetTop &&
+      scrollPosition < canvas.offsetTop + pageHeight
+    ) {
+      visiblePage = i + 1; // Pages are 1-indexed
+      break;
+    }
+  }
+
+  if (visiblePage !== pageNum) {
+    pageNum = visiblePage;
+    console.log(`Visible page: ${pageNum}`);
+    document.getElementById("page_num").textContent = pageNum;
+  }
+}
+
 function queueRenderPage(num) {
   if (pageRendering) {
     pageNumPending = num;
   } else {
     pageRendering = true;
-    renderPage(pdfDoc, num, "the-canvas", scale);
+    renderPage(pdfDoc, num, scale);
   }
 }
 
-// Function to display the previous page
 function onPrevPage() {
-  if (pageNum <= 1) {
+  if (pageNum >= pdfDoc.numPages) {
     return;
   }
-  pageNum--;
+  pageNum++;
   queueRenderPage(pageNum);
 }
 
-// Function to display the next page
 function onNextPage() {
   if (pageNum >= pdfDoc.numPages) {
     return;
@@ -96,58 +169,11 @@ function onNextPage() {
   queueRenderPage(pageNum);
 }
 
-// Main function to initialize the PDF viewer
-async function main() {
-  const url = "innotech.pdf";
-
-  document
-    .getElementById("prev")
-    .addEventListener("click", onPrevPage);
-  document
-    .getElementById("next")
-    .addEventListener("click", onNextPage);
-  document
-    .getElementById("speedread")
-    .addEventListener("click", toggleSpeedread);
-  document
-    .getElementById("speedreadOverlay")
-    .addEventListener("click", exitSpeedread);
-  document
-    .getElementById("fontChooser")
-    .addEventListener("change", chooseFont);
-  document
-    .getElementById("fontSize")
-    .addEventListener("change", chooseFont);
-  pdfDoc = await loadPDF(url);
-  if (pdfDoc) {
-    document.getElementById("page_count").textContent = pdfDoc.numPages;
-    queueRenderPage(pageNum);
-  }
-}
-
-// Call the main function
-main();
-
-// Function to extract the first paragraph from a specific page of the PDF
-async function extractParagraphs(pdfUrl, pageNumber) {
-  try {
-    const pdfDocument = await pdfjsLib.getDocument(pdfUrl).promise;
-    const page = await pdfDocument.getPage(pageNumber);
-
-    const textContent = await page.getTextContent();
-    const text = textContent.items.map((item) => item.str).join(" ");
-    const paragraphs = text.split(/\n\n/);
-    return paragraphs[0]; // Return the first paragraph
-  } catch (error) {
-    console.error("Error extracting text:", error);
-  }
-}
-
 function blurPage(blur) {
   var elementsToBlur = document.body.children;
   for (var i = 0; i < elementsToBlur.length; i++) {
     var element = elementsToBlur[i];
-    if (element.id !== "speedreadOverlay") {
+    if (element.id !== "grayOverlay") {
       if (blur) {
         element.style.filter = "blur(5px)";
       } else {
@@ -157,51 +183,285 @@ function blurPage(blur) {
   }
 }
 
-// Function to handle speedread mode
-async function toggleSpeedread() {
+function toggleOverlay() {
+  overlayActive = !overlayActive;
+  blurPage(overlayActive);
+  let grayOverlay = document.getElementById("grayOverlay");
+  grayOverlay.style.display = overlayActive ? "block" : "none";
+}
+
+async function extractParagraphs(pageNumber) {
   try {
-    // Blur the entire page except the speedread overlay
-    blurPage(true);
-    let speedreadTextElement = document.getElementById("speedreadText");
-    // Show the speedread overlay
-    let speedreadOverlay = document.getElementById("speedreadOverlay");
-    speedreadOverlay.style.display = "block";
-
-    // Extract a paragraph of text from the PDF
-    let paragraph = await extractParagraphs("innotech.pdf", 2);
-    let splitParagraph = paragraph.split(" ").filter(function (el) {
-      return el != "";
-    });
-    for (let i = 0; i < splitParagraph.length; i++) {
-      let word = splitParagraph[i];
-      speedreadTextElement.textContent = word;
-      let wpm = document.getElementById("wpm").value;
-      let delay = 60000/wpm;
-      console.log(delay);
-      await new Promise((resolve) => setTimeout(resolve, delay));
-    }
+    const page = await pdfDoc.getPage(pageNumber);
+    const textContent = await page.getTextContent();
+    const text = textContent.items.map((item) => item.str).join(" ");
+    console.log(text);
+    return text;
   } catch (error) {
-    console.error("Error extracting paragraph:", error);
+    console.error("Error extracting text:", error);
   }
 }
 
-// Function to exit speedread mode
-function exitSpeedread(event) {
-  // Check if the click happened directly on speedreadOverlay
-  if (event.target.id === "speedreadOverlay") {
-    // Remove blur from the page
+function exitOverlay(event) {
+  if (event.target.id === "grayOverlay") {
+    overlayActive = false;
     blurPage(false);
-
-    // Hide the speedread overlay
-    let speedreadOverlay = document.getElementById("speedreadOverlay");
-    speedreadOverlay.style.display = "none";
+    let grayOverlay = document.getElementById("grayOverlay");
+    grayOverlay.style.display = "none";
+    let speedreadTextElement = document.getElementById("speedreadText");
+    speedreadTextElement.style.letterSpacing = "";
+    clearTextMenu();
   }
 }
 
-function chooseFont(){
+function chooseFont() {
   let font = document.getElementById("fontChooser").value;
   let size = document.getElementById("fontSize").value;
   let speedreadTextElement = document.getElementById("speedreadText");
   speedreadTextElement.style.fontFamily = font;
   speedreadTextElement.style.fontSize = size + "px";
 }
+
+function chooseFile() {
+  const inputElement = document.createElement("input");
+  inputElement.type = "file";
+  inputElement.multiple = false;
+  inputElement.accept = ".pdf";
+
+  inputElement.addEventListener("change", async function (event) {
+    const files = event.target.files;
+    if (files.length > 0) {
+      const file = files[0];
+      pdfDoc = URL.createObjectURL(file);
+      if(!renderingPdf){
+        initializePDF(pdfDoc);
+      }
+    }
+  });
+
+  inputElement.click();
+}
+
+function createFontSizeElements() {
+  const fontLabel = document.createElement("label");
+  fontLabel.setAttribute("for", "fontChooser");
+  fontLabel.textContent = "Font:";
+
+  const fontChooser = document.createElement("select");
+  fontChooser.id = "fontChooser";
+
+  const fonts = ["Arial", "Times New Roman", "Verdana", "OpenDyslexic"];
+  fonts.forEach((font) => {
+    const option = document.createElement("option");
+    option.value = font;
+    option.textContent = font;
+    fontChooser.appendChild(option);
+  });
+
+  const fontSizeLabel = document.createElement("label");
+  fontSizeLabel.setAttribute("for", "fontSize");
+  fontSizeLabel.textContent = "Font Size:";
+
+  const fontSizeInput = document.createElement("input");
+  fontSizeInput.type = "number";
+  fontSizeInput.id = "fontSize";
+  fontSizeInput.value = 36;
+  fontSizeInput.min = 10;
+  fontSizeInput.max = 72;
+
+  fontChooser.addEventListener("change", chooseFont);
+  fontSizeInput.addEventListener("change", chooseFont);
+
+  return { fontLabel, fontChooser, fontSizeLabel, fontSizeInput };
+}
+
+async function speedread() {
+  speedTextMenu();
+  toggleOverlay();
+  if (overlayActive) {
+    displaySpeedreadText();
+  }
+}
+
+function speedTextMenu() {
+  let textMenu = document.getElementById("textMenu");
+
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
+    createFontSizeElements();
+
+  const wpmLabel = document.createElement("label");
+  wpmLabel.setAttribute("for", "wpm");
+  wpmLabel.textContent = "Words Per Minute:";
+
+  const wpmInput = document.createElement("input");
+  wpmInput.type = "number";
+  wpmInput.id = "wpm";
+  wpmInput.value = 300;
+  wpmInput.min = 50;
+  wpmInput.max = 800;
+  wpmInput.step = 25;
+
+  textMenu.appendChild(fontLabel);
+  textMenu.appendChild(fontChooser);
+  textMenu.appendChild(fontSizeLabel);
+  textMenu.appendChild(fontSizeInput);
+  textMenu.appendChild(wpmLabel);
+  textMenu.appendChild(wpmInput);
+}
+
+async function displaySpeedreadText() {
+  try {
+    let speedreadTextElement = document.getElementById("speedreadText");
+    let paragraph = await extractParagraphs(pageNum);
+    let splitParagraph = paragraph.split(" ").filter(function (el) {
+      return el != "";
+    });
+    for (let i = 0; i < splitParagraph.length; i++) {
+      if (!overlayActive) break;
+      let word = splitParagraph[i];
+      speedreadTextElement.textContent = word;
+      let wpm = document.getElementById("wpm").value;
+      let delay = 60000 / wpm;
+      await new Promise((resolve) => setTimeout(resolve, delay));
+    }
+  } catch (error) {
+    console.error("Error displaying text:", error);
+  }
+}
+
+function dyslexia() {
+  dyslexiaMenu();
+  toggleOverlay();
+  if (overlayActive) {
+    displayDyslexiaText();
+  }
+}
+
+function dyslexiaMenu() {
+  let textMenu = document.getElementById("textMenu");
+
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
+    createFontSizeElements();
+
+  textMenu.appendChild(fontLabel);
+  textMenu.appendChild(fontChooser);
+  textMenu.appendChild(fontSizeLabel);
+  textMenu.appendChild(fontSizeInput);
+
+  const spacingLabel = document.createElement("label");
+  spacingLabel.setAttribute("for", "spacing");
+  spacingLabel.textContent = "Spacing:";
+
+  const spacingInput = document.createElement("input");
+  spacingInput.type = "number";
+  spacingInput.id = "spacing";
+  spacingInput.value = 1;
+  spacingInput.min = 0;
+  spacingInput.max = 10;
+
+  textMenu.appendChild(spacingLabel);
+  textMenu.appendChild(spacingInput);
+
+  spacingInput.addEventListener("change", updateSpacing);
+
+  const alignmentLabel = document.createElement("label");
+  alignmentLabel.setAttribute("for", "alignmentChooser");
+  alignmentLabel.textContent = "Text Alignment:";
+
+  const alignmentChooser = document.createElement("select");
+  alignmentChooser.id = "alignmentChooser";
+
+  const alignments = ["left", "center", "right", "justify"];
+  alignments.forEach((alignment) => {
+    const option = document.createElement("option");
+    option.value = alignment;
+    option.textContent = alignment.charAt(0).toUpperCase() + alignment.slice(1);
+    alignmentChooser.appendChild(option);
+  });
+
+  textMenu.appendChild(alignmentLabel);
+  textMenu.appendChild(alignmentChooser);
+
+  alignmentChooser.addEventListener("change", updateAlignment);
+
+  // Adding Bold and Italic controls
+  const boldLabel = document.createElement("label");
+  boldLabel.textContent = "Bold:";
+  boldLabel.style.marginLeft = "10px";
+
+  const boldCheckbox = document.createElement("input");
+  boldCheckbox.type = "checkbox";
+  boldCheckbox.id = "boldCheckbox";
+
+  textMenu.appendChild(boldLabel);
+  textMenu.appendChild(boldCheckbox);
+
+  boldCheckbox.addEventListener("change", function () {
+    const speedreadText = document.getElementById("speedreadText");
+    speedreadText.style.fontWeight = boldCheckbox.checked ? "bold" : "normal";
+  });
+
+  const italicLabel = document.createElement("label");
+  italicLabel.speedreadText = "Italic:";
+  italicLabel.style.marginLeft = "10px";
+
+  const italicCheckbox = document.createElement("input");
+  italicCheckbox.type = "checkbox";
+  italicCheckbox.id = "italicCheckbox";
+
+  textMenu.appendChild(italicLabel);
+  textMenu.appendChild(italicCheckbox);
+
+  italicCheckbox.addEventListener("change", function () {
+    const speedreadText = document.getElementById("speedreadText");
+    speedreadText.style.fontStyle = italicCheckbox.checked ? "italic" : "normal";
+  });
+}
+
+function updateSpacing() {
+  let spacing = document.getElementById("spacing").value;
+  let speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.style.wordSpacing = spacing + "px";
+}
+
+function updateAlignment() {
+  let alignmentChooser = document.getElementById("alignmentChooser");
+  let speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.style.textAlign = alignmentChooser.value;
+}
+
+async function displayDyslexiaText() {
+  try {
+    let speedreadTextElement = document.getElementById("speedreadText");
+    let paragraph = await extractParagraphs(pageNum);
+    speedreadTextElement.textContent = paragraph;
+  } catch (error) {
+    console.error("Error displaying text:", error);
+  }
+}
+
+function clearTextMenu() {
+  const textMenu = document.getElementById("textMenu");
+  while (textMenu.firstChild) {
+    textMenu.removeChild(textMenu.firstChild);
+  }
+}
+
+function addEventListeners() {
+  //document.getElementById("prev").addEventListener("click", onPrevPage);
+  //document.getElementById("next").addEventListener("click", onNextPage);
+  document.getElementById("speedread").addEventListener("click", speedread);
+  document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
+  document.getElementById("file").addEventListener("click", chooseFile);
+  document.getElementById("dyslexia").addEventListener("click", dyslexia);
+}
+
+// Main Function
+async function main() {
+  const url = "innotech.pdf";
+  // const url = "asdfasdf.pdf";
+  addEventListeners();
+  initializePDF(url);
+}
+
+main();

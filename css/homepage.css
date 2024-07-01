@@ -117,7 +117,7 @@ body{
 }
 
 /* Speedread overlay */
-#speedreadOverlay {
+#grayOverlay {
   display: none;
   position: fixed;
   top: 0;
@@ -128,7 +128,7 @@ body{
   z-index: 1000; /* ensure it's above other content */
 }
 
-#speedreadBox {
+#textBox {
   position: fixed;
   top: 50%;
   left: 50%;
@@ -148,19 +148,19 @@ body{
 }
 
 /* Menu inside speedread box */
-#speedreadMenu {
+#textMenu {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
 }
 
-#speedreadMenu label {
+#textMenu label {
   margin-right: 10px;
 }
 
-#speedreadMenu select,
-#speedreadMenu input[type="number"] {
+#textMenu select,
+#textMenu input[type="number"] {
   padding: 5px;
   font-size: 14px;
 }
@@ -184,4 +184,21 @@ body{
 /* Disable scrolling on the body when speedread overlay is active */
 body.speedread-active {
   overflow: hidden;
+}
+
+#canvas-container {
+  height: 600px; /* Adjust height as needed */
+  overflow: auto;
+  border: 1px solid #ccc; /* Optional: add a border for better visibility */
+}
+
+#speedreadText {
+  max-height: 400px; /* or any height you prefer */
+  overflow-y: auto;
+  padding: 10px;
+}
+
+@font-face {
+  font-family: 'OpenDyslexic';
+  src: url('../Resources/Fonts/OpenDyslexic-Regular.otf') format('opentype');
 }

@@ -14,7 +14,8 @@ $user = $query->get_result()->fetch_assoc();
 if ($user && password_verify($password, $user['password'])) {
     // Password cocok, buat sesi
     $_SESSION['user_id'] = $user['id'];
-    header("Location: homepage.php");
+    $username = $user['username']; // Retrieve the username
+    header('Location: homepage.php?success=Welcome back, ' . htmlspecialchars($username) . '!');
     exit();
 } else {
     // Password tidak cocok, redirect dengan pesan error
