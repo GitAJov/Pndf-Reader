@@ -1,5 +1,5 @@
 body{
-  background-color: #9DB4C0;
+  background-color: #ffffff;
   overflow-y: hidden;
   font-family: 'Comic Sans MS';
   margin: 0;
@@ -15,17 +15,14 @@ body{
 }
 
 /* Top Menu */
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-}
-
 #topMenu {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #f1f1f1;
+  background-color: #f4f4f4;
+  border-bottom: 2px solid #ddd; /* Add a bottom border with color and thickness */
+
 }
 
 #pndf-logo{
@@ -47,7 +44,7 @@ body {
 }
 
 .dropbtn {
-  background-color: #f1f1f1;
+  background-color: #f4f4f4;
   border: none;
   cursor: pointer;
   font-size: 16px;
@@ -65,7 +62,7 @@ body {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
+  background-color: #f4f4f4;
   box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
   z-index: 1;
   right: 0;
