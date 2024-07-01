@@ -19,7 +19,7 @@ if ($user && password_verify($password, $user['password'])) {
     exit();
 } else {
     // Password tidak cocok, redirect dengan pesan error
-    header("Location: index.php?error=Username+atau+password+salah!");
+    header("Location: login.php?error=Username+atau+password+salah!");
     exit();
 }
 ?>
