@@ -82,7 +82,7 @@ if (isset($_SESSION['user_id'])) {
 <body>
     <!-- Brand Title -->
     <div id="brand-title">
-        <h1>PNDF Reader</h1>
+        <img src="Resources/pndf-logo.png" alt="PNDF Reader">
     </div>
 
     <div id="form-regis-container">
@@ -96,7 +96,8 @@ if (isset($_SESSION['user_id'])) {
             <input type="email" id="email" name="email" placeholder="Enter your email address" required>
             <input type="text" id="username" name="username" placeholder="Choose a username" required>
             <input type="password" id="password" name="password" placeholder="Create a password" required>
-            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
+            <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password"
+                required>
             <input type="submit" id="submit-register" name="reg_user" value="Register">
             <p id="body-text">Already have an account? <a href="login.php">Login here</a></p>
         </form>

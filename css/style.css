@@ -5,12 +5,13 @@ body {
   align-items: center;
   height: 100vh;
   margin: 0;
-  background-color: #9db4c0;
-  font-family: 'Comic Sans MS';
+  background-color: #f4f4f4;
+  font-family: "Comic Sans MS";
 }
-#brand-title img{
+
+#brand-title img {
   height: auto;
-  width: min-content;
+  width: 350px;
 }
 #header-text {
   font-size: 42px;
@@ -22,12 +23,12 @@ body {
 
 .header-register,
 .header-login {
-    margin: 15px;
+  margin: 15px;
 }
 
 #form-regis-container,
 #form-login-container {
-  background: #e0f7fa;
+  background: #ffffff;
   padding: 20px;
   border-radius: 20px;
   box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
@@ -53,7 +54,7 @@ body {
   font-size: 20px;
   margin: 15px;
 
-  font-family: 'Comic Sans MS';
+  font-family: "Comic Sans MS";
 
   border-radius: 20px;
   border: 1px solid transparent;
@@ -66,13 +67,13 @@ body {
   width: 100%;
   padding: 10px;
   margin: 15px;
-  background-color: #5c6b73;
+  background-color: #66b538;
   color: white;
   border: none;
   border-radius: 20px;
   cursor: pointer;
   font-size: 22px;
-  font-family: 'Comic Sans MS';
+  font-family: "Comic Sans MS";
 }
 
 p {
@@ -80,12 +81,12 @@ p {
 }
 
 #panda {
-    position: absolute;
-    bottom: -80px;
-    left: -195px;
-    width: 310px;
-    height: auto;
-    transform: scaleX(-1);
+  position: absolute;
+  bottom: -80px;
+  left: -195px;
+  width: 310px;
+  height: auto;
+  transform: scaleX(-1);
 }
 
 #panda-login {
@@ -94,4 +95,79 @@ p {
   right: -100px;
   width: 200px;
   height: auto;
+}
+
+.welcome-message {
+  padding: 100px;
+}
+
+.container-view-pdf {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.container-view-pdf label {
+  font-family: "Source Sans Pro";
+  font-weight: 900;
+  font-size: 38px;
+}
+
+.text-large-bold {
+  font-family: "Source Sans Pro";
+  font-weight: 900;
+  font-size: 42px;
+}
+
+.text-ssp label {
+  font-family: "Source Sans Pro";
+  font-weight: lighter;
+  font-size: 24px;
+}
+
+.upload-container {
+  display: flex;
+  justify-content: center;
+  width: 700px;
+  border: 2px dashed #ccc;
+  border-radius: 20px;
+  padding: 30px;
+  margin: 20px;
+  position: relative;
+}
+
+.upload-container p{
+  font-family: 'Source Sans Pro';
+}
+
+.panda-upload {
+  position: absolute;
+  width: 200px;
+  bottom: -50px;
+  left: -100px;
+}
+
+.upload-box {
+  text-align: center;
+  padding: 20px;
+}
+
+.choose-file-button {
+  background-color: #4CAF50;
+  color: white;
+  padding: 15px 50px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.choose-file-button:hover {
+  background-color: #45a049;
+}
+
+.upload-box p {
+  margin: 5px 0;
 }
