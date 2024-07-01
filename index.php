@@ -30,64 +30,56 @@ if ($isLoggedIn) {
 </head>
 
 <body>
-<div id="topMenu">
-      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
-      <div class="nav-right">
-        <div class="dropdown">
-          <button class="dropbtn">Tools
-          <img src="Resources/Drop_Icon.png" alt="Drop Icon" class="drop-icon">
-          </button>
-          <div class="dropdown-content">
-            <a href="#">Tool 1</a>
-            <a href="#">Tool 2</a>
-            <a href="#">Tool 3</a>
-          </div>
+    <div class="container">
+        <div id="topMenu">
+            <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
+            <div class="nav-right">
+                <div class="dropdown">
+                    <button class="dropbtn" onclick="toggleDropdown()">
+                        <?php echo htmlspecialchars($username); ?>
+                        <img src="Resources/Profile_Icon.png" alt="Profile Icon" class="profile-icon">
+                    </button>
+                    <div id="profileDropdown" class="dropdown-content">
+                        <?php if ($isLoggedIn): ?>
+                            <a href="profile.php">Profile</a>
+                            <a href="logout.php">Logout</a>
+                        <?php else: ?>
+                            <a href="login.php">Login</a>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="dropdown">
-          <button class="dropbtn" onclick="toggleDropdown()"> 
-            <?php echo htmlspecialchars($username); ?>
-            <img src="Resources/Profile_Icon.png" alt="Profile Icon" class="profile-icon">
-          </button>
-          <div id="profileDropdown" class="dropdown-content">
-            <?php if ($isLoggedIn): ?>
-              <a href="profile.php">Profile</a>
-              <a href="logout.php">Logout</a>
-            <?php else: ?>
-              <a href="login.php">Login</a>
-            <?php endif; ?>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div class="welcome-message">
-        <div class="text-large-bold">
-            <?php
-            if ($isLoggedIn) {
-                echo "Welcome, " . htmlspecialchars($username) . "!";
-            } else {
-                echo "Welcome, Guest";
-            }
-            ?>
+        <div class="welcome-message">
+            <div class="text-large-bold">
+                <?php
+                if ($isLoggedIn) {
+                    echo "Welcome, " . htmlspecialchars($username) . "!";
+                } else {
+                    echo "Welcome, Guest";
+                }
+                ?>
+            </div>
         </div>
-    </div>
 
-    <div class="container-view-pdf">
-        <div class="text-large-bold">
-            <label>View PDF</label>
+        <div class="container-view-pdf">
+            <div class="text-large-bold">
+                <label>View PDF</label>
+            </div>
+            <div class="text-ssp">
+                <label>View PDF you want with the easiest PDF viewer available</label>
+            </div>
         </div>
-        <div class="text-ssp">
-            <label>View PDF you want with the easiest PDF viewer available</label>
-        </div>
-    </div>
 
-    <div class="upload-container">
-        <div class="upload-box">
-            <button class="choose-file-button">Choose File</button>
-            <p>... or drop a file here</p>
-            <p>Files stay private. Automatically deletes after 2 hours</p>
+        <div class="upload-container">
+            <div class="upload-box">
+                <button class="choose-file-button">Choose File</button>
+                <p>... or drop a file here</p>
+                <p>Files stay private. Automatically deletes after 2 hours</p>
+            </div>
+            <img src="Resources/panda-upload.png" alt="Panda Image" class="panda-upload">
         </div>
-        <img src="Resources/panda-upload.png" alt="Panda Image" class="panda-upload">
     </div>
 </body>
 

@@ -9,12 +9,21 @@ body {
   font-family: "Comic Sans MS";
 }
 
+.container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 #topMenu {
   display: flex;
+  width: 100%;
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #f1f1f1;
+  background-color: #ffffff;
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
 }
 
 #pndf-logo{
@@ -36,7 +45,7 @@ body {
 }
 
 .dropbtn {
-  background-color: #f1f1f1;
+  background-color: #ffffff;
   border: none;
   cursor: pointer;
   font-size: 16px;
@@ -54,7 +63,7 @@ body {
 .dropdown-content {
   display: none;
   position: absolute;
-  background-color: #f1f1f1;
+  background-color: #ffffff;
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   right: 0;
