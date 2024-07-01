@@ -1,7 +1,21 @@
 <?php
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
-$username = $isLoggedIn ? $_SESSION['username'] : 'Guest';
+$username = '';
+
+if ($isLoggedIn) {
+    include 'database.php';
+
+    $user_id = $_SESSION['user_id'];
+    $sql = "SELECT username FROM users WHERE id = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("s", $user_id);
+    $stmt->execute();
+    $stmt->bind_result($username);
+    $stmt->fetch();
+    $stmt->close();
+    $conn->close();
+}
 ?>
 
 <!DOCTYPE html>
