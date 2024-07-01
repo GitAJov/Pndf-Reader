@@ -71,9 +71,9 @@ $username = $isLoggedIn ? $_SESSION['username'] : 'Guest';
       <div id="pdf">
         <div id="navigate">
           <button id="prev">Previous</button>
+          <span>Page: <span id="page_num">loading</span> / <span id="page_count">-</span></span>
           <button id="next">Next</button>
           &nbsp; &nbsp;
-          <span>Page: <span id="page_num">loading</span> / <span id="page_count">-</span></span>
           <br />
         </div>
         <div id="canvas-container">
