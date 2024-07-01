@@ -1,6 +1,7 @@
 <?php
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
+$username = $isLoggedIn ? $_SESSION['username'] : 'Guest';
 ?>
 
 <!DOCTYPE html>
@@ -36,14 +37,33 @@ $isLoggedIn = isset($_SESSION['user_id']);
 <body>
   <div id="container">
     <div id="topMenu">
-      <button id="file">File</button>
-      <button id="tools">Tools</button>
-      <button id="view">View</button>
-      <button id="help">Help</button>
-      <form action="<?php echo $isLoggedIn ? 'logout.php' : 'login.php'; ?>" method="post" style="display:inline;">
-        <button type="submit" id="loginlogout"><?php echo $isLoggedIn ? 'Logout' : 'Login'; ?></button>
-      </form>
+      <img src="Resources/Logo-Pndf-Txt.png" alt="PNDF Reader">
+      <div class="nav-right">
+        <div class="dropdown">
+          <button class="dropbtn">Tools</button>
+          <div class="dropdown-content">
+            <a href="#">Tool 1</a>
+            <a href="#">Tool 2</a>
+            <a href="#">Tool 3</a>
+          </div>
+        </div>
+        <div class="dropdown">
+          <button class="dropbtn" onclick="toggleDropdown()"> 
+            <?php echo htmlspecialchars($username); ?>
+            <img src="Resources/Profile_Icon.png" alt="Profile Icon" class="profile-icon">
+          </button>
+          <div id="profileDropdown" class="dropdown-content">
+            <?php if ($isLoggedIn): ?>
+              <a href="profile.php">Profile</a>
+              <a href="logout.php">Logout</a>
+            <?php else: ?>
+              <a href="login.php">Login</a>
+            <?php endif; ?>
+          </div>
+        </div>
+      </div>
     </div>
+
 
     <div id="mainContent">
       <div id="pdf">
@@ -56,11 +76,6 @@ $isLoggedIn = isset($_SESSION['user_id']);
         </div>
         <div id="canvas-container">
         </div> <br />
-      </div>
-      <div id="sideMenu">
-        <button id="speedread">Speedread</button>
-        <button id="dyslexia">Dyslexia</button>
-        <button id="zoom">Zoom</button>
       </div>
     </div>
   </div>
