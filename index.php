@@ -36,7 +36,13 @@ if ($isLoggedIn) {
             <div class="nav-right">
                 <div class="dropdown">
                     <button class="dropbtn" onclick="toggleDropdown()">
-                        <?php echo htmlspecialchars($username); ?>
+                        <?php 
+                        if ($isLoggedIn) {
+                            echo htmlspecialchars($username);
+                        } else {
+                            echo "Guest";
+                        } 
+                        ?>
                         <img src="Resources/Profile_Icon.png" alt="Profile Icon" class="profile-icon">
                     </button>
                     <div id="profileDropdown" class="dropdown-content">

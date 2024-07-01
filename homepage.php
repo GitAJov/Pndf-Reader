@@ -4,17 +4,17 @@ $isLoggedIn = isset($_SESSION['user_id']);
 $username = '';
 
 if ($isLoggedIn) {
-    include 'database.php';
+  include 'database.php';
 
-    $user_id = $_SESSION['user_id'];
-    $sql = "SELECT username FROM users WHERE id = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param("s", $user_id);
-    $stmt->execute();
-    $stmt->bind_result($username);
-    $stmt->fetch();
-    $stmt->close();
-    $conn->close();
+  $user_id = $_SESSION['user_id'];
+  $sql = "SELECT username FROM users WHERE id = ?";
+  $stmt = $conn->prepare($sql);
+  $stmt->bind_param("s", $user_id);
+  $stmt->execute();
+  $stmt->bind_result($username);
+  $stmt->fetch();
+  $stmt->close();
+  $conn->close();
 }
 ?>
 
@@ -55,7 +55,7 @@ if ($isLoggedIn) {
       <div class="nav-right">
         <div class="dropdown">
           <button class="dropbtn">Tools
-          <img src="Resources/Drop_Icon.png" alt="Drop Icon" class="drop-icon">
+            <img src="Resources/Drop_Icon.png" alt="Drop Icon" class="drop-icon">
           </button>
           <div class="dropdown-content">
             <a href="#">Tool 1</a>
@@ -64,8 +64,14 @@ if ($isLoggedIn) {
           </div>
         </div>
         <div class="dropdown">
-          <button class="dropbtn" onclick="toggleDropdown()"> 
-            <?php echo htmlspecialchars($username); ?>
+          <button class="dropbtn" onclick="toggleDropdown()">
+            <?php
+            if ($isLoggedIn) {
+              echo htmlspecialchars($username);
+            } else {
+              echo "Guest";
+            }
+            ?>
             <img src="Resources/Profile_Icon.png" alt="Profile Icon" class="profile-icon">
           </button>
           <div id="profileDropdown" class="dropdown-content">
