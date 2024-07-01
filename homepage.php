@@ -61,7 +61,7 @@ if ($isLoggedIn) {
         </div>
         <div class="dropdown">
           <button class="dropbtn">Tools
-            <img src="Resources/Drop_Icon.png" alt="Drop Icon" class="drop-icon">
+            <img src="Resources/drop-icon.png" alt="Drop Icon" class="drop-icon">
           </button>
           <div class="dropdown-content">
             <a href="#">Tool 1</a>
@@ -78,7 +78,7 @@ if ($isLoggedIn) {
               echo "Guest";
             }
             ?>
-            <img src="Resources/Profile_Icon.png" alt="Profile Icon" class="profile-icon">
+            <img src="Resources/profile-icon.png" alt="Profile Icon" class="profile-icon">
           </button>
           <div id="profileDropdown" class="dropdown-content">
             <?php if ($isLoggedIn): ?>

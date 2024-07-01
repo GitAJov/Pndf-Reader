@@ -460,26 +460,51 @@ document.addEventListener('DOMContentLoaded', () => {
   const themeToggle = document.getElementById('theme-toggle');
   const body = document.body;
   const topMenu = document.getElementById('topMenu');
-  
+  const navigate = document.getElementById('navigate');
+  const dropdowns = document.querySelectorAll('.dropdown, .profile-dropdown');
+  const pndfLogo = document.getElementById('pndf-logo');
+  const dropIcon = document.querySelector('.drop-icon');
+  const profileIcon = document.querySelector('.profile-icon');
+
   // Check local storage for saved theme preference
   if (localStorage.getItem('theme') === 'dark') {
     body.classList.add('dark-mode');
     topMenu.classList.add('dark-mode');
-    themeToggle.checked = true;
+    navigate.classList.add('dark-mode');
+    dropdowns.forEach(dropdown => {
+      dropdown.querySelector('.dropbtn').classList.add('dark-mode');
+      dropdown.querySelector('.dropdown-content').classList.add('dark-mode');
+    });
+    pndfLogo.src = 'Resources/pndf-logo-dark-mode.png';
+    dropIcon.src = 'Resources/drop-icon-dark-mode.png';
+    profileIcon.src = 'Resources/profile-icon-dark-mode.png';
   }
 
   themeToggle.addEventListener('change', () => {
-    if (themeToggle.checked) {
-      body.classList.add('dark-mode');
-      topMenu.classList.add('dark-mode');
-      localStorage.setItem('theme', 'dark');
+    body.classList.toggle('dark-mode');
+    topMenu.classList.toggle('dark-mode');
+    navigate.classList.toggle('dark-mode');
+    dropdowns.forEach(dropdown => {
+      dropdown.querySelector('.dropbtn').classList.toggle('dark-mode');
+      dropdown.querySelector('.dropdown-content').classList.toggle('dark-mode');
+    });
+    // Change logos based on the theme
+    if (body.classList.contains('dark-mode')) {
+      pndfLogo.src = 'Resources/pndf-logo-dark-mode.png';
+      dropIcon.src = 'Resources/drop-icon-dark-mode.png';
+      profileIcon.src = 'Resources/profile-icon-dark-mode.png';
     } else {
-      body.classList.remove('dark-mode');
-      topMenu.classList.remove('dark-mode');
-      localStorage.setItem('theme', 'light');
+      pndfLogo.src = 'Resources/pndf-logo.png';
+      dropIcon.src = 'Resources/drop-icon.png';
+      profileIcon.src = 'Resources/profile-icon.png';
     }
+    // Save the user's preference in local storage
+    localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
   });
 });
+
+
+
 
 // Main Function
 async function main() {
