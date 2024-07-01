@@ -9,6 +9,78 @@ body {
   font-family: "Comic Sans MS";
 }
 
+#topMenu {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  background-color: #f1f1f1;
+}
+
+#pndf-logo{
+  height: 100px;
+}
+
+#logo {
+  height: 40px;
+}
+
+.nav-right {
+  display: flex;
+  align-items: center;
+}
+
+.dropdown {
+  position: relative;
+  margin-left: 20px;
+}
+
+.dropbtn {
+  background-color: #f1f1f1;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+}
+
+.profile-icon {
+  height: 60px; /* Enlarge the icon */
+  width: 60px; /* Enlarge the icon */
+  margin-left: 10px; /* Add space between text and icon */
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #f1f1f1;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  right: 0;
+  top: 100%;
+  min-width: 150px;
+}
+
+.dropdown-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-content a:hover {
+  background-color: #ddd;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.dropbtn:hover {
+  background-color: #ddd;
+}
+
 #brand-title img {
   height: auto;
   width: 350px;
@@ -137,8 +209,8 @@ p {
   position: relative;
 }
 
-.upload-container p{
-  font-family: 'Source Sans Pro';
+.upload-container p {
+  font-family: "Source Sans Pro";
 }
 
 .panda-upload {
@@ -154,7 +226,7 @@ p {
 }
 
 .choose-file-button {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
   padding: 15px 50px;
   margin-bottom: 20px;

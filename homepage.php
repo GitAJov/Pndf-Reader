@@ -37,7 +37,7 @@ $username = $isLoggedIn ? $_SESSION['username'] : 'Guest';
 <body>
   <div id="container">
     <div id="topMenu">
-      <img src="Resources/Logo-Pndf-Txt.png" alt="PNDF Reader">
+      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
       <div class="nav-right">
         <div class="dropdown">
           <button class="dropbtn">Tools
