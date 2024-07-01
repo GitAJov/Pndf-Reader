@@ -455,6 +455,31 @@ function addEventListeners() {
   // document.getElementById("file").addEventListener("click", chooseFile);
   document.getElementById("dyslexia").addEventListener("click", dyslexia);
 }
+//Attempt at dark mode
+document.addEventListener('DOMContentLoaded', () => {
+  const themeToggle = document.getElementById('theme-toggle');
+  const body = document.body;
+  const topMenu = document.getElementById('topMenu');
+  
+  // Check local storage for saved theme preference
+  if (localStorage.getItem('theme') === 'dark') {
+    body.classList.add('dark-mode');
+    topMenu.classList.add('dark-mode');
+    themeToggle.checked = true;
+  }
+
+  themeToggle.addEventListener('change', () => {
+    if (themeToggle.checked) {
+      body.classList.add('dark-mode');
+      topMenu.classList.add('dark-mode');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      body.classList.remove('dark-mode');
+      topMenu.classList.remove('dark-mode');
+      localStorage.setItem('theme', 'light');
+    }
+  });
+});
 
 // Main Function
 async function main() {

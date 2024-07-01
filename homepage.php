@@ -53,6 +53,12 @@ if ($isLoggedIn) {
     <div id="topMenu">
       <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
       <div class="nav-right">
+        <div class="switch">
+          <label class="switch">
+            <input type="checkbox" id="theme-toggle">
+            <span class="slider round"></span>
+          </label>
+        </div>
         <div class="dropdown">
           <button class="dropbtn">Tools
             <img src="Resources/Drop_Icon.png" alt="Drop Icon" class="drop-icon">
