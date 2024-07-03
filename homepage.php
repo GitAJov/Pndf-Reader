@@ -64,8 +64,8 @@ if ($isLoggedIn) {
             <img src="Resources/drop-icon.png" alt="Drop Icon" class="drop-icon">
           </button>
           <div class="dropdown-content">
-            <a href="#">Tool 1</a>
-            <a href="#">Tool 2</a>
+            <a href="#">Speedread</a>
+            <a href="#">Dyslexia</a>
             <a href="#">Tool 3</a>
           </div>
         </div>
