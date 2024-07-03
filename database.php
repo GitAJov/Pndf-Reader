@@ -3,7 +3,8 @@
 $host = 'localhost';
 $dbname = 'db_pndf';
 $username = 'root';
-$password = '123';
+// $password = '123';
+$password = '';
 
 // Membuat koneksi ke database
 $conn = new mysqli($host, $username, $password, $dbname);

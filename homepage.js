@@ -503,15 +503,11 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
-
-
-
 // Main Function
 async function main() {
-  const url = "innotech.pdf";
+  const url = "";
   // const url = "asdfasdf.pdf";
   addEventListeners();
   initializePDF(url);
 }
 
-main();

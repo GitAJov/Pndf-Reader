@@ -25,6 +25,7 @@ if ($isLoggedIn) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Reader</title>
+    <script src="index.js"></script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro" />
 </head>
@@ -44,7 +45,7 @@ if ($isLoggedIn) {
                             echo "Guest";
                         }
                         ?>
-                        <img src="Resources/Profile_Icon.png" alt="Profile Icon" class="profile-icon">
+                        <img src="Resources/profile-icon.png" alt="Profile Icon" class="profile-icon">
                     </button>
                     <div id="profileDropdown" class="dropdown-content">
                         <?php if ($isLoggedIn): ?>
@@ -81,7 +82,7 @@ if ($isLoggedIn) {
 
             <div class="upload-container">
                 <div class="upload-box">
-                    <button class="choose-file-button">Choose File</button>
+                    <button id="choosefile" class="choose-file-button" onclick="choosefile()">Choose File</button>
                     <p>... or drop a file here</p>
                     <p>Files stay private. Automatically deletes after 2 hours</p>
                 </div>
