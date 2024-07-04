@@ -24,7 +24,7 @@ if ($isLoggedIn) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Reader</title>>
+  <title>PDF Reader</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
   <script src="js/homepage.js" type="module"></script>
   <link rel="stylesheet" href="css/homepage.css" />
@@ -98,7 +98,37 @@ if ($isLoggedIn) {
         </div>
       </div>
     </div>
+    <div id="mainMenu">
+      <div class="welcome-message">
+        <div class="text-large-bold">
+          <?php
+          if ($isLoggedIn) {
+            echo "Welcome, " . htmlspecialchars($username) . "!";
+          } else {
+            echo "Welcome, Guest";
+          }
+          ?>
+        </div>
+      </div>
 
+      <div class="container-view-pdf">
+        <div class="text-large-bold">
+          <label>View PDF</label>
+        </div>
+        <div class="text-ssp">
+          <label>View PDF you want with the easiest PDF viewer available</label>
+        </div>
+      </div>
+
+      <div class="upload-container">
+        <div class="upload-box">
+          <button id="choosefile" class="choose-file-button" onclick="choosefile()">Choose File</button>
+          <p>... or drop a file here</p>
+          <p>Files stay private. Automatically deletes after 2 hours</p>
+        </div>
+        <img src="Resources/panda-upload.png" alt="Panda Image" class="panda-upload">
+      </div>
+    </div>
 
     <div id="mainContent">
       <div id="pdf">

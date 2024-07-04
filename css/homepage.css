@@ -27,6 +27,13 @@ body {
   transition: background-color 0.3s, border-bottom-color 0.3s;
 }
 
+#mainMenu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  align-items: center;
+}
+
 #pndf-logo {
   height: 100px;
 }
@@ -328,4 +335,82 @@ body.speedread-active {
 @font-face {
   font-family: 'OpenDyslexic';
   src: url('../Resources/Fonts/OpenDyslexic-Regular.otf') format('opentype');
+}
+
+/* Welcome */
+
+
+.welcome-message {
+  padding: 100px;
+}
+
+.container-view-pdf {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+}
+
+.container-view-pdf label {
+  font-family: "Source Sans Pro";
+  font-weight: 900;
+  font-size: 38px;
+}
+
+.text-large-bold {
+  font-family: "Source Sans Pro";
+  font-weight: 900;
+  font-size: 42px;
+}
+
+.text-ssp label {
+  font-family: "Source Sans Pro";
+  font-weight: lighter;
+  font-size: 24px;
+}
+
+.upload-container {
+  display: flex;
+  justify-content: center;
+  width: 700px;
+  border: 2px dashed #ccc;
+  border-radius: 20px;
+  padding: 30px;
+  margin: 20px;
+  position: relative;
+}
+
+.upload-container p {
+  font-family: "Source Sans Pro";
+}
+
+.panda-upload {
+  position: absolute;
+  width: 200px;
+  bottom: -50px;
+  left: -100px;
+}
+
+.upload-box {
+  text-align: center;
+  padding: 20px;
+}
+
+.choose-file-button {
+  background-color: #4caf50;
+  color: white;
+  padding: 15px 50px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.choose-file-button:hover {
+  background-color: #45a049;
+}
+
+.upload-box p {
+  margin: 5px 0;
 }
