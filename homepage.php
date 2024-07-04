@@ -24,13 +24,8 @@ if ($isLoggedIn) {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>PDF Reader</title>
-  <script type="module">
-    import { franc, francAll } from 'https://esm.sh/franc@6?bundle'
-  </script>
+  <title>PDF Reader</title>>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
-
-
   <script src="js/homepage.js" type="module"></script>
   <link rel="stylesheet" href="css/homepage.css" />
 

@@ -221,7 +221,8 @@ body.dark-mode #navigate button:hover {
 
 /* Other Styles */
 #mainContent {
-  display: flex;
+  /* display: flex; */
+  display: none;
   flex-direction: row;
 }
 
