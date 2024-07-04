@@ -25,7 +25,7 @@ if ($isLoggedIn) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PDF Reader</title>
-    <script src="index.js"></script>
+    <script src="js/index.js"></script>
     <link rel="stylesheet" href="css/style.css" />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro" />
 </head>

@@ -31,7 +31,7 @@ if ($isLoggedIn) {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
 
 
-  <script src="homepage.js" type="module"></script>
+  <script src="js/homepage.js" type="module"></script>
   <link rel="stylesheet" href="css/homepage.css" />
 
   <script>
