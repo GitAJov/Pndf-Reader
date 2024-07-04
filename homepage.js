@@ -141,6 +141,7 @@ function updatePageNumBasedOnScroll() {
     pageNum = visiblePage;
     console.log(`Visible page: ${pageNum}`);
     document.getElementById("page_num").textContent = pageNum;
+    handleTextToSpeech(pageNum);
   }
 }
 
@@ -453,7 +454,7 @@ function addEventListeners() {
   //document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
   // document.getElementById("file").addEventListener("click", chooseFile);
-  document.getElementById("dyslexia").addEventListener("click", dyslexia);
+  // document.getElementById("dyslexia").addEventListener("click", dyslexia);
 }
 //Attempt at dark mode
 document.addEventListener('DOMContentLoaded', () => {
@@ -503,11 +504,129 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 });
 
+
+async function handleTextToSpeech(pageNum) {
+  try {
+    let text = await extractParagraphs(pageNum);
+    tts(text);
+  } catch (error) {
+    console.error("Error extracting paragraphs:", error);
+  }
+}
+
+function tts(text) {
+  window.utterances = [];
+  let pausedByUser = false;
+  var voicesList = [];
+
+  var utterance = new SpeechSynthesisUtterance(text);
+
+  utterance.addEventListener("error", function (event) {
+    console.log(
+      "An error has occurred with the speech synthesis: " + event.error
+    );
+  });
+
+  var timer = setInterval(function () {
+    voicesList = window.speechSynthesis.getVoices();
+    if (voicesList.length !== 0) {
+      utterance.lang = "en-US";
+      utterance.rate = 0.9;
+      utterance.volume = 0.7;
+      utterance.pitch = 1;
+      utterance.voice = voicesList.find((voice) => voice.lang === "en-US");
+
+      let voiceSelect = document.getElementById("voices");
+      voiceSelect.innerHTML = "";
+      voicesList.forEach((voice, i) => {
+        voiceSelect.options[i] = new Option(voice.name, i);
+      });
+
+      clearInterval(timer);
+    }
+  }, 1000);
+
+  var speechUtteranceChunker = function (utt, settings, callback) {
+    settings = settings || {};
+    var newUtt;
+    var txt =
+      settings.offset !== undefined
+        ? utt.text.substring(settings.offset)
+        : utt.text;
+
+    var chunkLength = settings.chunkLength || 160;
+    var chunkArr = txt.match(
+      new RegExp(`^[\\s\\S]{1,${chunkLength}}([\\s,.!?:;]|$)`)
+    );
+
+    if (!chunkArr || chunkArr[0].length <= 2) {
+      if (callback) callback();
+      return;
+    }
+
+    var chunk = chunkArr[0];
+    newUtt = new SpeechSynthesisUtterance(chunk.trim());
+    newUtt.voice = voicesList.find((voice) => voice.lang === "en-US");
+    newUtt.lang = "en-US";
+    newUtt.rate = 0.9;
+    newUtt.volume = 0.7;
+    newUtt.pitch = 1;
+
+    for (let x in utt) {
+      if (utt.hasOwnProperty(x) && x !== "text") {
+        newUtt[x] = utt[x];
+      }
+    }
+
+    newUtt.addEventListener("end", function () {
+      if (speechUtteranceChunker.cancel) {
+        speechUtteranceChunker.cancel = false;
+        return;
+      }
+      settings.offset = settings.offset || 0;
+      settings.offset += chunk.length;
+      speechUtteranceChunker(utt, settings, callback);
+    });
+
+    newUtt.addEventListener("error", function (event) {
+      console.log(
+        "An error has occurred with the speech synthesis: " + event.error
+      );
+    });
+
+    utterances.push(newUtt);
+    speechSynthesis.speak(newUtt);
+  };
+
+  document.getElementById("start").addEventListener("click", () => {
+    speechUtteranceChunker.cancel = false;
+    speechUtteranceChunker(utterance, { chunkLength: 120 }, () => {
+      console.log("done");
+    });
+  });
+
+  document.getElementById("stop").addEventListener("click", () => {
+    window.speechSynthesis.pause();
+  });
+
+  document.getElementById("resume").addEventListener("click", () => {
+    window.speechSynthesis.resume();
+  });
+
+  document.getElementById("cancel").addEventListener("click", () => {
+    speechUtteranceChunker.cancel = true;
+    window.speechSynthesis.cancel();
+  });
+}
+
+
 // Main Function
 async function main() {
-  const url = "";
-  // const url = "asdfasdf.pdf";
+  // const url = "";
+  const url = "asdfasdf.pdf";
   addEventListeners();
   initializePDF(url);
 }
+
+main();
 

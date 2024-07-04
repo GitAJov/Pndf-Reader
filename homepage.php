@@ -25,7 +25,12 @@ if ($isLoggedIn) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Reader</title>
+  <script type="module">
+    import { franc, francAll } from 'https://esm.sh/franc@6?bundle'
+  </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
+
+
   <script src="homepage.js" type="module"></script>
   <link rel="stylesheet" href="css/homepage.css" />
 
@@ -51,6 +56,13 @@ if ($isLoggedIn) {
 <body>
   <div id="container">
     <div id="topMenu">
+      <div>
+        <button id="start">Start</button>
+        <button id="stop">Stop</button>
+        <button id="resume">Resume</button>
+        <button id="cancel">Cancel</button>
+        <select name="voices" id="voices"></select>
+      </div>
       <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
       <div class="nav-right">
         <div class="switch">
@@ -118,6 +130,8 @@ if ($isLoggedIn) {
       </div>
     </div>
   </div>
+
+
 </body>
 
 </html>
