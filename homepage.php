@@ -28,7 +28,14 @@ if ($isLoggedIn) {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
   <script src="js/homepage.js" type="module"></script>
   <link rel="stylesheet" href="css/homepage.css" />
-
+  <script type="importmap">
+      {
+        "imports": {
+          "@google/generative-ai": "https://esm.run/@google/generative-ai"
+        }
+      }
+  </script>
+  <script src="gemini.js" type="module"></script>
   <script>
     function getParameterByName(name, url = window.location.href) {
       name = name.replace(/[\[\]]/g, '\\$&');
@@ -122,7 +129,7 @@ if ($isLoggedIn) {
 
       <div class="upload-container">
         <div class="upload-box">
-          <button id="choosefile" class="choose-file-button" onclick="choosefile()">Choose File</button>
+          <button id="choosefile" class="choose-file-button">Choose File</button>
           <p>... or drop a file here</p>
           <p>Files stay private. Automatically deletes after 2 hours</p>
         </div>

@@ -27,7 +27,7 @@ async function loadPDF(url) {
 
 async function initializePDF(url) {
   let tempDoc = await loadPDF(url);
-  pdfDoc = tempDoc; 
+  pdfDoc = tempDoc;
   if (pdfDoc) {
     document.getElementById("page_count").textContent = pdfDoc.numPages;
     await renderAllPages(pdfDoc, scale); // Render all pages at once
@@ -38,23 +38,23 @@ async function initializePDF(url) {
   }
 }
 
-function reset(){
-  pageNum = 1,
-  pageRendering = false,
-  pageNumPending = null,
-  scale = 1.5,
-  canvases = [],
-  renderTasks = [],
-  document.getElementById("canvas-container").innerHTML = "";
+function reset() {
+  (pageNum = 1),
+    (pageRendering = false),
+    (pageNumPending = null),
+    (scale = 1.5),
+    (canvases = []),
+    (renderTasks = []),
+    (document.getElementById("canvas-container").innerHTML = "");
   console.log("Reset done");
 }
 
 async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
   try {
     const numPages = pdf.numPages;
-    renderingPdf = true; 
+    renderingPdf = true;
     for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
-      if(pdfDoc.constructor === String){
+      if (pdfDoc.constructor === String) {
         console.log("Pdf Changed in renderAllPages");
         reset();
         initializePDF(pdfDoc);
@@ -62,7 +62,7 @@ async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
       }
       await renderPage(pdf, pageNumber, scale);
     }
-    renderingPdf = false; 
+    renderingPdf = false;
     console.log("All pages rendered");
   } catch (error) {
     console.error("Error rendering pages:", error);
@@ -72,7 +72,7 @@ async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
 async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
   try {
     //if pdfdoc type is string
-    if(pdfDoc.constructor === String){
+    if (pdfDoc.constructor === String) {
       console.log("Pdf Changed in renderPage");
       reset();
       return;
@@ -234,13 +234,15 @@ function chooseFile() {
     if (files.length > 0) {
       const file = files[0];
       pdfDoc = URL.createObjectURL(file);
-      if(!renderingPdf){
+      if (!renderingPdf) {
         initializePDF(pdfDoc);
       }
     }
   });
-
   inputElement.click();
+  console.log("whatsup");
+  document.getElementById("mainMenu").style.display = "none";
+  document.getElementById("mainContent").style.display = "flex";
 }
 
 function createFontSizeElements() {
@@ -415,7 +417,9 @@ function dyslexiaMenu() {
 
   italicCheckbox.addEventListener("change", function () {
     const speedreadText = document.getElementById("speedreadText");
-    speedreadText.style.fontStyle = italicCheckbox.checked ? "italic" : "normal";
+    speedreadText.style.fontStyle = italicCheckbox.checked
+      ? "italic"
+      : "normal";
   });
 }
 
@@ -453,57 +457,60 @@ function addEventListeners() {
   //document.getElementById("next").addEventListener("click", onNextPage);
   //document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
+  document.getElementById("choosefile").addEventListener("click", chooseFile);
   // document.getElementById("file").addEventListener("click", chooseFile);
   // document.getElementById("dyslexia").addEventListener("click", dyslexia);
 }
 //Attempt at dark mode
-document.addEventListener('DOMContentLoaded', () => {
-  const themeToggle = document.getElementById('theme-toggle');
+document.addEventListener("DOMContentLoaded", () => {
+  const themeToggle = document.getElementById("theme-toggle");
   const body = document.body;
-  const topMenu = document.getElementById('topMenu');
-  const navigate = document.getElementById('navigate');
-  const dropdowns = document.querySelectorAll('.dropdown, .profile-dropdown');
-  const pndfLogo = document.getElementById('pndf-logo');
-  const dropIcon = document.querySelector('.drop-icon');
-  const profileIcon = document.querySelector('.profile-icon');
+  const topMenu = document.getElementById("topMenu");
+  const navigate = document.getElementById("navigate");
+  const dropdowns = document.querySelectorAll(".dropdown, .profile-dropdown");
+  const pndfLogo = document.getElementById("pndf-logo");
+  const dropIcon = document.querySelector(".drop-icon");
+  const profileIcon = document.querySelector(".profile-icon");
 
   // Check local storage for saved theme preference
-  if (localStorage.getItem('theme') === 'dark') {
-    body.classList.add('dark-mode');
-    topMenu.classList.add('dark-mode');
-    navigate.classList.add('dark-mode');
-    dropdowns.forEach(dropdown => {
-      dropdown.querySelector('.dropbtn').classList.add('dark-mode');
-      dropdown.querySelector('.dropdown-content').classList.add('dark-mode');
+  if (localStorage.getItem("theme") === "dark") {
+    body.classList.add("dark-mode");
+    topMenu.classList.add("dark-mode");
+    navigate.classList.add("dark-mode");
+    dropdowns.forEach((dropdown) => {
+      dropdown.querySelector(".dropbtn").classList.add("dark-mode");
+      dropdown.querySelector(".dropdown-content").classList.add("dark-mode");
     });
-    pndfLogo.src = 'Resources/pndf-logo-dark-mode.png';
-    dropIcon.src = 'Resources/drop-icon-dark-mode.png';
-    profileIcon.src = 'Resources/profile-icon-dark-mode.png';
+    pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
+    dropIcon.src = "Resources/drop-icon-dark-mode.png";
+    profileIcon.src = "Resources/profile-icon-dark-mode.png";
   }
 
-  themeToggle.addEventListener('change', () => {
-    body.classList.toggle('dark-mode');
-    topMenu.classList.toggle('dark-mode');
-    navigate.classList.toggle('dark-mode');
-    dropdowns.forEach(dropdown => {
-      dropdown.querySelector('.dropbtn').classList.toggle('dark-mode');
-      dropdown.querySelector('.dropdown-content').classList.toggle('dark-mode');
+  themeToggle.addEventListener("change", () => {
+    body.classList.toggle("dark-mode");
+    topMenu.classList.toggle("dark-mode");
+    navigate.classList.toggle("dark-mode");
+    dropdowns.forEach((dropdown) => {
+      dropdown.querySelector(".dropbtn").classList.toggle("dark-mode");
+      dropdown.querySelector(".dropdown-content").classList.toggle("dark-mode");
     });
     // Change logos based on the theme
-    if (body.classList.contains('dark-mode')) {
-      pndfLogo.src = 'Resources/pndf-logo-dark-mode.png';
-      dropIcon.src = 'Resources/drop-icon-dark-mode.png';
-      profileIcon.src = 'Resources/profile-icon-dark-mode.png';
+    if (body.classList.contains("dark-mode")) {
+      pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
+      dropIcon.src = "Resources/drop-icon-dark-mode.png";
+      profileIcon.src = "Resources/profile-icon-dark-mode.png";
     } else {
-      pndfLogo.src = 'Resources/pndf-logo.png';
-      dropIcon.src = 'Resources/drop-icon.png';
-      profileIcon.src = 'Resources/profile-icon.png';
+      pndfLogo.src = "Resources/pndf-logo.png";
+      dropIcon.src = "Resources/drop-icon.png";
+      profileIcon.src = "Resources/profile-icon.png";
     }
     // Save the user's preference in local storage
-    localStorage.setItem('theme', body.classList.contains('dark-mode') ? 'dark' : 'light');
+    localStorage.setItem(
+      "theme",
+      body.classList.contains("dark-mode") ? "dark" : "light"
+    );
   });
 });
-
 
 async function handleTextToSpeech(pageNum) {
   try {
@@ -517,6 +524,7 @@ async function handleTextToSpeech(pageNum) {
 function tts(text) {
   window.utterances = [];
   let pausedByUser = false;
+
   var voicesList = [];
 
   var utterance = new SpeechSynthesisUtterance(text);
@@ -537,10 +545,9 @@ function tts(text) {
       utterance.voice = voicesList.find((voice) => voice.lang === "en-US");
 
       let voiceSelect = document.getElementById("voices");
-      voiceSelect.innerHTML = "";
-      voicesList.forEach((voice, i) => {
-        voiceSelect.options[i] = new Option(voice.name, i);
-      });
+      voicesList.forEach(
+        (voice, i) => (voiceSelect.options[i] = new Option(voice.name, i))
+      );
 
       clearInterval(timer);
     }
@@ -550,52 +557,100 @@ function tts(text) {
     settings = settings || {};
     var newUtt;
     var txt =
-      settings.offset !== undefined
+      settings && settings.offset !== undefined
         ? utt.text.substring(settings.offset)
         : utt.text;
+    if (utt.voice && utt.voice.voiceURI === "native") {
+      // Not part of the spec
+      newUtt = utt;
+      newUtt.text = txt;
+      newUtt.voice = voicesList.find((voice) => voice.lang === "en-US");
+      newUtt.lang = "en-US";
+      newUtt.rate = 0.9;
+      newUtt.volume = 0.7;
+      newUtt.pitch = 1;
+      newUtt.addEventListener("end", function () {
+        if (speechUtteranceChunker.cancel) {
+          speechUtteranceChunker.cancel = false;
+        }
+        if (callback !== undefined) {
+          callback();
+        }
+      });
 
-    var chunkLength = settings.chunkLength || 160;
-    var chunkArr = txt.match(
-      new RegExp(`^[\\s\\S]{1,${chunkLength}}([\\s,.!?:;]|$)`)
-    );
+      newUtt.addEventListener("error", function (event) {
+        console.log(
+          "An error has occurred with the speech synthesis: " + event.error
+        );
+      });
 
-    if (!chunkArr || chunkArr[0].length <= 2) {
-      if (callback) callback();
-      return;
-    }
+      utterances.push(newUtt);
+    } else {
+      var chunkLength = (settings && settings.chunkLength) || 160;
+      var pattRegex = new RegExp(
+        "^[\\s\\S]{" +
+          Math.floor(chunkLength / 2) +
+          "," +
+          chunkLength +
+          "}[.!?,]{1}|^[\\s\\S]{1," +
+          chunkLength +
+          "}$|^[\\s\\S]{1," +
+          chunkLength +
+          "} "
+      );
+      var chunkArr = txt.match(pattRegex);
 
-    var chunk = chunkArr[0];
-    newUtt = new SpeechSynthesisUtterance(chunk.trim());
-    newUtt.voice = voicesList.find((voice) => voice.lang === "en-US");
-    newUtt.lang = "en-US";
-    newUtt.rate = 0.9;
-    newUtt.volume = 0.7;
-    newUtt.pitch = 1;
-
-    for (let x in utt) {
-      if (utt.hasOwnProperty(x) && x !== "text") {
-        newUtt[x] = utt[x];
-      }
-    }
-
-    newUtt.addEventListener("end", function () {
-      if (speechUtteranceChunker.cancel) {
-        speechUtteranceChunker.cancel = false;
+      if (chunkArr[0] === undefined || chunkArr[0].length <= 2) {
+        //call once all text has been spoken...
+        if (callback !== undefined) {
+          callback();
+        }
         return;
       }
-      settings.offset = settings.offset || 0;
-      settings.offset += chunk.length;
-      speechUtteranceChunker(utt, settings, callback);
-    });
+      var chunk = chunkArr[0];
+      newUtt = new SpeechSynthesisUtterance(chunk);
+      newUtt.voice = voicesList.find((voice) => voice.lang === "en-US");
+      newUtt.lang = "en-US";
+      newUtt.rate = 0.9;
+      newUtt.volume = 0.7;
+      newUtt.pitch = 1;
 
-    newUtt.addEventListener("error", function (event) {
-      console.log(
-        "An error has occurred with the speech synthesis: " + event.error
-      );
-    });
+      var x;
+      for (x in utt) {
+        if (utt.hasOwnProperty(x) && x !== "text") {
+          newUtt[x] = utt[x];
+        }
+      }
+      newUtt.addEventListener("end", function () {
+        if (speechUtteranceChunker.cancel) {
+          speechUtteranceChunker.cancel = false;
+          return;
+        }
+        settings.offset = settings.offset || 0;
+        settings.offset += chunk.length - 1;
+        speechUtteranceChunker(utt, settings, callback);
+      });
 
-    utterances.push(newUtt);
-    speechSynthesis.speak(newUtt);
+      newUtt.addEventListener("error", function (event) {
+        console.log(
+          "An error has occurred with the speech synthesis: " + event.error
+        );
+      });
+
+      utterances.push(newUtt);
+    }
+
+    if (settings.modifier) {
+      settings.modifier(newUtt);
+    }
+
+    //console.log(newUtt); //IMPORTANT!! Do not remove: Logging the object out fixes some onend firing issues.
+    //placing the speak invocation inside a callback fixes ordering and onend issues.
+
+    var k = setInterval(function () {
+      speechSynthesis.speak(newUtt);
+      clearInterval(k);
+    }, 10);
   };
 
   document.getElementById("start").addEventListener("click", () => {
@@ -619,14 +674,13 @@ function tts(text) {
   });
 }
 
-
 // Main Function
 async function main() {
   // const url = "";
-  const url = "asdfasdf.pdf";
+  // const url = "asdfasdf.pdf";
+
   addEventListeners();
-  initializePDF(url);
+  // initializePDF(url);
 }
 
 main();
-
