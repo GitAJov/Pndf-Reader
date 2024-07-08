@@ -1,10 +1,10 @@
 /* Base Styles */
 body {
   background-color: #ffffff;
-  overflow-y: hidden;
-  font-family: 'Comic Sans MS';
+  font-family: "Comic Sans MS";
   margin: 0;
   transition: background-color 0.3s, color 0.3s;
+  overflow-y: hidden;
 }
 
 #container {
@@ -47,12 +47,14 @@ body {
   align-items: center;
 }
 
-.dropdown, .profile-dropdown {
+.dropdown,
+.profile-dropdown {
   position: relative;
   margin-left: 20px;
 }
 
-.dropbtn {
+.dropbtn,
+.filebtn {
   background-color: #f4f4f4;
   border: none;
   cursor: pointer;
@@ -70,11 +72,12 @@ body {
   margin-left: 10px; /* Space between text and icon */
 }
 
-.dropdown-content, .profile-dropdown-content {
+.dropdown-content,
+.profile-dropdown-content {
   display: none;
   position: absolute;
   background-color: #f4f4f4; /* Light mode dropdown */
-  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
   z-index: 1;
   right: 0;
   top: 100%;
@@ -82,18 +85,21 @@ body {
   transition: background-color 0.3s;
 }
 
-.dropdown-content a, .profile-dropdown-content a {
+.dropdown-content a,
+.profile-dropdown-content a {
   color: black;
   padding: 12px 16px;
   text-decoration: none;
   display: block;
 }
 
-.dropdown-content a:hover, .profile-dropdown-content a:hover {
+.dropdown-content a:hover,
+.profile-dropdown-content a:hover {
   background-color: #ddd;
 }
 
-.dropdown:hover .dropdown-content, .profile-dropdown:hover .profile-dropdown-content {
+.dropdown:hover .dropdown-content,
+.profile-dropdown:hover .profile-dropdown-content {
   display: block;
 }
 
@@ -122,15 +128,18 @@ body.dark-mode {
   width: 60px;
 }
 
-.dropdown-content.dark-mode, .profile-dropdown-content.dark-mode {
+.dropdown-content.dark-mode,
+.profile-dropdown-content.dark-mode {
   background-color: #333333;
 }
 
-.dropdown-content a.dark-mode, .profile-dropdown-content a.dark-mode {
+.dropdown-content a.dark-mode,
+.profile-dropdown-content a.dark-mode {
   color: #ffffff;
 }
 
-.dropdown-content a.dark-mode:hover, .profile-dropdown-content a.dark-mode:hover {
+.dropdown-content a.dark-mode:hover,
+.profile-dropdown-content a.dark-mode:hover {
   background-color: #555555;
 }
 
@@ -155,7 +164,7 @@ body.dark-mode {
   height: 34px;
   border-radius: 34px;
   background-color: #ccc;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 .slider:before {
@@ -167,11 +176,11 @@ body.dark-mode {
   left: 4px;
   bottom: 4px;
   background-color: white;
-  transition: .4s;
+  transition: 0.4s;
 }
 
 input:checked + .slider {
-  background-color: #2196F3;
+  background-color: #2196f3;
 }
 
 input:checked + .slider:before {
@@ -194,11 +203,23 @@ input:checked + .slider:before {
   align-items: center;
   justify-content: center;
   margin-top: 10px;
+  width: 100%; /* Ensure it takes the full width */
+  transition: top 0.3s;
+}
+
+#navigate.fixed {
+  margin: 0;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background-color: #f4f4f4; /* Optional: Add a background color for better visibility */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for better visibility */
 }
 
 #navigate button {
   font-size: 20px;
-  font-family: 'Comic Sans MS';
+  font-family: "Comic Sans MS";
   padding: 5px 15px;
   margin: 10px;
   border-radius: 10px;
@@ -215,6 +236,10 @@ input:checked + .slider:before {
 /* Dark Mode Navigation Styles */
 body.dark-mode #navigate {
   color: #ffffff;
+}
+
+body.dark-mode #navigate.fixed {
+  background-color: #333333; /* Background color for dark mode */
 }
 
 body.dark-mode #navigate button {
@@ -296,7 +321,8 @@ body.dark-mode #navigate button:hover {
   margin-right: 10px;
 }
 
-#textMenu select, #textMenu input[type="number"] {
+#textMenu select,
+#textMenu input[type="number"] {
   padding: 5px;
   font-size: 14px;
 }
@@ -321,9 +347,11 @@ body.speedread-active {
 }
 
 #canvas-container {
-  height: 600px; /* Adjust height as needed */
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
   border: 1px solid #ccc; /* Optional: add a border for better visibility */
+  overflow: auto;
+  height: 600px;
 }
 
 #speedreadText {
@@ -333,12 +361,11 @@ body.speedread-active {
 }
 
 @font-face {
-  font-family: 'OpenDyslexic';
-  src: url('../Resources/Fonts/OpenDyslexic-Regular.otf') format('opentype');
+  font-family: "OpenDyslexic";
+  src: url("../Resources/Fonts/OpenDyslexic-Regular.otf") format("opentype");
 }
 
 /* Welcome */
-
 
 .welcome-message {
   padding: 100px;
