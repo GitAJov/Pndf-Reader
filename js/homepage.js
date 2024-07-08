@@ -4,7 +4,7 @@ var { pdfjsLib } = globalThis;
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
-  
+
 
 let pdfDoc = null,
   pageNum = 1,
@@ -117,13 +117,13 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
     // Start rendering the page to the canvas
     renderTasks[pageNumber - 1] = page.render(renderContext);
     await renderTasks[pageNumber - 1].promise;
-   
+
     console.log(`Page ${pageNumber} rendered`);
   } catch (error) {
     console.error("Error rendering page:", error);
   }
 
-  
+
 }
 
 function updatePageNumBasedOnScroll() {
@@ -597,14 +597,14 @@ function tts(text) {
       var chunkLength = (settings && settings.chunkLength) || 160;
       var pattRegex = new RegExp(
         "^[\\s\\S]{" +
-          Math.floor(chunkLength / 2) +
-          "," +
-          chunkLength +
-          "}[.!?,]{1}|^[\\s\\S]{1," +
-          chunkLength +
-          "}$|^[\\s\\S]{1," +
-          chunkLength +
-          "} "
+        Math.floor(chunkLength / 2) +
+        "," +
+        chunkLength +
+        "}[.!?,]{1}|^[\\s\\S]{1," +
+        chunkLength +
+        "}$|^[\\s\\S]{1," +
+        chunkLength +
+        "} "
       );
       var chunkArr = txt.match(pattRegex);
 
@@ -681,6 +681,16 @@ function tts(text) {
     window.speechSynthesis.cancel();
   });
 }
+
+window.addEventListener('scroll', function () {
+  const topMenuHeight = document.getElementById('topMenu').offsetHeight;
+  const navigate = document.getElementById('navigate');
+  if (window.scrollY > topMenuHeight) {
+    navigate.classList.add('fixed');
+  } else {
+    navigate.classList.remove('fixed');
+  }
+});
 
 // Main Function
 async function main() {

@@ -80,6 +80,7 @@ if ($isLoggedIn) {
             <span class="slider round"></span>
           </label>
         </div>
+        <button id="file" class="filebtn"> File </button>
         <div class="dropdown">
           <button class="dropbtn">Tools
             <img src="Resources/drop-icon.png" alt="Drop Icon" class="drop-icon">
