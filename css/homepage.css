@@ -118,7 +118,8 @@ body.dark-mode {
   border-bottom-color: #444444; /* Dark mode border */
 }
 
-.dropbtn.dark-mode {
+.dropbtn.dark-mode,
+.filebtn.dark-mode {
   background-color: #333333;
   color: #ffffff;
 }
@@ -352,6 +353,11 @@ body.speedread-active {
   border: 1px solid #ccc; /* Optional: add a border for better visibility */
   overflow: auto;
   height: 600px;
+  width: -webkit-fill-available;
+}
+
+#pdf-page {
+  width: 600px;
 }
 
 #speedreadText {

@@ -462,11 +462,11 @@ function clearTextMenu() {
 function addEventListeners() {
   //document.getElementById("prev").addEventListener("click", onPrevPage);
   //document.getElementById("next").addEventListener("click", onNextPage);
-  //document.getElementById("speedread").addEventListener("click", speedread);
+  document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
   document.getElementById("choosefile").addEventListener("click", chooseFile);
   // document.getElementById("file").addEventListener("click", chooseFile);
-  // document.getElementById("dyslexia").addEventListener("click", dyslexia);
+  document.getElementById("dyslexia").addEventListener("click", dyslexia);
 }
 //Attempt at dark mode
 document.addEventListener("DOMContentLoaded", () => {
