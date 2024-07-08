@@ -459,6 +459,7 @@ function clearTextMenu() {
 function addEventListeners() {
   //document.getElementById("prev").addEventListener("click", onPrevPage);
   //document.getElementById("next").addEventListener("click", onNextPage);
+  // document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
   document.getElementById("choosefile").addEventListener("click", chooseFile);
