@@ -1,4 +1,10 @@
 <?php
+require 'vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__, 'var.env');
+$dotenv->load();
+$api_key = $_ENV['MY_API_KEY'];
+
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $username = '';
@@ -25,9 +31,6 @@ if ($isLoggedIn) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Reader</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
-  <script src="js/homepage.js" type="module"></script>
-  <link rel="stylesheet" href="css/homepage.css" />
   <script type="importmap">
       {
         "imports": {
@@ -35,8 +38,12 @@ if ($isLoggedIn) {
         }
       }
   </script>
-  <script src="gemini.js" type="module"></script>
-  <script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
+  <script src="js/homepage.js" type="module"></script>
+  <link rel="stylesheet" href="css/homepage.css" />
+  <script type="module">
+    import { initializeGemini } from './js/gemini.js';
+    const apiKey = "<?php echo htmlspecialchars($api_key); ?>";
     function getParameterByName(name, url = window.location.href) {
       name = name.replace(/[\[\]]/g, '\\$&');
       let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -45,12 +52,12 @@ if ($isLoggedIn) {
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
-
     window.onload = function () {
       let successMessage = getParameterByName('success');
       if (successMessage) {
         alert(successMessage);
       }
+      initializeGemini(apiKey);
     };
   </script>
 </head>

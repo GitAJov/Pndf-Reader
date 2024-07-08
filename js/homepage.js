@@ -1,7 +1,10 @@
+import { formatText } from "../js/gemini.js";
+
 var { pdfjsLib } = globalThis;
 
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
+  
 
 let pdfDoc = null,
   pageNum = 1,
@@ -30,6 +33,7 @@ async function initializePDF(url) {
   pdfDoc = tempDoc;
   if (pdfDoc) {
     document.getElementById("page_count").textContent = pdfDoc.numPages;
+    document.getElementById("page_num").textContent = pageNum; // Update page number immediately
     await renderAllPages(pdfDoc, scale); // Render all pages at once
 
     // Add scroll event listener to update pageNum based on visible page
@@ -113,10 +117,13 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
     // Start rendering the page to the canvas
     renderTasks[pageNumber - 1] = page.render(renderContext);
     await renderTasks[pageNumber - 1].promise;
+   
     console.log(`Page ${pageNumber} rendered`);
   } catch (error) {
     console.error("Error rendering page:", error);
   }
+
+  
 }
 
 function updatePageNumBasedOnScroll() {
@@ -515,7 +522,8 @@ document.addEventListener("DOMContentLoaded", () => {
 async function handleTextToSpeech(pageNum) {
   try {
     let text = await extractParagraphs(pageNum);
-    tts(text);
+    let formattedText = await formatText(text);
+    tts(formattedText);
   } catch (error) {
     console.error("Error extracting paragraphs:", error);
   }
