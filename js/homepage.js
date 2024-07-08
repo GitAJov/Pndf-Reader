@@ -5,7 +5,6 @@ var { pdfjsLib } = globalThis;
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
 
-
 let pdfDoc = null,
   pageNum = 1,
   pageRendering = false,
@@ -13,7 +12,6 @@ let pdfDoc = null,
   scale = 1.5,
   canvases = [],
   renderTasks = [],
-  voicesList = [],
   renderingPdf = false,
   overlayActive = false;
 
@@ -123,8 +121,6 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
   } catch (error) {
     console.error("Error rendering page:", error);
   }
-
-
 }
 
 function updatePageNumBasedOnScroll() {
@@ -463,11 +459,11 @@ function clearTextMenu() {
 function addEventListeners() {
   //document.getElementById("prev").addEventListener("click", onPrevPage);
   //document.getElementById("next").addEventListener("click", onNextPage);
-  // document.getElementById("speedread").addEventListener("click", speedread);
+  document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
   document.getElementById("choosefile").addEventListener("click", chooseFile);
   // document.getElementById("file").addEventListener("click", chooseFile);
-  // document.getElementById("dyslexia").addEventListener("click", dyslexia);
+  document.getElementById("dyslexia").addEventListener("click", dyslexia);
 }
 //Attempt at dark mode
 document.addEventListener("DOMContentLoaded", () => {
@@ -479,7 +475,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const pndfLogo = document.getElementById("pndf-logo");
   const dropIcon = document.querySelector(".drop-icon");
   const profileIcon = document.querySelector(".profile-icon");
-  const voiceSelect = document.getElementById("voices");
 
   // Check local storage for saved theme preference
   if (localStorage.getItem("theme") === "dark") {
@@ -519,14 +514,6 @@ document.addEventListener("DOMContentLoaded", () => {
       body.classList.contains("dark-mode") ? "dark" : "light"
     );
   });
-
-  // Adding event listener to voice selection dropdown
-  voiceSelect.addEventListener("change", (event) => {
-    const selectedVoice = voicesList[event.target.value];
-    if (selectedVoice) {
-      utterance.voice = selectedVoice;
-    }
-  });
 });
 
 async function handleTextToSpeech(pageNum) {
@@ -539,39 +526,12 @@ async function handleTextToSpeech(pageNum) {
   }
 }
 
-function loadVoices() {
-  voicesList = speechSynthesis.getVoices();
-  populateVoiceOptions(voicesList);
-}
-
-function populateVoiceOptions(voicesList) {
-  const select = document.getElementById("voiceOptions");
-  select.innerHTML = ""; // Clear existing options
-  voicesList.forEach((voice, index) => {
-    const option = document.createElement("option");
-    option.value = index;
-    option.textContent = `${voice.name} (${voice.lang})`;
-    select.appendChild(option);
-  });
-}
-
-// Event listener for dropdown changes
-document.getElementById("voiceOptions").addEventListener("change", (event) => {
-  const selectedVoiceIndex = event.target.value;
-  const selectedVoice = voicesList[selectedVoiceIndex];
-  // Handle the change in voice selection
-});
-
-// Initialize voices and set up dropdown
-if (speechSynthesis.onvoiceschanged !== undefined) {
-  speechSynthesis.onvoiceschanged = loadVoices;
-} else {
-  loadVoices();
-}
-
 function tts(text) {
   window.utterances = [];
   let pausedByUser = false;
+
+  var voicesList = [];
+
   var utterance = new SpeechSynthesisUtterance(text);
 
   utterance.addEventListener("error", function (event) {
@@ -705,7 +665,7 @@ function tts(text) {
     });
   });
 
-  document.getElementById("stop").addEventListener("click", () => {
+  document.getElementById("pause").addEventListener("click", () => {
     window.speechSynthesis.pause();
   });
 
@@ -718,6 +678,16 @@ function tts(text) {
     window.speechSynthesis.cancel();
   });
 }
+
+window.addEventListener("scroll", function () {
+  const topMenuHeight = document.getElementById("topMenu").offsetHeight;
+  const navigate = document.getElementById("navigate");
+  if (window.scrollY > topMenuHeight) {
+    navigate.classList.add("fixed");
+  } else {
+    navigate.classList.remove("fixed");
+  }
+});
 
 // Main Function
 async function main() {

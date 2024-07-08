@@ -67,7 +67,7 @@ if ($isLoggedIn) {
     <div id="topMenu">
       <div>
         <button id="start">Start</button>
-        <button id="stop">Stop</button>
+        <button id="pause">Pause</button>
         <button id="resume">Resume</button>
         <button id="cancel">Cancel</button>
         <select name="voices" id="voices"></select>
@@ -86,8 +86,8 @@ if ($isLoggedIn) {
             <img src="Resources/drop-icon.png" alt="Drop Icon" class="drop-icon">
           </button>
           <div class="dropdown-content">
-            <a href="#">Speedread</a>
-            <a href="#">Dyslexia</a>
+            <a href="#" id="speedread">Speedread</a>
+            <a href="#" id="dyslexia">Dyslexia</a>
             <a href="#">Tool 3</a>
           </div>
         </div>
