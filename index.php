@@ -69,12 +69,6 @@ if ($isLoggedIn) {
     <div id="topMenu">
       <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
       <div class="nav-right">
-        <div class="switch">
-          <label class="switch">
-            <input type="checkbox" id="theme-toggle">
-            <span class="slider round"></span>
-          </label>
-        </div>
         <button id="file" class="filebtn"> File </button>
         <div class="dropdown">
           <button class="dropbtn">Tools
@@ -83,7 +77,7 @@ if ($isLoggedIn) {
           <div class="dropdown-content">
             <a href="#" id="speedread">Speedread</a>
             <a href="#" id="dyslexia">Dyslexia</a>
-            <a href="#">Tool 3</a>
+            <a href="#" id="theme-toggle-item">Toggle Theme</a> <!-- New theme toggle option -->
           </div>
         </div>
         <div class="dropdown">
