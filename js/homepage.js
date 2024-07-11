@@ -28,6 +28,7 @@ async function loadPDF(url) {
 }
 
 async function initializePDF(url) {
+  reset();
   let tempDoc = await loadPDF(url);
   pdfDoc = tempDoc;
   if (pdfDoc) {
@@ -67,6 +68,7 @@ async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
     }
     renderingPdf = false;
     console.log("All pages rendered");
+    handleTextToSpeech();
   } catch (error) {
     console.error("Error rendering pages:", error);
   }
@@ -145,7 +147,6 @@ function updatePageNumBasedOnScroll() {
     pageNum = visiblePage;
     console.log(`Visible page: ${pageNum}`);
     document.getElementById("page_num").textContent = pageNum;
-    handleTextToSpeech(pageNum);
   }
 }
 
@@ -200,7 +201,6 @@ async function extractParagraphs(pageNumber) {
     const page = await pdfDoc.getPage(pageNumber);
     const textContent = await page.getTextContent();
     const text = textContent.items.map((item) => item.str).join(" ");
-    console.log(text);
     return text;
   } catch (error) {
     console.error("Error extracting text:", error);
@@ -244,7 +244,6 @@ function chooseFile() {
     }
   });
   inputElement.click();
-  console.log("whatsup");
   document.getElementById("mainMenu").style.display = "none";
   document.getElementById("mainContent").style.display = "flex";
 }
@@ -457,15 +456,13 @@ function clearTextMenu() {
 }
 
 function addEventListeners() {
-  //document.getElementById("prev").addEventListener("click", onPrevPage);
-  //document.getElementById("next").addEventListener("click", onNextPage);
-  // document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("speedread").addEventListener("click", speedread);
   document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
   document.getElementById("choosefile").addEventListener("click", chooseFile);
-  // document.getElementById("file").addEventListener("click", chooseFile);
+  document.getElementById("file").addEventListener("click", chooseFile);
   document.getElementById("dyslexia").addEventListener("click", dyslexia);
 }
+
 //Attempt at dark mode
 document.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.getElementById("theme-toggle");
@@ -517,146 +514,94 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
-async function handleTextToSpeech(pageNum) {
+async function handleTextToSpeech() {
   try {
-    let text = await extractParagraphs(pageNum);
-    let formattedText = await formatText(text);
-    tts(formattedText);
+    const numPages = pdfDoc.numPages;
+    let allText = [];
+
+    // Iterate through each page and extract text
+    for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+      const pageText = await extractParagraphs(pageNumber);
+      allText.push(pageText); // Collect raw text for each page
+    }
+
+    let formattedTextArray = [];
+
+    for (let text of allText) {
+      let formattedText = await formatText(text);
+      formattedTextArray.push(formattedText); 
+    }
+
+    for (let formattedText of formattedTextArray) {
+      await tts(formattedText);
+    }
+
   } catch (error) {
-    console.error("Error extracting paragraphs:", error);
+    console.error("Error handling text to speech:", error);
   }
 }
 
 function tts(text) {
-  window.utterances = [];
-  let pausedByUser = false;
+  let utterances = [];
+  let voicesList = [];
+  const utterance = new SpeechSynthesisUtterance(text);
 
-  var voicesList = [];
+  utterance.lang = "en-US";
+  utterance.rate = 0.9;
+  utterance.volume = 0.7;
+  utterance.pitch = 1;
 
-  var utterance = new SpeechSynthesisUtterance(text);
-
-  utterance.addEventListener("error", function (event) {
-    console.log(
-      "An error has occurred with the speech synthesis: " + event.error
-    );
+  utterance.addEventListener("error", (event) => {
+    console.log("An error occurred: " + event.error);
   });
 
-  var timer = setInterval(function () {
+  const populateVoices = () => {
     voicesList = window.speechSynthesis.getVoices();
-    if (voicesList.length !== 0) {
-      utterance.lang = "en-US";
-      utterance.rate = 0.9;
-      utterance.volume = 0.7;
-      utterance.pitch = 1;
+    if (voicesList.length) {
       utterance.voice = voicesList.find((voice) => voice.lang === "en-US");
-
-      let voiceSelect = document.getElementById("voices");
-      voicesList.forEach(
-        (voice, i) => (voiceSelect.options[i] = new Option(voice.name, i))
-      );
-
-      clearInterval(timer);
+      clearInterval(voiceTimer);
     }
-  }, 1000);
+  };
 
-  var speechUtteranceChunker = function (utt, settings, callback) {
-    settings = settings || {};
-    var newUtt;
-    var txt =
-      settings && settings.offset !== undefined
+  const voiceTimer = setInterval(populateVoices, 1000);
+
+  const speechUtteranceChunker = (utt, settings = {}, callback) => {
+    const chunkLength = settings.chunkLength || 160;
+    const txt =
+      settings.offset !== undefined
         ? utt.text.substring(settings.offset)
         : utt.text;
-    if (utt.voice && utt.voice.voiceURI === "native") {
-      // Not part of the spec
-      newUtt = utt;
-      newUtt.text = txt;
-      newUtt.voice = voicesList.find((voice) => voice.lang === "en-US");
-      newUtt.lang = "en-US";
-      newUtt.rate = 0.9;
-      newUtt.volume = 0.7;
-      newUtt.pitch = 1;
-      newUtt.addEventListener("end", function () {
-        if (speechUtteranceChunker.cancel) {
-          speechUtteranceChunker.cancel = false;
-        }
-        if (callback !== undefined) {
-          callback();
-        }
-      });
+    const chunkArr = txt.match(
+      new RegExp(
+        `^[\\s\\S]{${Math.floor(
+          chunkLength / 2
+        )},${chunkLength}}[.!?,]{1}|^[\\s\\S]{1,${chunkLength}}$|^[\\s\\S]{1,${chunkLength}} `
+      )
+    );
 
-      newUtt.addEventListener("error", function (event) {
-        console.log(
-          "An error has occurred with the speech synthesis: " + event.error
-        );
-      });
+    if (!chunkArr || chunkArr[0].length <= 2) {
+      if (callback) callback();
+      return;
+    }
 
-      utterances.push(newUtt);
-    } else {
-      var chunkLength = (settings && settings.chunkLength) || 160;
-      var pattRegex = new RegExp(
-        "^[\\s\\S]{" +
-          Math.floor(chunkLength / 2) +
-          "," +
-          chunkLength +
-          "}[.!?,]{1}|^[\\s\\S]{1," +
-          chunkLength +
-          "}$|^[\\s\\S]{1," +
-          chunkLength +
-          "} "
-      );
-      var chunkArr = txt.match(pattRegex);
-
-      if (chunkArr[0] === undefined || chunkArr[0].length <= 2) {
-        //call once all text has been spoken...
-        if (callback !== undefined) {
-          callback();
-        }
+    const chunk = chunkArr[0];
+    const newUtt = new SpeechSynthesisUtterance(chunk);
+    Object.assign(newUtt, utt, { text: chunk });
+    newUtt.addEventListener("end", () => {
+      if (speechUtteranceChunker.cancel) {
+        speechUtteranceChunker.cancel = false;
         return;
       }
-      var chunk = chunkArr[0];
-      newUtt = new SpeechSynthesisUtterance(chunk);
-      newUtt.voice = voicesList.find((voice) => voice.lang === "en-US");
-      newUtt.lang = "en-US";
-      newUtt.rate = 0.9;
-      newUtt.volume = 0.7;
-      newUtt.pitch = 1;
+      settings.offset = (settings.offset || 0) + chunk.length - 1;
+      speechUtteranceChunker(utt, settings, callback);
+    });
 
-      var x;
-      for (x in utt) {
-        if (utt.hasOwnProperty(x) && x !== "text") {
-          newUtt[x] = utt[x];
-        }
-      }
-      newUtt.addEventListener("end", function () {
-        if (speechUtteranceChunker.cancel) {
-          speechUtteranceChunker.cancel = false;
-          return;
-        }
-        settings.offset = settings.offset || 0;
-        settings.offset += chunk.length - 1;
-        speechUtteranceChunker(utt, settings, callback);
-      });
+    newUtt.addEventListener("error", (event) => {
+      console.log("An error occurred: " + event.error);
+    });
 
-      newUtt.addEventListener("error", function (event) {
-        console.log(
-          "An error has occurred with the speech synthesis: " + event.error
-        );
-      });
-
-      utterances.push(newUtt);
-    }
-
-    if (settings.modifier) {
-      settings.modifier(newUtt);
-    }
-
-    //console.log(newUtt); //IMPORTANT!! Do not remove: Logging the object out fixes some onend firing issues.
-    //placing the speak invocation inside a callback fixes ordering and onend issues.
-
-    var k = setInterval(function () {
-      speechSynthesis.speak(newUtt);
-      clearInterval(k);
-    }, 10);
+    utterances.push(newUtt);
+    speechSynthesis.speak(newUtt);
   };
 
   document.getElementById("start").addEventListener("click", () => {

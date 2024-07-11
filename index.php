@@ -70,7 +70,6 @@ if ($isLoggedIn) {
         <button id="pause">Pause</button>
         <button id="resume">Resume</button>
         <button id="cancel">Cancel</button>
-        <select name="voices" id="voices"></select>
       </div>
       <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
       <div class="nav-right">
