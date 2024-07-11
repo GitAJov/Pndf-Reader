@@ -41,6 +41,8 @@ if ($isLoggedIn) {
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
   <script src="js/homepage.js" type="module"></script>
   <link rel="stylesheet" href="css/homepage.css" />
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
   <script type="module">
     import { initializeGemini } from './js/gemini.js';
     const apiKey = "<?php echo htmlspecialchars($api_key); ?>";
@@ -65,13 +67,6 @@ if ($isLoggedIn) {
 <body>
   <div id="container">
     <div id="topMenu">
-      <div>
-        <button id="start">Start</button>
-        <button id="pause">Pause</button>
-        <button id="resume">Resume</button>
-        <button id="cancel">Cancel</button>
-        <select name="voices" id="voices"></select>
-      </div>
       <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
       <div class="nav-right">
         <div class="switch">
@@ -171,7 +166,49 @@ if ($isLoggedIn) {
     </div>
   </div>
 
+  <div id="footbar">
+    <div class="texttospeech-nav">
+      <button id="start"><i class="material-icons">play_arrow</i></button>
+      <button id="pause"><i class="material-icons">pause</i></button>
+      <button id="resume"><i class="material-icons">play_arrow</i></button>
+      <button id="cancel"><i class="material-icons">stop</i></button>
+    </div>
+  </div>
 
+  <script>
+    window.addEventListener('DOMContentLoaded', (event) => {
+      const startButton = document.getElementById('start');
+      const pauseButton = document.getElementById('pause');
+      const resumeButton = document.getElementById('resume');
+      const cancelButton = document.getElementById('cancel');
+      const voicesSelect = document.getElementById('voices');
+
+      pauseButton.style.display = 'none';
+      resumeButton.style.display = 'none';
+      
+      startButton.addEventListener('click', () => {
+        startButton.style.display = 'none';
+        pauseButton.style.display = 'inline-block';
+        voicesSelect.style.display = 'inline-block';
+      });
+
+      pauseButton.addEventListener('click', () => {
+        pauseButton.style.display = 'none';
+        resumeButton.style.display = 'inline-block';
+      });
+
+      resumeButton.addEventListener('click', () => {
+        resumeButton.style.display = 'none';
+        pauseButton.style.display = 'inline-block';
+      });
+
+      cancelButton.addEventListener('click', () => {
+        startButton.style.display = 'inline-block';
+        pauseButton.style.display = 'none';
+        resumeButton.style.display = 'none';
+      });
+    });
+  </script>
 </body>
 
 </html>
