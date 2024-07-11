@@ -149,8 +149,18 @@ if ($isLoggedIn) {
           &nbsp; &nbsp;
           <br />
         </div>
-        <div id="canvas-container">
-        </div> <br />
+        <div class="before-canvas-container">
+          <div id="canvas-container">
+          </div> <br />
+        </div>
+        <div id="footbar">
+          <div class="texttospeech-nav">
+            <button id="start"><i class="material-icons">play_arrow</i></button>
+            <button id="pause"><i class="material-icons">pause</i></button>
+            <button id="resume"><i class="material-icons">play_arrow</i></button>
+            <button id="cancel"><i class="material-icons">stop</i></button>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -166,15 +176,6 @@ if ($isLoggedIn) {
     </div>
   </div>
 
-  <div id="footbar">
-    <div class="texttospeech-nav">
-      <button id="start"><i class="material-icons">play_arrow</i></button>
-      <button id="pause"><i class="material-icons">pause</i></button>
-      <button id="resume"><i class="material-icons">play_arrow</i></button>
-      <button id="cancel"><i class="material-icons">stop</i></button>
-    </div>
-  </div>
-
   <script>
     window.addEventListener('DOMContentLoaded', (event) => {
       const startButton = document.getElementById('start');
@@ -185,7 +186,7 @@ if ($isLoggedIn) {
 
       pauseButton.style.display = 'none';
       resumeButton.style.display = 'none';
-      
+
       startButton.addEventListener('click', () => {
         startButton.style.display = 'none';
         pauseButton.style.display = 'inline-block';
