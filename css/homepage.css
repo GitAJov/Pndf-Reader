@@ -329,21 +329,14 @@ body.dark-mode #navigate button:hover {
   font-size: 14px;
 }
 
-#speedreadContainer {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  flex: 1; /* Ensure the container takes up remaining space */
-}
-
 #speedreadTextContainer {
+  flex: 1;
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-bottom: 10px;
 }
 
-#speedreadWord {
+#speedreadText {
   text-align: center;
   line-height: 1.6;
   overflow: auto; /* allow scrolling if content overflows */
@@ -351,20 +344,17 @@ body.dark-mode #navigate button:hover {
   font-family: Arial, sans-serif;
 }
 
+body.speedread-active {
+  overflow: hidden;
+}
+
 #paragraphContainer {
-  text-align: center;
-  line-height: 1.6;
-  overflow: auto; /* allow scrolling if content overflows */
-  font-size: 20px;
-  font-family: Arial, sans-serif;
+  height: 400px; /* Adjust height as needed */
+  overflow: auto;
 }
 
 .current-word {
   text-decoration: underline;
-}
-
-body.speedread-active {
-  overflow: hidden;
 }
 
 .before-canvas-container {

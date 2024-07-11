@@ -298,7 +298,6 @@ async function speedread() {
 
 function speedTextMenu() {
   let textMenu = document.getElementById("textMenu");
-  textMenu.innerHTML = ""; // Clear previous content
 
   const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
     createFontSizeElements();
@@ -342,11 +341,11 @@ function speedTextMenu() {
   textMenu.appendChild(buttonNext);
 }
 
-
 async function displaySpeedreadText() {
   try {
-    let speedreadWordElement = document.getElementById("speedreadWord");
+    let speedreadWordElement = document.getElementById("speedreadText");
     let paragraphContainer = document.getElementById("paragraphContainer");
+    let speedreadTextElement = document.getElementById("speedreadText");
 
     let paragraph = await extractParagraphs(pageNum);
     let splitParagraph = paragraph.split(" ").filter(function (el) {
@@ -354,6 +353,12 @@ async function displaySpeedreadText() {
     });
 
     paragraphContainer.textContent = ""; // Clear previous content
+
+    // Apply font settings
+    let selectedFont = document.getElementById("fontChooser").value;
+    let selectedFontSize = document.getElementById("fontSize").value;
+    speedreadTextElement.style.fontFamily = selectedFont;
+    speedreadTextElement.style.fontSize = selectedFontSize + "px";
 
     for (let i = 0; i < splitParagraph.length; i++) {
       if (!overlayActive) break;
@@ -367,6 +372,16 @@ async function displaySpeedreadText() {
         )
         .join(" ");
 
+      // Scroll down when the underlined word reaches the bottom
+      let currentWordElement = document.querySelector(".current-word");
+      if (currentWordElement) {
+        let rect = currentWordElement.getBoundingClientRect();
+        if (rect.bottom > paragraphContainer.clientHeight) {
+          paragraphContainer.scrollTop +=
+            rect.bottom - paragraphContainer.clientHeight;
+        }
+      }
+
       let wpm = document.getElementById("wpm").value;
       let delay = 60000 / wpm;
       await new Promise((resolve) => setTimeout(resolve, delay));
@@ -375,7 +390,6 @@ async function displaySpeedreadText() {
     console.error("Error displaying text:", error);
   }
 }
-
 
 function dyslexia() {
   dyslexiaMenu();
@@ -597,7 +611,6 @@ document.addEventListener("DOMContentLoaded", () => {
     );
   });
 });
-
 
 async function handleTextToSpeech() {
   try {

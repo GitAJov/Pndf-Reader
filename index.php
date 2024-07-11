@@ -166,7 +166,7 @@ if ($isLoggedIn) {
       </div>
       <div id="speedreadContainer">
         <div id="speedreadTextContainer">
-          <span id="speedreadWord"></span>
+          <span id="speedreadText"></span>
         </div>
         <div id="paragraphContainer"></div>
       </div>
