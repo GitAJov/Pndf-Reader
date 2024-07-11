@@ -314,7 +314,6 @@ function speedTextMenu() {
   wpmInput.max = 800;
   wpmInput.step = 25;
 
-  
   textMenu.appendChild(fontLabel);
   textMenu.appendChild(fontChooser);
   textMenu.appendChild(fontSizeLabel);
@@ -322,24 +321,24 @@ function speedTextMenu() {
   textMenu.appendChild(wpmLabel);
   textMenu.appendChild(wpmInput);
 
-    const buttonPrev = document.createElement("button");
-    buttonPrev.textContent = "Previous Page";
-    buttonPrev.id = "prevPage";
-    buttonPrev.addEventListener("click", function () {
-      onPrevPage();
-      displaySpeedreadText();
-    });
+  const buttonPrev = document.createElement("button");
+  buttonPrev.textContent = "Previous Page";
+  buttonPrev.id = "prevPage";
+  buttonPrev.addEventListener("click", function () {
+    onPrevPage();
+    displaySpeedreadText();
+  });
 
-    const buttonNext = document.createElement("button");
-    buttonNext.textContent = "Next Page";
-    buttonNext.id = "nextPage";
-    buttonNext.addEventListener("click", function () {
-      onNextPage();
-      displaySpeedreadText();
-    });
+  const buttonNext = document.createElement("button");
+  buttonNext.textContent = "Next Page";
+  buttonNext.id = "nextPage";
+  buttonNext.addEventListener("click", function () {
+    onNextPage();
+    displaySpeedreadText();
+  });
 
-    textMenu.appendChild(buttonPrev);
-    textMenu.appendChild(buttonNext);
+  textMenu.appendChild(buttonPrev);
+  textMenu.appendChild(buttonNext);
 }
 
 async function displaySpeedreadText() {
