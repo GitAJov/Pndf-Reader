@@ -146,15 +146,16 @@ body.dark-mode {
 .dropdown-content.dark-mode,
 .profile-dropdown-content.dark-mode {
   background-color: #333333;
+  color: white;
 }
 
-.dropdown-content a.dark-mode,
-.profile-dropdown-content a.dark-mode {
+.dropdown-content.dark-mode a,
+.profile-dropdown-content.dark-mode a {
   color: #ffffff;
 }
 
-.dropdown-content a.dark-mode:hover,
-.profile-dropdown-content a.dark-mode:hover {
+.dropdown-content.dark-mode a:hover,
+.profile-dropdown-content.dark-mode a:hover {
   background-color: #555555;
 }
 
