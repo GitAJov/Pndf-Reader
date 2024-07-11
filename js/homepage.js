@@ -160,19 +160,25 @@ function queueRenderPage(num) {
 }
 
 function onPrevPage() {
-  if (pageNum >= pdfDoc.numPages) {
-    return;
+  if (pageNum > 1) {
+    pageNum--;
+
+    const canvas = canvases[pageNum - 1];
+    if (canvas) {
+      canvas.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
-  pageNum++;
-  queueRenderPage(pageNum);
 }
 
 function onNextPage() {
-  if (pageNum >= pdfDoc.numPages) {
-    return;
+  if (pageNum < pdfDoc.numPages) {
+    pageNum++;
+
+    const canvas = canvases[pageNum - 1];
+    if (canvas) {
+      canvas.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
   }
-  pageNum++;
-  queueRenderPage(pageNum);
 }
 
 function blurPage(blur) {
@@ -308,12 +314,32 @@ function speedTextMenu() {
   wpmInput.max = 800;
   wpmInput.step = 25;
 
+  
   textMenu.appendChild(fontLabel);
   textMenu.appendChild(fontChooser);
   textMenu.appendChild(fontSizeLabel);
   textMenu.appendChild(fontSizeInput);
   textMenu.appendChild(wpmLabel);
   textMenu.appendChild(wpmInput);
+
+    const buttonPrev = document.createElement("button");
+    buttonPrev.textContent = "Previous Page";
+    buttonPrev.id = "prevPage";
+    buttonPrev.addEventListener("click", function () {
+      onPrevPage();
+      displaySpeedreadText();
+    });
+
+    const buttonNext = document.createElement("button");
+    buttonNext.textContent = "Next Page";
+    buttonNext.id = "nextPage";
+    buttonNext.addEventListener("click", function () {
+      onNextPage();
+      displaySpeedreadText();
+    });
+
+    textMenu.appendChild(buttonPrev);
+    textMenu.appendChild(buttonNext);
 }
 
 async function displaySpeedreadText() {
@@ -425,6 +451,25 @@ function dyslexiaMenu() {
       ? "italic"
       : "normal";
   });
+
+  const buttonPrev = document.createElement("button");
+  buttonPrev.textContent = "Previous Page";
+  buttonPrev.id = "prevPage";
+  buttonPrev.addEventListener("click", function () {
+    onPrevPage();
+    displayDyslexiaText();
+  });
+
+  const buttonNext = document.createElement("button");
+  buttonNext.textContent = "Next Page";
+  buttonNext.id = "nextPage";
+  buttonNext.addEventListener("click", function () {
+    onNextPage();
+    displayDyslexiaText();
+  });
+
+  textMenu.appendChild(buttonPrev);
+  textMenu.appendChild(buttonNext);
 }
 
 function updateSpacing() {
@@ -539,13 +584,12 @@ async function handleTextToSpeech() {
 
     for (let text of allText) {
       let formattedText = await formatText(text);
-      formattedTextArray.push(formattedText); 
+      formattedTextArray.push(formattedText);
     }
 
     for (let formattedText of formattedTextArray) {
       await tts(formattedText);
     }
-
   } catch (error) {
     console.error("Error handling text to speech:", error);
   }
