@@ -17,7 +17,8 @@ body {
 }
 
 /* Top Menu */
-#topMenu {
+#topMenu,
+#footbar {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -113,7 +114,8 @@ body.dark-mode {
   color: #ffffff;
 }
 
-#topMenu.dark-mode {
+#topMenu.dark-mode,
+#footbar.dark-mode {
   background-color: #333333;
   border-bottom-color: #444444; /* Dark mode border */
 }
@@ -122,6 +124,16 @@ body.dark-mode {
 .filebtn.dark-mode {
   background-color: #333333;
   color: #ffffff;
+}
+
+#footbar.dark-mode .texttospeech-nav button {
+  background-color: #555;
+  color: white;
+}
+
+#footbar.dark-mode .texttospeech-nav button:hover {
+  background-color: #777;
+  color: white;
 }
 
 .profile-icon.dark-mode {
@@ -352,7 +364,7 @@ body.speedread-active {
   flex-direction: column;
   border: 1px solid #ccc; /* Optional: add a border for better visibility */
   overflow: auto;
-  height: 600px;
+  height: 700px;
   width: -webkit-fill-available;
 }
 
@@ -446,4 +458,40 @@ body.speedread-active {
 
 .upload-box p {
   margin: 5px 0;
+}
+
+/* General styles for the footbar */
+#footbar {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: #f4f4f4;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.2);
+  z-index: 1000;
+  display: none;
+  justify-content: center;
+}
+
+/* Styles for the text-to-speech navigation inside the footbar */
+#footbar .texttospeech-nav {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#footbar .texttospeech-nav button {
+  margin: 0 10px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  background-color: #f4f4f4;
+}
+
+.material-icons {
+  vertical-align: middle;
+  font-size: 24px;
 }

@@ -240,6 +240,7 @@ function chooseFile() {
       pdfDoc = URL.createObjectURL(file);
       if (!renderingPdf) {
         initializePDF(pdfDoc);
+        document.getElementById("footbar").style.display = "flex";
       }
     }
   });
@@ -463,7 +464,6 @@ function addEventListeners() {
   document.getElementById("dyslexia").addEventListener("click", dyslexia);
 }
 
-//Attempt at dark mode
 document.addEventListener("DOMContentLoaded", () => {
   const themeToggle = document.getElementById("theme-toggle");
   const body = document.body;
@@ -473,12 +473,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const pndfLogo = document.getElementById("pndf-logo");
   const dropIcon = document.querySelector(".drop-icon");
   const profileIcon = document.querySelector(".profile-icon");
+  const fileBtns = document.getElementsByClassName("filebtn");
+  const footbar = document.getElementById("footbar");
 
   // Check local storage for saved theme preference
   if (localStorage.getItem("theme") === "dark") {
     body.classList.add("dark-mode");
     topMenu.classList.add("dark-mode");
+    footbar.classList.add("dark-mode");
     navigate.classList.add("dark-mode");
+    Array.from(fileBtns).forEach((fileBtn) => {
+      fileBtn.classList.add("dark-mode");
+    });
     dropdowns.forEach((dropdown) => {
       dropdown.querySelector(".dropbtn").classList.add("dark-mode");
       dropdown.querySelector(".dropdown-content").classList.add("dark-mode");
@@ -491,7 +497,11 @@ document.addEventListener("DOMContentLoaded", () => {
   themeToggle.addEventListener("change", () => {
     body.classList.toggle("dark-mode");
     topMenu.classList.toggle("dark-mode");
+    footbar.classList.toggle("dark-mode");
     navigate.classList.toggle("dark-mode");
+    Array.from(fileBtns).forEach((fileBtn) => {
+      fileBtn.classList.toggle("dark-mode");
+    });
     dropdowns.forEach((dropdown) => {
       dropdown.querySelector(".dropbtn").classList.toggle("dark-mode");
       dropdown.querySelector(".dropdown-content").classList.toggle("dark-mode");
