@@ -170,8 +170,11 @@ if ($isLoggedIn) {
       <div id="textMenu">
         <!-- Commented code for text menu -->
       </div>
-      <div id="speedreadTextContainer">
-        <div id="speedreadText"></div>
+      <div id="speedreadContainer">
+        <div id="speedreadTextContainer">
+          <span id="speedreadWord"></span>
+        </div>
+        <div id="paragraphContainer"></div>
       </div>
     </div>
   </div>

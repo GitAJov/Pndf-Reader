@@ -298,6 +298,7 @@ async function speedread() {
 
 function speedTextMenu() {
   let textMenu = document.getElementById("textMenu");
+  textMenu.innerHTML = ""; // Clear previous content
 
   const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
     createFontSizeElements();
@@ -341,17 +342,31 @@ function speedTextMenu() {
   textMenu.appendChild(buttonNext);
 }
 
+
 async function displaySpeedreadText() {
   try {
-    let speedreadTextElement = document.getElementById("speedreadText");
+    let speedreadWordElement = document.getElementById("speedreadWord");
+    let paragraphContainer = document.getElementById("paragraphContainer");
+
     let paragraph = await extractParagraphs(pageNum);
     let splitParagraph = paragraph.split(" ").filter(function (el) {
       return el != "";
     });
+
+    paragraphContainer.textContent = ""; // Clear previous content
+
     for (let i = 0; i < splitParagraph.length; i++) {
       if (!overlayActive) break;
       let word = splitParagraph[i];
-      speedreadTextElement.textContent = word;
+
+      // Display current word with underline
+      speedreadWordElement.textContent = word;
+      paragraphContainer.innerHTML = splitParagraph
+        .map((w, index) =>
+          index === i ? `<span class="current-word">${w}</span>` : w
+        )
+        .join(" ");
+
       let wpm = document.getElementById("wpm").value;
       let delay = 60000 / wpm;
       await new Promise((resolve) => setTimeout(resolve, delay));
@@ -360,6 +375,7 @@ async function displaySpeedreadText() {
     console.error("Error displaying text:", error);
   }
 }
+
 
 function dyslexia() {
   dyslexiaMenu();
