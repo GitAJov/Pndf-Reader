@@ -84,6 +84,7 @@ body {
   top: 100%;
   min-width: 150px;
   transition: background-color 0.3s;
+  border-radius: 15px;
 }
 
 .dropdown-content a,
@@ -97,6 +98,7 @@ body {
 .dropdown-content a:hover,
 .profile-dropdown-content a:hover {
   background-color: #ddd;
+  border-radius: 15px;
 }
 
 .dropdown:hover .dropdown-content,
@@ -193,7 +195,7 @@ body.dark-mode {
 }
 
 input:checked + .slider {
-  background-color: #2196f3;
+  background-color: #424242;
 }
 
 input:checked + .slider:before {
@@ -279,20 +281,6 @@ body.dark-mode #navigate button:hover {
   width: 100%;
 }
 
-#speedread {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  background-color: #007bff;
-  color: white;
-  border: none;
-  border-radius: 4px;
-}
-
-#speedread:hover {
-  background-color: #0056b3;
-}
-
 #grayOverlay {
   display: none;
   position: fixed;
@@ -359,13 +347,17 @@ body.speedread-active {
   overflow: hidden;
 }
 
+.before-canvas-container {
+  display: flex;
+  justify-content: center;
+}
+
 #canvas-container {
   display: flex;
   flex-direction: column;
   border: 1px solid #ccc; /* Optional: add a border for better visibility */
-  overflow: auto;
-  height: 700px;
-  width: -webkit-fill-available;
+  overflow-y: auto;
+  height: 70vh;
 }
 
 #pdf-page {

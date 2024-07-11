@@ -550,6 +550,7 @@ document.addEventListener("DOMContentLoaded", () => {
       dropdown.querySelector(".dropbtn").classList.toggle("dark-mode");
       dropdown.querySelector(".dropdown-content").classList.toggle("dark-mode");
     });
+    
     // Change logos based on the theme
     if (body.classList.contains("dark-mode")) {
       pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
