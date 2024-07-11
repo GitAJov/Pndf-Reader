@@ -8,13 +8,17 @@ export async function formatText(promptText) {
 
   const prompt =
     "Format and make this text more neat so that a text-to-speech can read it," +
-    " such that the whitespaces and such are removed, and has proper punctuations (no ** to bold, etc). Do NOT change any sentence:" +
+    " such that the whitespaces and such are removed, and has proper punctuations (no ** to bold, etc). Do NOT change any sentence" +
+    "if no text is provided, reply 'no'" +
+    "here is the text:" +
     promptText;
 
   const result = await model.generateContent(prompt);
   const response = await result.response;
   const text = response.text();
-  console.log(text);
+  if(text == "no") {
+    return;
+  }
   return text;
 };
 
