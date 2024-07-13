@@ -14,6 +14,7 @@ let pdfDoc = null,
   canvases = [],
   renderTasks = [],
   renderingPdf = false,
+  mode = "",
   overlayActive = false;
 
 // PDF Loading
@@ -152,7 +153,6 @@ function updatePageNumBasedOnScroll() {
   }
 }
 
-
 function queueRenderPage(num) {
   if (pageRendering) {
     pageNumPending = num;
@@ -176,7 +176,7 @@ function onPrevPage() {
 function onNextPage() {
   if (pageNum < pdfDoc.numPages) {
     pageNum++;
-
+    console.log("Page Number: ", pageNum);
     const canvas = canvases[pageNum - 1];
     if (canvas) {
       canvas.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -239,6 +239,13 @@ function exitOverlay(event) {
     let speedreadTextElement = document.getElementById("speedreadText");
     speedreadTextElement.style.letterSpacing = "";
     clearTextMenu();
+    mode = "";
+    const buttonPrev = document.getElementById("prevPage");
+    buttonPrev.removeEventListener("click", pressPrev);
+
+    const buttonNext = document.getElementById("nextPage");
+    buttonNext.removeEventListener("click", pressNext);
+
   }
 }
 
@@ -305,10 +312,36 @@ function createFontSizeElements() {
   return { fontLabel, fontChooser, fontSizeLabel, fontSizeInput };
 }
 
+function pressPrev() {
+  if (overlayActive) {
+    if (mode === "dyslexia") {
+      onPrevPage();
+      displayDyslexiaText();
+    } else if (mode === "speedread") {
+      onPrevPage();
+      displaySpeedreadText();
+    }
+  }
+}
+
+function pressNext() {
+  if (overlayActive) {
+    if (mode === "dyslexia") {
+      console.log("Next page button pressed!");
+      onNextPage();
+      displayDyslexiaText();
+    } else if (mode === "speedread") {
+      onNextPage();
+      displaySpeedreadText();
+    }
+  }
+}
+
 async function speedread() {
   speedTextMenu();
   toggleOverlay();
   if (overlayActive) {
+    mode = "speedread";
     displaySpeedreadText();
   }
 }
@@ -338,15 +371,11 @@ function speedTextMenu() {
   textMenu.appendChild(wpmLabel);
   textMenu.appendChild(wpmInput);
 
-  document.getElementById("prevPage").addEventListener("click", function () {
-    onPrevPage();
-    displaySpeedreadText();
-  });
+  const buttonPrev = document.getElementById("prevPage");
+  buttonPrev.addEventListener("click", pressPrev);
 
-  document.getElementById("nextPage").addEventListener("click", function () {
-    onNextPage();
-    displaySpeedreadText();
-  });
+  const buttonNext = document.getElementById("nextPage");
+  buttonNext.addEventListener("click", pressNext);
 }
 
 async function displaySpeedreadText() {
@@ -361,7 +390,7 @@ async function displaySpeedreadText() {
 
     paragraphContainer.textContent = ""; // Clear previous content
 
-    // Apply font settings
+    // // Apply font settings
     let selectedFont = document.getElementById("fontChooser").value;
     let selectedFontSize = document.getElementById("fontSize").value;
     speedreadTextElement.style.fontFamily = selectedFont;
@@ -422,6 +451,7 @@ function dyslexia() {
   dyslexiaMenu();
   toggleOverlay();
   if (overlayActive) {
+    mode = "dyslexia";
     displayDyslexiaText();
   }
 }
@@ -430,7 +460,8 @@ function dyslexiaMenu() {
   const textMenu = document.getElementById("textMenu");
 
   // Create font controls
-  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } = createFontSizeElements();
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
+    createFontSizeElements();
   const fontChooserLabel = document.createElement("label");
   fontChooserLabel.setAttribute("for", "fontChooser");
   fontChooserLabel.textContent = "Font:";
@@ -484,7 +515,9 @@ function dyslexiaMenu() {
   boldButton.addEventListener("click", function () {
     boldButton.classList.toggle("active");
     const speedreadText = document.getElementById("speedreadText");
-    speedreadText.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
+    speedreadText.style.fontWeight = boldButton.classList.contains("active")
+      ? "bold"
+      : "normal";
   });
   alignmentContainer.appendChild(boldButton);
 
@@ -494,22 +527,17 @@ function dyslexiaMenu() {
   italicButton.addEventListener("click", function () {
     italicButton.classList.toggle("active");
     const speedreadText = document.getElementById("speedreadText");
-    speedreadText.style.fontStyle = italicButton.classList.contains("active") ? "italic" : "normal";
+    speedreadText.style.fontStyle = italicButton.classList.contains("active")
+      ? "italic"
+      : "normal";
   });
   alignmentContainer.appendChild(italicButton);
 
-  // Navigation buttons are separated from the text menu
   const buttonPrev = document.getElementById("prevPage");
-  buttonPrev.addEventListener("click", function () {
-    onPrevPage();
-    displayDyslexiaText();
-  });
+  buttonPrev.addEventListener("click", pressPrev);
 
   const buttonNext = document.getElementById("nextPage");
-  buttonNext.addEventListener("click", function () {
-    onNextPage();
-    displayDyslexiaText();
-  });
+  buttonNext.addEventListener("click", pressNext);
 
   // Initial text display
   displayDyslexiaText();
