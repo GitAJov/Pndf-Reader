@@ -159,58 +159,6 @@ body.dark-mode {
   background-color: #555555;
 }
 
-/* Switch Styles */
-.switch {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  margin-left: 20px; /* Space between switch and other items */
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: relative;
-  cursor: pointer;
-  width: 60px;
-  height: 34px;
-  border-radius: 34px;
-  background-color: #ccc;
-  transition: 0.4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  border-radius: 50%;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-}
-
-input:checked + .slider {
-  background-color: #424242;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
 /* Navigation Styles */
 #navigate {
   color: #253237;
@@ -312,25 +260,92 @@ body.dark-mode #navigate button:hover {
   z-index: 1001; /* Ensure it's above other content including sideMenu */
 }
 
+/* Start of Text Menu Changes */
 #textMenu {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ccc;
 }
 
+
 #textMenu label {
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 #textMenu select,
 #textMenu input[type="number"] {
   padding: 5px;
   font-size: 14px;
+  margin-right: 10px;
 }
 
-#speedreadTextContainer {
+.text-menu button.toggle-button {
+  font-size: 20px;
+  font-family: "Comic Sans MS";
+  padding: 5px 15px;
+  margin: 10px;
+  border-radius: 10px;
+  border-color: transparent;
+  background-color: #f4f4f4; /* Light mode button */
+  color: #333; /* Light mode text color */
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+}
+
+.text-menu button.toggle-button:hover {
+  background-color: #ddd;
+}
+
+/* Added active state for toggle buttons */
+.text-menu button.toggle-button.active {
+  background-color: #ddd; /* Consistent with hover state */
+}
+
+.textMenu-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ccc;
+}
+
+.textMenu-buttons button {
+  font-size: 20px;
+  font-family: "Comic Sans MS";
+  padding: 5px 15px;
+  border-radius: 10px;
+  border-color: transparent;
+  background-color: #f4f4f4; /* Light mode button */
+  color: #333; /* Light mode text color */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.textMenu-buttons button:hover {
+  background-color: #ddd;
+}
+
+/* Aligns text alignment container and buttons in the same row */
+.alignment-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+/* End of Text Menu Changes */
+/*Start of Container Changes */
+
+#speedreadContainer{
   flex: 1;
+}
+#speedreadTextContainer {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -352,6 +367,7 @@ body.speedread-active {
   height: 400px; /* Adjust height as needed */
   overflow: auto;
 }
+/* End of Container Changes */
 
 .current-word {
   text-decoration: underline;
