@@ -1,0 +1,75 @@
+body {
+  background-color: #ffffff;
+  font-family: "Comic Sans MS";
+  margin: 0;
+  transition: background-color 0.3s, color 0.3s;
+  overflow-y: hidden;
+}
+
+#headerMydocs {
+  display: flex;
+  flex-direction: row;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 20px;
+}
+
+#headerTxt {
+  font-size: 30px;
+}
+
+.fileUpload {
+  background-color: #4caf50;
+  color: white;
+  padding: 15px 50px;
+  margin-bottom: 20px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.fileUpload:hover {
+  background-color: #45a049;
+}
+
+#documentList {
+  padding: 20px;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.document-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  background-color: #f9f9f9;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  transition: background-color 0.3s, box-shadow 0.3s;
+}
+
+.document-item:hover {
+  background-color: #f1f1f1;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.document-item span {
+  font-size: 18px;
+}
+
+.document-item button {
+  background-color: #007bff;
+  color: white;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.document-item button:hover {
+  background-color: #0056b3;
+}

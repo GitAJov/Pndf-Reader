@@ -8,6 +8,7 @@ $api_key = $_ENV['MY_API_KEY'];
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $username = '';
+$file_data_base64 = '';
 
 if ($isLoggedIn) {
   include 'database.php';
@@ -20,6 +21,20 @@ if ($isLoggedIn) {
   $stmt->bind_result($username);
   $stmt->fetch();
   $stmt->close();
+
+  // Check if doc_id is set and get the document data
+  if (isset($_GET['doc_id'])) {
+    $doc_id = $_GET['doc_id'];
+    $doc_sql = "SELECT file_data FROM pdf_files WHERE id = ? AND user_id = ?";
+    $doc_stmt = $conn->prepare($doc_sql);
+    $doc_stmt->bind_param("ii", $doc_id, $user_id);
+    $doc_stmt->execute();
+    $doc_stmt->bind_result($file_data);
+    if ($doc_stmt->fetch()) {
+      $file_data_base64 = base64_encode($file_data);
+    }
+    $doc_stmt->close();
+  }
   $conn->close();
 }
 ?>
@@ -69,7 +84,9 @@ if ($isLoggedIn) {
     <div id="topMenu">
       <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
       <div class="nav-right">
-        <button id="file" class="filebtn"> File </button>
+        <button id="docs" class="docsbtn" onclick="window.location.href='mydocs.php'">My Documents</button>
+        <button id="file" class="filebtn">File</button>
+
         <div class="dropdown">
           <button class="dropbtn">Tools
             <img src="Resources/drop-icon.png" alt="Drop Icon" class="drop-icon">
@@ -77,7 +94,7 @@ if ($isLoggedIn) {
           <div class="dropdown-content">
             <a href="#" id="speedread">Speedread</a>
             <a href="#" id="dyslexia">Dyslexia</a>
-            <a href="#" id="theme-toggle-item">Toggle Theme</a> <!-- New theme toggle option -->
+            <a href="#" id="theme-toggle-item">Toggle Theme</a>
           </div>
         </div>
         <div class="dropdown">
@@ -162,7 +179,6 @@ if ($isLoggedIn) {
   <div id="grayOverlay">
     <div id="textBox">
       <div id="textMenu">
-        <!-- Commented code for text menu -->
       </div>
       <div id="speedreadContainer">
         <div id="speedreadTextContainer">
@@ -205,6 +221,15 @@ if ($isLoggedIn) {
         pauseButton.style.display = 'none';
         resumeButton.style.display = 'none';
       });
+
+      // Check if there is a document to load
+      const fileDataBase64 = "<?php echo isset($file_data_base64) ? $file_data_base64 : ''; ?>";
+      if (fileDataBase64) {
+        const pdfData = atob(fileDataBase64);
+        const pdfAsArray = new Uint8Array(pdfData.split("").map(c => c.charCodeAt(0)));
+        document.getElementById('mainMenu').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+      }
     });
   </script>
 </body>
