@@ -47,6 +47,14 @@ async function initializePDF(url) {
     const canvasContainer = document.getElementById("canvas-container");
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
     fetchBookmark();
+    
+    // Hide main menu, show main content and footbar if a doc is present
+    document.getElementById('mainMenu').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'flex';
+    document.getElementById('footbar').style.display = 'flex';
+  } else {
+    // Hide loading overlay and keep the main menu visible
+    hideLoadingOverlay();
   }
   // Ensure overlay stays for at least 3 seconds
   clearTimeout(loadingTimeout);
@@ -304,13 +312,10 @@ function chooseFile() {
       pdfDoc = URL.createObjectURL(file);
       if (!renderingPdf) {
         initializePDF(pdfDoc);
-        document.getElementById("footbar").style.display = "flex";
       }
     }
   });
   inputElement.click();
-  document.getElementById("mainMenu").style.display = "none";
-  document.getElementById("mainContent").style.display = "flex";
 }
 
 function createFontSizeElements() {
