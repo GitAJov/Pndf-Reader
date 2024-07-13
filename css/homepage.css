@@ -312,22 +312,45 @@ body.dark-mode #navigate button:hover {
   z-index: 1001; /* Ensure it's above other content including sideMenu */
 }
 
+/*Start of Text Menu Changes */
 #textMenu {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ccc;
 }
 
 #textMenu label {
-  margin-right: 10px;
+  margin-right: 5px;
 }
 
 #textMenu select,
 #textMenu input[type="number"] {
   padding: 5px;
   font-size: 14px;
+  margin-right: 10px;
 }
+
+.text-menu button.toggle-button {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+}
+
+.textMenu-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-top: 1px solid #ccc;
+}
+/*End of Text Menu Changes */
 
 #speedreadTextContainer {
   flex: 1;

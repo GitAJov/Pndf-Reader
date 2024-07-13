@@ -161,15 +161,18 @@ if ($isLoggedIn) {
 
   <div id="grayOverlay">
     <div id="textBox">
-      <div id="textMenu">
-        <!-- Commented code for text menu -->
-      </div>
+      <!-- Start of text menu -->
+      <div id="textMenu" class="text-menu"></div>
       <div id="speedreadContainer">
-        <div id="speedreadTextContainer">
-          <span id="speedreadText"></span>
+          <div id="speedreadTextContainer">
+            <span id="speedreadText"></span>
+          </div>
         </div>
-        <div id="paragraphContainer"></div>
+      <div class="textMenu-buttons">
+        <button id="prevPage">Previous Page</button>
+        <button id="nextPage">Next Page</button>
       </div>
+      <div id="paragraphContainer"></div>
     </div>
   </div>
 

@@ -321,24 +321,18 @@ function speedTextMenu() {
   textMenu.appendChild(wpmLabel);
   textMenu.appendChild(wpmInput);
 
-  const buttonPrev = document.createElement("button");
-  buttonPrev.textContent = "Previous Page";
-  buttonPrev.id = "prevPage";
-  buttonPrev.addEventListener("click", function () {
-    onPrevPage();
-    displaySpeedreadText();
-  });
+ // Navigation buttons are separated from the text menu
+ const buttonPrev = document.getElementById("prevPage");
+ buttonPrev.addEventListener("click", function () {
+   onPrevPage();
+   displayDyslexiaText();
+ });
 
-  const buttonNext = document.createElement("button");
-  buttonNext.textContent = "Next Page";
-  buttonNext.id = "nextPage";
-  buttonNext.addEventListener("click", function () {
-    onNextPage();
-    displaySpeedreadText();
-  });
-
-  textMenu.appendChild(buttonPrev);
-  textMenu.appendChild(buttonNext);
+ const buttonNext = document.getElementById("nextPage");
+ buttonNext.addEventListener("click", function () {
+   onNextPage();
+   displayDyslexiaText();
+ });
 }
 
 async function displaySpeedreadText() {
@@ -400,19 +394,19 @@ function dyslexia() {
 }
 
 function dyslexiaMenu() {
-  let textMenu = document.getElementById("textMenu");
+  const textMenu = document.getElementById("textMenu");
 
-  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
-    createFontSizeElements();
-
-  textMenu.appendChild(fontLabel);
+  // Create font controls
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } = createFontSizeElements();
   textMenu.appendChild(fontChooser);
   textMenu.appendChild(fontSizeLabel);
   textMenu.appendChild(fontSizeInput);
 
+  // Create spacing controls
   const spacingLabel = document.createElement("label");
   spacingLabel.setAttribute("for", "spacing");
   spacingLabel.textContent = "Spacing:";
+  textMenu.appendChild(spacingLabel);
 
   const spacingInput = document.createElement("input");
   spacingInput.type = "number";
@@ -420,19 +414,17 @@ function dyslexiaMenu() {
   spacingInput.value = 1;
   spacingInput.min = 0;
   spacingInput.max = 10;
-
-  textMenu.appendChild(spacingLabel);
   textMenu.appendChild(spacingInput);
-
   spacingInput.addEventListener("change", updateSpacing);
 
+  // Create alignment controls
   const alignmentLabel = document.createElement("label");
   alignmentLabel.setAttribute("for", "alignmentChooser");
   alignmentLabel.textContent = "Text Alignment:";
+  textMenu.appendChild(alignmentLabel);
 
   const alignmentChooser = document.createElement("select");
   alignmentChooser.id = "alignmentChooser";
-
   const alignments = ["left", "center", "right", "justify"];
   alignments.forEach((alignment) => {
     const option = document.createElement("option");
@@ -440,65 +432,45 @@ function dyslexiaMenu() {
     option.textContent = alignment.charAt(0).toUpperCase() + alignment.slice(1);
     alignmentChooser.appendChild(option);
   });
-
-  textMenu.appendChild(alignmentLabel);
   textMenu.appendChild(alignmentChooser);
-
   alignmentChooser.addEventListener("change", updateAlignment);
 
-  // Adding Bold and Italic controls
-  const boldLabel = document.createElement("label");
-  boldLabel.textContent = "Bold:";
-  boldLabel.style.marginLeft = "10px";
-
-  const boldCheckbox = document.createElement("input");
-  boldCheckbox.type = "checkbox";
-  boldCheckbox.id = "boldCheckbox";
-
-  textMenu.appendChild(boldLabel);
-  textMenu.appendChild(boldCheckbox);
-
-  boldCheckbox.addEventListener("change", function () {
+  // Create Bold and Italic buttons
+  const boldButton = document.createElement("button");
+  boldButton.textContent = "B";
+  boldButton.classList.add("toggle-button");
+  boldButton.addEventListener("click", function () {
+    boldButton.classList.toggle("active");
     const speedreadText = document.getElementById("speedreadText");
-    speedreadText.style.fontWeight = boldCheckbox.checked ? "bold" : "normal";
+    speedreadText.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
   });
+  textMenu.appendChild(boldButton);
 
-  const italicLabel = document.createElement("label");
-  italicLabel.speedreadText = "Italic:";
-  italicLabel.style.marginLeft = "10px";
-
-  const italicCheckbox = document.createElement("input");
-  italicCheckbox.type = "checkbox";
-  italicCheckbox.id = "italicCheckbox";
-
-  textMenu.appendChild(italicLabel);
-  textMenu.appendChild(italicCheckbox);
-
-  italicCheckbox.addEventListener("change", function () {
+  const italicButton = document.createElement("button");
+  italicButton.textContent = "I";
+  italicButton.classList.add("toggle-button");
+  italicButton.addEventListener("click", function () {
+    italicButton.classList.toggle("active");
     const speedreadText = document.getElementById("speedreadText");
-    speedreadText.style.fontStyle = italicCheckbox.checked
-      ? "italic"
-      : "normal";
+    speedreadText.style.fontStyle = italicButton.classList.contains("active") ? "italic" : "normal";
   });
+  textMenu.appendChild(italicButton);
 
-  const buttonPrev = document.createElement("button");
-  buttonPrev.textContent = "Previous Page";
-  buttonPrev.id = "prevPage";
+  // Navigation buttons are separated from the text menu
+  const buttonPrev = document.getElementById("prevPage");
   buttonPrev.addEventListener("click", function () {
     onPrevPage();
     displayDyslexiaText();
   });
 
-  const buttonNext = document.createElement("button");
-  buttonNext.textContent = "Next Page";
-  buttonNext.id = "nextPage";
+  const buttonNext = document.getElementById("nextPage");
   buttonNext.addEventListener("click", function () {
     onNextPage();
     displayDyslexiaText();
   });
 
-  textMenu.appendChild(buttonPrev);
-  textMenu.appendChild(buttonNext);
+  // Initial text display
+  displayDyslexiaText();
 }
 
 function updateSpacing() {
