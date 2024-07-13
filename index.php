@@ -8,7 +8,7 @@ $api_key = $_ENV['MY_API_KEY'];
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $username = '';
-$file_data_base64 = '';
+$file_path = '';
 
 if ($isLoggedIn) {
   include 'database.php';
@@ -22,17 +22,15 @@ if ($isLoggedIn) {
   $stmt->fetch();
   $stmt->close();
 
-  // Check if doc_id is set and get the document data
+  // Check if doc_id is set and get the document path
   if (isset($_GET['doc_id'])) {
     $doc_id = $_GET['doc_id'];
-    $doc_sql = "SELECT file_data FROM pdf_files WHERE id = ? AND user_id = ?";
+    $doc_sql = "SELECT file_path FROM pdf_files WHERE id = ? AND user_id = ?";
     $doc_stmt = $conn->prepare($doc_sql);
     $doc_stmt->bind_param("ii", $doc_id, $user_id);
     $doc_stmt->execute();
-    $doc_stmt->bind_result($file_data);
-    if ($doc_stmt->fetch()) {
-      $file_data_base64 = base64_encode($file_data);
-    }
+    $doc_stmt->bind_result($file_path);
+    $doc_stmt->fetch();
     $doc_stmt->close();
   }
   $conn->close();
@@ -47,11 +45,11 @@ if ($isLoggedIn) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Reader</title>
   <script type="importmap">
-      {
-        "imports": {
-          "@google/generative-ai": "https://esm.run/@google/generative-ai"
-        }
+    {
+      "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
       }
+    }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
   <script src="js/homepage.js" type="module"></script>
@@ -62,7 +60,9 @@ if ($isLoggedIn) {
 
   <script type="module">
     import { initializeGemini } from './js/gemini.js';
+    import { initializePDF } from './js/homepage.js';  // Import initializePDF function
     const apiKey = "<?php echo htmlspecialchars($api_key); ?>";
+
     function getParameterByName(name, url = window.location.href) {
       name = name.replace(/[\[\]]/g, '\\$&');
       let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -71,12 +71,23 @@ if ($isLoggedIn) {
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
+
     window.onload = function () {
       let successMessage = getParameterByName('success');
       if (successMessage) {
         alert(successMessage);
       }
       initializeGemini(apiKey);
+      const filePath = "<?php echo $file_path; ?>";
+      if (filePath) {
+        //console.log("Initializing PDF with file path: " + filePath);
+        initializePDF(filePath);
+
+        // Hide main menu, show mainContent and show footbar if doc_id is present
+        document.getElementById('mainMenu').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'flex';
+        document.getElementById('footbar').style.display = 'flex';
+      }
     };
   </script>
 </head>
@@ -183,11 +194,11 @@ if ($isLoggedIn) {
       <!-- Start of text menu -->
       <div id="textMenu"></div>
       <div id="speedreadContainer">
-          <div id="speedreadTextContainer">
-            <span id="speedreadText"></span>
-            <div id="paragraphContainer"></div>
-          </div>
+        <div id="speedreadTextContainer">
+          <span id="speedreadText"></span>
+          <div id="paragraphContainer"></div>
         </div>
+      </div>
       <div class="textMenu-buttons">
         <button id="prevPage">Previous Page</button>
         <button id="nextPage">Next Page</button>
@@ -201,7 +212,6 @@ if ($isLoggedIn) {
       const pauseButton = document.getElementById('pause');
       const resumeButton = document.getElementById('resume');
       const cancelButton = document.getElementById('cancel');
-      const voicesSelect = document.getElementById('voices');
 
       pauseButton.style.display = 'none';
       resumeButton.style.display = 'none';
@@ -209,7 +219,6 @@ if ($isLoggedIn) {
       startButton.addEventListener('click', () => {
         startButton.style.display = 'none';
         pauseButton.style.display = 'inline-block';
-        voicesSelect.style.display = 'inline-block';
       });
 
       pauseButton.addEventListener('click', () => {
@@ -227,15 +236,6 @@ if ($isLoggedIn) {
         pauseButton.style.display = 'none';
         resumeButton.style.display = 'none';
       });
-
-      // Check if there is a document to load
-      const fileDataBase64 = "<?php echo isset($file_data_base64) ? $file_data_base64 : ''; ?>";
-      if (fileDataBase64) {
-        const pdfData = atob(fileDataBase64);
-        const pdfAsArray = new Uint8Array(pdfData.split("").map(c => c.charCodeAt(0)));
-        document.getElementById('mainMenu').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'block';
-      }
     });
   </script>
 </body>

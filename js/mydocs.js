@@ -1,7 +1,7 @@
 document.getElementById('fileInput').addEventListener('change', async function () {
   const file = this.files[0];
   if (file) {
-    console.log('File selected:', file);
+    //console.log('File selected:', file);
 
     const formData = new FormData();
     formData.append('file', file);
@@ -13,10 +13,10 @@ document.getElementById('fileInput').addEventListener('change', async function (
       });
 
       const text = await response.text();
-      console.log('Raw response text:', text);
+      //console.log('Raw response text:', text);
 
       const result = JSON.parse(text);
-      console.log('Upload response:', result);
+      //console.log('Upload response:', result);
 
       if (result.status === 'success') {
         alert('File uploaded successfully');
@@ -34,7 +34,7 @@ async function fetchDocuments() {
   try {
     const response = await fetch('php/fetch_documents.php');
     const documents = await response.json();
-    console.log('Fetched documents:', documents);
+    //console.log('Fetched documents:', documents);
     const documentList = document.getElementById('documentList');
     documentList.innerHTML = '';
     documents.forEach(doc => {
