@@ -90,6 +90,8 @@ if ($isLoggedIn) {
       }
     };
   </script>
+
+
 </head>
 
 <body>
@@ -194,10 +196,10 @@ if ($isLoggedIn) {
       <!-- Start of text menu -->
       <div id="textMenu"></div>
       <div id="speedreadContainer">
-          <div id="speedreadTextContainer">
-            <span id="speedreadText"></span>
-          </div>
-          <div id="paragraphContainer"></div>
+        <div id="speedreadTextContainer">
+          <span id="speedreadText"></span>
+        </div>
+        <div id="paragraphContainer"></div>
       </div>
       <div class="textMenu-buttons">
         <button id="prevPage">Previous Page</button>

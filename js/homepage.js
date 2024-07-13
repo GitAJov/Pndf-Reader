@@ -8,12 +8,17 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 let pdfDoc = null,
   pageNum = 1,
+  visiblePage = 1,
   scale = 1.5,
   canvases = [],
   renderTasks = [],
   renderingPdf = false,
   mode = "",
   overlayActive = false;
+
+// Get doc_id from URL
+const urlParams = new URLSearchParams(window.location.search);
+const doc_id = urlParams.get('doc_id');
 
 // PDF RELATED FUNCTIONS ===================================
 async function loadPDF(url) {
@@ -39,6 +44,7 @@ async function initializePDF(url) {
     // Add scroll event listener to update pageNum based on visible page
     const canvasContainer = document.getElementById("canvas-container");
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
+    fetchBookmark();
   }
 }
 
@@ -129,7 +135,6 @@ function updatePageNumBasedOnScroll() {
   const scrollPosition = canvasContainer.scrollTop;
   const viewportHeight = canvasContainer.clientHeight;
   const viewportMidpoint = scrollPosition + viewportHeight / 2;
-  let visiblePage = 1;
 
   // Calculate the visible page based on the midpoint of the viewport
   for (let i = 0; i < canvases.length; i++) {
@@ -147,6 +152,7 @@ function updatePageNumBasedOnScroll() {
     pageNum = visiblePage;
     console.log(`Visible page: ${pageNum}`);
     document.getElementById("page_num").textContent = pageNum;
+    updateBookmark();
   }
 }
 
@@ -708,6 +714,47 @@ window.addEventListener("scroll", function () {
     navigate.classList.remove("fixed");
   }
 });
+
+async function fetchBookmark() {
+  if (doc_id !== null) {
+    try {
+      const response = await fetch(`php/get_bookmark.php?doc_id=${doc_id}`);
+      const result = await response.json();
+      if (result.status === 'success') {
+        pageNum = result.last_page;
+        document.getElementById("page_num").textContent = pageNum;
+        const canvas = canvases[pageNum - 1];
+        if (canvas) {
+          canvas.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      } else {
+        console.error('Failed to fetch bookmark:', result.message);
+      }
+    } catch (error) {
+      console.error('Error fetching bookmark:', error);
+    }
+  }
+}
+
+async function updateBookmark() {
+  try {
+    const response = await fetch('php/update_bookmark.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `doc_id=${doc_id}&last_page=${pageNum}`
+    });
+    const result = await response.json();
+    if (result.status !== 'success') {
+      console.error('Failed to update bookmark:', result.message);
+    }
+  } catch (error) {
+    console.error('Error updating bookmark:', error);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchBookmark);
 
 // Export initializePDF function
 export { initializePDF };
