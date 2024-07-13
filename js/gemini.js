@@ -4,6 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 var API_KEY = "", genAI="", model="";
 
 export async function formatText(promptText) {
+  return promptText;
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt =
@@ -23,6 +24,7 @@ export async function formatText(promptText) {
 };
 
 export async function formatDisplayText(promptText) {
+  return promptText;
   const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
   const prompt =

@@ -129,16 +129,17 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
 function updatePageNumBasedOnScroll() {
   const canvasContainer = document.getElementById("canvas-container");
   const scrollPosition = canvasContainer.scrollTop;
+  const viewportHeight = canvasContainer.clientHeight;
+  const viewportMidpoint = scrollPosition + viewportHeight / 2;
   let visiblePage = 1;
 
-  // Calculate the visible page based on scroll position
+  // Calculate the visible page based on the midpoint of the viewport
   for (let i = 0; i < canvases.length; i++) {
     const canvas = canvases[i];
-    const pageHeight = canvas.height;
-    if (
-      scrollPosition >= canvas.offsetTop &&
-      scrollPosition < canvas.offsetTop + pageHeight
-    ) {
+    const pageTop = canvas.offsetTop;
+    const pageBottom = pageTop + canvas.height;
+
+    if (viewportMidpoint >= pageTop && viewportMidpoint < pageBottom) {
       visiblePage = i + 1; // Pages are 1-indexed
       break;
     }
@@ -150,6 +151,7 @@ function updatePageNumBasedOnScroll() {
     document.getElementById("page_num").textContent = pageNum;
   }
 }
+
 
 function queueRenderPage(num) {
   if (pageRendering) {
