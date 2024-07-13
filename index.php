@@ -60,7 +60,7 @@ if ($isLoggedIn) {
 
   <script type="module">
     import { initializeGemini } from './js/gemini.js';
-    import { initializePDF } from './js/homepage.js';  // Import initializePDF function
+    import { initializePDF, onNextPage, onPrevPage } from './js/homepage.js';  // Import initializePDF function
     const apiKey = "<?php echo htmlspecialchars($api_key); ?>";
 
     function getParameterByName(name, url = window.location.href) {
@@ -89,6 +89,11 @@ if ($isLoggedIn) {
         document.getElementById('footbar').style.display = 'flex';
       }
     };
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+      document.getElementById('next').addEventListener('click', onNextPage);
+      document.getElementById('prev').addEventListener('click', onPrevPage);
+    });
   </script>
 
 

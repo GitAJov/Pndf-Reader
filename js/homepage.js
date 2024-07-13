@@ -147,7 +147,9 @@ function updatePageNumBasedOnScroll() {
   for (let i = 0; i < canvases.length; i++) {
     const canvas = canvases[i];
     const pageTop = canvas.offsetTop;
-    const pageBottom = pageTop + canvas.height;
+    //const pageBottom = pageTop + canvas.height;
+    const pageBottom = pageTop + canvas.clientHeight; // Use clientHeight instead of height for more accurate measurement
+
 
     if (viewportMidpoint >= pageTop && viewportMidpoint < pageBottom) {
       visiblePage = i + 1; // Pages are 1-indexed
@@ -186,8 +188,10 @@ function onNextPage() {
   }
 }
 
-function pressPrev() {
+async function pressPrev() {
   if (overlayActive) {
+    cancelSpeedread = true; // Set the cancel flag
+    await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to ensure the cancellation
     if (mode === "dyslexia") {
       onPrevPage();
       displayDyslexiaText();
@@ -198,8 +202,10 @@ function pressPrev() {
   }
 }
 
-function pressNext() {
+async function pressNext() {
   if (overlayActive) {
+    cancelSpeedread = true; // Set the cancel flag
+    await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to ensure the cancellation
     if (mode === "dyslexia") {
       console.log("Next page button pressed!");
       onNextPage();
@@ -394,7 +400,14 @@ function speedTextMenu() {
   buttonNext.addEventListener("click", pressNext);
 }
 
+let isSpeedreadActive = false; // Flag to indicate if speed reading is active
+let cancelSpeedread = false; // Flag to cancel the speed reading process
+
 async function displaySpeedreadText() {
+  if (isSpeedreadActive) return; // Exit if already running
+  isSpeedreadActive = true; // Set the flag
+  cancelSpeedread = false; // Reset the cancel flag
+
   try {
     let speedreadWordElement = document.getElementById("speedreadText");
     let paragraphContainer = document.getElementById("paragraphContainer");
@@ -406,7 +419,7 @@ async function displaySpeedreadText() {
 
     paragraphContainer.textContent = ""; // Clear previous content
 
-    // // Apply font settings
+    // Apply font settings
     let selectedFont = document.getElementById("fontChooser").value;
     let selectedFontSize = document.getElementById("fontSize").value;
     speedreadTextElement.style.fontFamily = selectedFont;
@@ -430,17 +443,23 @@ async function displaySpeedreadText() {
     });
     paragraphContainer.appendChild(fragment);
 
+    let wpmInput = document.getElementById("wpm");
+    let wpm = wpmInput ? parseInt(wpmInput.value, 10) : 300; // Default to 300 if wpmInput is not found
+    //console.log(`Current WPM: ${wpm}`); // Debugging WPM value
+
+    let delay = 60000 / wpm;
+    //console.log(`Delay between words: ${delay} ms`); // Debugging delay value
+
     let words = paragraphContainer.querySelectorAll("span");
     for (let i = 0; i < words.length; i++) {
-      if (!overlayActive) break;
+      if (!overlayActive || cancelSpeedread) break; // Check cancel flag
       let word = words[i].textContent.trim();
 
       // Display current word with underline
       speedreadWordElement.textContent = word;
 
       // Update the current word class
-      let currentWordElements =
-        paragraphContainer.querySelectorAll(".current-word");
+      let currentWordElements = paragraphContainer.querySelectorAll(".current-word");
       currentWordElements.forEach((el) => el.classList.remove("current-word"));
       let currentWordElement = words[i];
       currentWordElement.classList.add("current-word");
@@ -454,12 +473,12 @@ async function displaySpeedreadText() {
         }
       }
 
-      let wpm = document.getElementById("wpm").value;
-      let delay = 60000 / wpm;
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   } catch (error) {
     console.error("Error displaying text:", error);
+  } finally {
+    isSpeedreadActive = false; // Reset the flag
   }
 }
 
@@ -771,7 +790,7 @@ function hideLoadingOverlay() {
   document.getElementById('loadingOverlay').style.display = 'none';
 }
 
-export { initializePDF };
+export { initializePDF, onNextPage, onPrevPage };
 
 // MAIN FUNCTION ===========================================
 async function main() {
