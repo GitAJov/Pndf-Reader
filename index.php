@@ -168,11 +168,11 @@ if ($isLoggedIn) {
             <span id="speedreadText"></span>
           </div>
         </div>
+      <div id="paragraphContainer"></div>
       <div class="textMenu-buttons">
         <button id="prevPage">Previous Page</button>
         <button id="nextPage">Next Page</button>
       </div>
-      <div id="paragraphContainer"></div>
     </div>
   </div>
 

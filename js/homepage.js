@@ -321,18 +321,24 @@ function speedTextMenu() {
   textMenu.appendChild(wpmLabel);
   textMenu.appendChild(wpmInput);
 
- // Navigation buttons are separated from the text menu
- const buttonPrev = document.getElementById("prevPage");
- buttonPrev.addEventListener("click", function () {
-   onPrevPage();
-   displayDyslexiaText();
- });
+  const buttonPrev = document.createElement("button");
+  buttonPrev.textContent = "Previous Page";
+  buttonPrev.id = "prevPage";
+  buttonPrev.addEventListener("click", function () {
+    onPrevPage();
+    displaySpeedreadText();
+  });
 
- const buttonNext = document.getElementById("nextPage");
- buttonNext.addEventListener("click", function () {
-   onNextPage();
-   displayDyslexiaText();
- });
+  const buttonNext = document.createElement("button");
+  buttonNext.textContent = "Next Page";
+  buttonNext.id = "nextPage";
+  buttonNext.addEventListener("click", function () {
+    onNextPage();
+    displaySpeedreadText();
+  });
+
+  textMenu.appendChild(buttonPrev);
+  textMenu.appendChild(buttonNext);
 }
 
 async function displaySpeedreadText() {
@@ -487,13 +493,22 @@ function updateAlignment() {
 
 async function displayDyslexiaText() {
   try {
+    // Clear the paragraph container before loading new text
+    let paragraphContainer = document.getElementById("paragraphContainer");
+    paragraphContainer.innerHTML = "";
+
+    // Clear the speedread text container before loading new text
     let speedreadTextElement = document.getElementById("speedreadText");
+    speedreadTextElement.textContent = "";
+
+    // Extract and display the new paragraph
     let paragraph = await extractParagraphs(pageNum);
     speedreadTextElement.textContent = paragraph;
   } catch (error) {
     console.error("Error displaying text:", error);
   }
 }
+
 
 function clearTextMenu() {
   const textMenu = document.getElementById("textMenu");

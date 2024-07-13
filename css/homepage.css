@@ -372,7 +372,7 @@ body.speedread-active {
 }
 
 #paragraphContainer {
-  height: 400px; /* Adjust height as needed */
+  max-height: 400px; /* Adjust height as needed */
   overflow: auto;
 }
 
