@@ -34,6 +34,7 @@ async function loadPDF(url) {
 
 async function initializePDF(url) {
   reset();
+  showLoadingOverlay(); // Show loading overlay
   let tempDoc = await loadPDF(url);
   pdfDoc = tempDoc;
   if (pdfDoc) {
@@ -46,6 +47,7 @@ async function initializePDF(url) {
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
     fetchBookmark();
   }
+  hideLoadingOverlay(); // Hide loading overlay
 }
 
 function reset() {
@@ -756,7 +758,14 @@ async function updateBookmark() {
 
 document.addEventListener('DOMContentLoaded', fetchBookmark);
 
-// Export initializePDF function
+function showLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
 export { initializePDF };
 
 // MAIN FUNCTION ===========================================

@@ -191,6 +191,13 @@ if ($isLoggedIn) {
     </div>
   </div>
 
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+      <img src="Resources/panda-slide.gif" alt="Loading..." />
+      <label>Rendering...</label>
+    </div>
+  </div>
+
   <div id="grayOverlay">
     <div id="textBox">
       <!-- Start of text menu -->
