@@ -17,7 +17,7 @@ let pdfDoc = null,
   mode = "",
   overlayActive = false;
 
-// PDF Loading
+// PDF RELATED FUNCTIONS ===================================
 async function loadPDF(url) {
   try {
     const loadingTask = pdfjsLib.getDocument(url);
@@ -127,6 +127,7 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
   }
 }
 
+// PAGE NUMBER RELATED FUNCTIONS ============================
 function updatePageNumBasedOnScroll() {
   const canvasContainer = document.getElementById("canvas-container");
   const scrollPosition = canvasContainer.scrollTop;
@@ -153,15 +154,6 @@ function updatePageNumBasedOnScroll() {
   }
 }
 
-function queueRenderPage(num) {
-  if (pageRendering) {
-    pageNumPending = num;
-  } else {
-    pageRendering = true;
-    renderPage(pdfDoc, num, scale);
-  }
-}
-
 function onPrevPage() {
   if (pageNum > 1) {
     pageNum--;
@@ -185,6 +177,32 @@ function onNextPage() {
   }
 }
 
+function pressPrev() {
+  if (overlayActive) {
+    if (mode === "dyslexia") {
+      onPrevPage();
+      displayDyslexiaText();
+    } else if (mode === "speedread") {
+      onPrevPage();
+      displaySpeedreadText();
+    }
+  }
+}
+
+function pressNext() {
+  if (overlayActive) {
+    if (mode === "dyslexia") {
+      console.log("Next page button pressed!");
+      onNextPage();
+      displayDyslexiaText();
+    } else if (mode === "speedread") {
+      onNextPage();
+      displaySpeedreadText();
+    }
+  }
+}
+
+// OVERLAY RELATED FUNCTIONS ================================
 function blurPage(blur) {
   var elementsToBlur = document.body.children;
   for (var i = 0; i < elementsToBlur.length; i++) {
@@ -206,6 +224,25 @@ function toggleOverlay() {
   grayOverlay.style.display = overlayActive ? "block" : "none";
 }
 
+function exitOverlay(event) {
+  if (event.target.id === "grayOverlay") {
+    overlayActive = false;
+    blurPage(false);
+    let grayOverlay = document.getElementById("grayOverlay");
+    grayOverlay.style.display = "none";
+    let speedreadTextElement = document.getElementById("speedreadText");
+    speedreadTextElement.style.letterSpacing = "";
+    clearTextMenu();
+    mode = "";
+    const buttonPrev = document.getElementById("prevPage");
+    buttonPrev.removeEventListener("click", pressPrev);
+
+    const buttonNext = document.getElementById("nextPage");
+    buttonNext.removeEventListener("click", pressNext);
+  }
+}
+
+// TEXT RELATED FUNCTIONS ==================================
 async function extractParagraphs(pageNumber) {
   try {
     const page = await pdfDoc.getPage(pageNumber);
@@ -228,25 +265,6 @@ async function extractParagraphs(pageNumber) {
     return finalString;
   } catch (error) {
     console.error("Error extracting text:", error);
-  }
-}
-
-function exitOverlay(event) {
-  if (event.target.id === "grayOverlay") {
-    overlayActive = false;
-    blurPage(false);
-    let grayOverlay = document.getElementById("grayOverlay");
-    grayOverlay.style.display = "none";
-    let speedreadTextElement = document.getElementById("speedreadText");
-    speedreadTextElement.style.letterSpacing = "";
-    clearTextMenu();
-    mode = "";
-    const buttonPrev = document.getElementById("prevPage");
-    buttonPrev.removeEventListener("click", pressPrev);
-
-    const buttonNext = document.getElementById("nextPage");
-    buttonNext.removeEventListener("click", pressNext);
-
   }
 }
 
@@ -313,31 +331,19 @@ function createFontSizeElements() {
   return { fontLabel, fontChooser, fontSizeLabel, fontSizeInput };
 }
 
-function pressPrev() {
-  if (overlayActive) {
-    if (mode === "dyslexia") {
-      onPrevPage();
-      displayDyslexiaText();
-    } else if (mode === "speedread") {
-      onPrevPage();
-      displaySpeedreadText();
-    }
-  }
+function updateSpacing() {
+  let spacing = document.getElementById("spacing").value;
+  let speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.style.wordSpacing = spacing + "px";
 }
 
-function pressNext() {
-  if (overlayActive) {
-    if (mode === "dyslexia") {
-      console.log("Next page button pressed!");
-      onNextPage();
-      displayDyslexiaText();
-    } else if (mode === "speedread") {
-      onNextPage();
-      displaySpeedreadText();
-    }
-  }
+function updateAlignment() {
+  let alignmentChooser = document.getElementById("alignmentChooser");
+  let speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.style.textAlign = alignmentChooser.value;
 }
 
+// SPEEDREAD AND DYSLEXIA FUNCTIONS ========================
 async function speedread() {
   speedTextMenu();
   toggleOverlay();
@@ -544,18 +550,6 @@ function dyslexiaMenu() {
   displayDyslexiaText();
 }
 
-function updateSpacing() {
-  let spacing = document.getElementById("spacing").value;
-  let speedreadTextElement = document.getElementById("speedreadText");
-  speedreadTextElement.style.wordSpacing = spacing + "px";
-}
-
-function updateAlignment() {
-  let alignmentChooser = document.getElementById("alignmentChooser");
-  let speedreadTextElement = document.getElementById("speedreadText");
-  speedreadTextElement.style.textAlign = alignmentChooser.value;
-}
-
 async function displayDyslexiaText() {
   try {
     // Clear the paragraph container before loading new text
@@ -589,14 +583,7 @@ function clearTextMenu() {
   }
 }
 
-function addEventListeners() {
-  document.getElementById("speedread").addEventListener("click", speedread);
-  document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
-  document.getElementById("choosefile").addEventListener("click", chooseFile);
-  document.getElementById("file").addEventListener("click", chooseFile);
-  document.getElementById("dyslexia").addEventListener("click", dyslexia);
-}
-
+// TEXT TO SPEECH FUNCTIONS ================================
 async function handleTextToSpeech() {
   try {
     const numPages = pdfDoc.numPages;
@@ -707,6 +694,15 @@ function tts(text) {
   });
 }
 
+// EVENT LISTENERS =========================================
+function addEventListeners() {
+  document.getElementById("speedread").addEventListener("click", speedread);
+  document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
+  document.getElementById("choosefile").addEventListener("click", chooseFile);
+  document.getElementById("file").addEventListener("click", chooseFile);
+  document.getElementById("dyslexia").addEventListener("click", dyslexia);
+}
+
 window.addEventListener("scroll", function () {
   const topMenuHeight = document.getElementById("topMenu").offsetHeight;
   const navigate = document.getElementById("navigate");
@@ -717,7 +713,7 @@ window.addEventListener("scroll", function () {
   }
 });
 
-// Main Function
+// MAIN FUNCTION ===========================================
 async function main() {
   // const url = "";
   // const url = "asdfasdf.pdf";
