@@ -39,7 +39,7 @@ if ($isLoggedIn) {
       }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
-  <script src="js/homepage.js" type="module"></script>\
+  <script src="js/homepage.js" type="module"></script>
   <script src="js/darkmode.js" type="module"></script>
 
   <link rel="stylesheet" href="css/homepage.css" />
@@ -164,7 +164,7 @@ if ($isLoggedIn) {
   <div id="grayOverlay">
     <div id="textBox">
       <!-- Start of text menu -->
-      <div id="textMenu" class="text-menu"></div>
+      <div id="textMenu"></div>
       <div id="speedreadContainer">
           <div id="speedreadTextContainer">
             <span id="speedreadText"></span>
