@@ -709,6 +709,9 @@ window.addEventListener("scroll", function () {
   }
 });
 
+// Export initializePDF function
+export { initializePDF };
+
 // MAIN FUNCTION ===========================================
 async function main() {
   // const url = "";
