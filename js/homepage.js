@@ -355,9 +355,7 @@ async function displaySpeedreadText() {
 
     let paragraph = await extractParagraphs(pageNum);
     let formattedParagraph = await formatDisplayText(paragraph);
-    let splitParagraph = formattedParagraph.split(" ").filter(function (el) {
-      return el != "";
-    });
+    let lines = formattedParagraph.split("\n"); // Split by new lines
 
     paragraphContainer.textContent = ""; // Clear previous content
 
@@ -367,21 +365,28 @@ async function displaySpeedreadText() {
     speedreadTextElement.style.fontFamily = selectedFont;
     speedreadTextElement.style.fontSize = selectedFontSize + "px";
 
-    // Create a fragment to hold the words
+    // Create a fragment to hold the lines and words
     let fragment = document.createDocumentFragment();
-    splitParagraph.forEach((word, index) => {
-      let span = document.createElement("span");
-      span.textContent = word + " ";
-      if (index === 0) {
-        span.classList.add("current-word");
-      }
-      fragment.appendChild(span);
+    lines.forEach((line) => {
+      let lineElement = document.createElement("div");
+      let splitLine = line.split(" ").filter(function (el) {
+        return el != "";
+      });
+
+      splitLine.forEach((word, index) => {
+        let span = document.createElement("span");
+        span.textContent = word + " ";
+        lineElement.appendChild(span);
+      });
+
+      fragment.appendChild(lineElement);
     });
     paragraphContainer.appendChild(fragment);
 
-    for (let i = 0; i < splitParagraph.length; i++) {
+    let words = paragraphContainer.querySelectorAll("span");
+    for (let i = 0; i < words.length; i++) {
       if (!overlayActive) break;
-      let word = splitParagraph[i];
+      let word = words[i].textContent.trim();
 
       // Display current word with underline
       speedreadWordElement.textContent = word;
@@ -390,7 +395,7 @@ async function displaySpeedreadText() {
       let currentWordElements =
         paragraphContainer.querySelectorAll(".current-word");
       currentWordElements.forEach((el) => el.classList.remove("current-word"));
-      let currentWordElement = paragraphContainer.children[i];
+      let currentWordElement = words[i];
       currentWordElement.classList.add("current-word");
 
       // Scroll down when the underlined word reaches the bottom
@@ -410,7 +415,6 @@ async function displaySpeedreadText() {
     console.error("Error displaying text:", error);
   }
 }
-
 
 function dyslexia() {
   dyslexiaMenu();
@@ -509,8 +513,6 @@ function dyslexiaMenu() {
   displayDyslexiaText();
 }
 
-
-
 function updateSpacing() {
   let spacing = document.getElementById("spacing").value;
   let speedreadTextElement = document.getElementById("speedreadText");
@@ -548,7 +550,6 @@ async function displayDyslexiaText() {
     console.error("Error displaying text:", error);
   }
 }
-
 
 function clearTextMenu() {
   const textMenu = document.getElementById("textMenu");
