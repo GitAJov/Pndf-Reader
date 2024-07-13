@@ -351,6 +351,12 @@ body.speedread-active {
 #paragraphContainer {
   height: 400px; /* Adjust height as needed */
   overflow: auto;
+  display: none; /* Hide by default */
+  transition: opacity 0.3s; /* Optional: Add a transition effect */
+}
+
+#speedreadContainer:hover #paragraphContainer {
+  display: block; 
 }
 
 .current-word {

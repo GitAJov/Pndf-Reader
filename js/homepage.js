@@ -1,4 +1,5 @@
 import { formatText } from "../js/gemini.js";
+import { formatDisplayText } from "../js/gemini.js";
 
 var { pdfjsLib } = globalThis;
 
@@ -206,8 +207,22 @@ async function extractParagraphs(pageNumber) {
   try {
     const page = await pdfDoc.getPage(pageNumber);
     const textContent = await page.getTextContent();
-    const text = textContent.items.map((item) => item.str).join(" ");
-    return text;
+    const textItems = textContent.items;
+    let finalString = "";
+    let line = 0;
+
+    // Concatenate the string of the item to the final string
+    for (let i = 0; i < textItems.length; i++) {
+      if (line != textItems[i].transform[5]) {
+        if (line != 0) {
+          finalString += "\r\n";
+        }
+        line = textItems[i].transform[5];
+      }
+      finalString += textItems[i].str;
+    }
+
+    return finalString;
   } catch (error) {
     console.error("Error extracting text:", error);
   }
@@ -348,7 +363,8 @@ async function displaySpeedreadText() {
     let speedreadTextElement = document.getElementById("speedreadText");
 
     let paragraph = await extractParagraphs(pageNum);
-    let splitParagraph = paragraph.split(" ").filter(function (el) {
+    let formattedParagraph = await formatDisplayText(paragraph);
+    let splitParagraph = formattedParagraph.split(" ").filter(function (el) {
       return el != "";
     });
 
@@ -360,25 +376,38 @@ async function displaySpeedreadText() {
     speedreadTextElement.style.fontFamily = selectedFont;
     speedreadTextElement.style.fontSize = selectedFontSize + "px";
 
+    // Create a fragment to hold the words
+    let fragment = document.createDocumentFragment();
+    splitParagraph.forEach((word, index) => {
+      let span = document.createElement("span");
+      span.textContent = word + " ";
+      if (index === 0) {
+        span.classList.add("current-word");
+      }
+      fragment.appendChild(span);
+    });
+    paragraphContainer.appendChild(fragment);
+
     for (let i = 0; i < splitParagraph.length; i++) {
       if (!overlayActive) break;
       let word = splitParagraph[i];
 
       // Display current word with underline
       speedreadWordElement.textContent = word;
-      paragraphContainer.innerHTML = splitParagraph
-        .map((w, index) =>
-          index === i ? `<span class="current-word">${w}</span>` : w
-        )
-        .join(" ");
+
+      // Update the current word class
+      let currentWordElements =
+        paragraphContainer.querySelectorAll(".current-word");
+      currentWordElements.forEach((el) => el.classList.remove("current-word"));
+      let currentWordElement = paragraphContainer.children[i];
+      currentWordElement.classList.add("current-word");
 
       // Scroll down when the underlined word reaches the bottom
-      let currentWordElement = document.querySelector(".current-word");
       if (currentWordElement) {
         let rect = currentWordElement.getBoundingClientRect();
-        if (rect.bottom > paragraphContainer.clientHeight) {
-          paragraphContainer.scrollTop +=
-            rect.bottom - paragraphContainer.clientHeight;
+        let containerRect = paragraphContainer.getBoundingClientRect();
+        if (rect.bottom > containerRect.bottom) {
+          paragraphContainer.scrollTop += rect.bottom - containerRect.bottom;
         }
       }
 
@@ -390,6 +419,7 @@ async function displaySpeedreadText() {
     console.error("Error displaying text:", error);
   }
 }
+
 
 function dyslexia() {
   dyslexiaMenu();
@@ -517,11 +547,20 @@ async function displayDyslexiaText() {
   try {
     let speedreadTextElement = document.getElementById("speedreadText");
     let paragraph = await extractParagraphs(pageNum);
-    speedreadTextElement.textContent = paragraph;
+    let formattedParagraph = await formatDisplayText(paragraph);
+
+    console.log("Formatted paragraph:", formattedParagraph);
+
+    // Replace new lines with <br> tags for proper HTML rendering
+    let paragraphWithLineBreaks = formattedParagraph.replace(/\n/g, "<br>");
+
+    // Use innerHTML instead of textContent to render the HTML
+    speedreadTextElement.innerHTML = paragraphWithLineBreaks;
   } catch (error) {
     console.error("Error displaying text:", error);
   }
 }
+
 
 function clearTextMenu() {
   const textMenu = document.getElementById("textMenu");
