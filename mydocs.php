@@ -27,7 +27,12 @@ $conn->close();
   <title>My Documents</title>
   <link rel="stylesheet" href="css/mydocs.css">
   <link rel="stylesheet" href="css/homepage.css">
-  <script src="js/mydocs.js" type="module"></script>
+  <script type="module">
+    import { fetchDocuments, confirmDeleteDocument } from './js/mydocs.js';
+    document.addEventListener('DOMContentLoaded', fetchDocuments);
+    window.confirmDeleteDocument = confirmDeleteDocument;
+  </script>
+  <script src="js/dark-mode.js" type="module"></script>
 </head>
 
 <body>
@@ -35,7 +40,15 @@ $conn->close();
     <div id="topMenu">
       <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
       <div class="nav-right">
-        <button onclick="window.location.href='index.php'" class="filebtn">Home</button>
+        <button onclick="window.location.href='index.php'" class="homebtn">Home</button>
+        <div class="dropdown">
+          <button class="dropbtn">Tools
+            <img src="Resources/drop-icon.png" alt="Drop Icon" class="drop-icon">
+          </button>
+          <div class="dropdown-content">
+            <a href="#" id="theme-toggle-item">Toggle Theme</a>
+          </div>
+        </div>
         <div class="dropdown">
           <button class="dropbtn" onclick="toggleDropdown()">
             <?php echo htmlspecialchars($username); ?>

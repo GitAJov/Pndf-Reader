@@ -1,8 +1,6 @@
 document.getElementById('fileInput').addEventListener('change', async function () {
   const file = this.files[0];
   if (file) {
-    //console.log('File selected:', file);
-
     const formData = new FormData();
     formData.append('file', file);
 
@@ -13,10 +11,7 @@ document.getElementById('fileInput').addEventListener('change', async function (
       });
 
       const text = await response.text();
-      //console.log('Raw response text:', text);
-
       const result = JSON.parse(text);
-      //console.log('Upload response:', result);
 
       if (result.status === 'success') {
         alert('File uploaded successfully');
@@ -30,11 +25,10 @@ document.getElementById('fileInput').addEventListener('change', async function (
   }
 });
 
-async function fetchDocuments() {
+export async function fetchDocuments() {
   try {
     const response = await fetch('php/fetch_documents.php');
     const documents = await response.json();
-    //console.log('Fetched documents:', documents);
     const documentList = document.getElementById('documentList');
     documentList.innerHTML = '';
     documents.forEach(doc => {
@@ -42,7 +36,10 @@ async function fetchDocuments() {
       div.className = 'document-item';
       div.innerHTML = `
         <span>${doc.file_name}</span>
+        <div>
         <button onclick="viewDocument(${doc.id})">View</button>
+        <button onclick="confirmDeleteDocument(${doc.id})">Delete</button>
+        </div>
       `;
       documentList.appendChild(div);
     });
@@ -54,5 +51,39 @@ async function fetchDocuments() {
 function viewDocument(id) {
   window.location.href = `index.php?doc_id=${id}`;
 }
+
+export async function deleteDocument(id) {
+  //console.log('Deleting document with id:', id);
+  try {
+    const response = await fetch(`php/delete_document.php`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded' // Change to form-urlencoded
+      },
+      body: `id=${id}` // Send id in the body
+    });
+    const responseText = await response.text();
+    //console.log('Response text that caused error:', responseText);
+    const result = JSON.parse(responseText);
+    //console.log('Delete response:', result);
+    if (result.status === 'success') {
+      alert('Document deleted successfully');
+      fetchDocuments();
+    } else {
+      alert('Failed to delete document: ' + result.message);
+    }
+  } catch (error) {
+    console.error('Error deleting document:', error);
+    //console.error('Response text that caused error:', error.message);
+  }
+}
+
+function confirmDeleteDocument(id) {
+  if (confirm('Are you sure you want to delete this document?')) {
+    deleteDocument(id);
+  }
+}
+
+export { confirmDeleteDocument};
 
 document.addEventListener('DOMContentLoaded', fetchDocuments);

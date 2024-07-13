@@ -8,10 +8,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const dropIcon = document.querySelector(".drop-icon");
     const profileIcon = document.querySelector(".profile-icon");
     const fileBtns = document.getElementsByClassName("filebtn");
-    const docsBtns = document.getElementsByClassName("docsbtn");
-    const footbar = document.getElementById("footbar");
+    const homeBtns = document.getElementsByClassName("homebtn");
     const textBox = document.getElementById("textBox");
     const textMenuButtons = document.querySelector(".textMenu-buttons");
+    const mainContent = document.getElementById("mainContent");
 
     // Function to update the text of the theme toggle item
     function updateThemeToggleText() {
@@ -26,15 +26,15 @@ document.addEventListener("DOMContentLoaded", () => {
     if (localStorage.getItem("theme") === "dark") {
         body.classList.add("dark-mode");
         topMenu.classList.add("dark-mode");
-        footbar.classList.add("dark-mode");
-        navigate.classList.add("dark-mode");
-        textBox.classList.add("dark-mode");
-        textMenuButtons.classList.add("dark-mode");
+        if (navigate) navigate.classList.add("dark-mode");
+        if (textBox) textBox.classList.add("dark-mode");
+        if (textMenuButtons) textMenuButtons.classList.add("dark-mode");
+        if (mainContent) mainContent.classList.add("dark-mode");
         Array.from(fileBtns).forEach((fileBtn) => {
             fileBtn.classList.add("dark-mode");
         });
-        Array.from(docsBtns).forEach((docsBtn) => {
-            docsBtn.classList.add("dark-mode");
+        Array.from(homeBtns).forEach((homeBtn) => {
+            homeBtn.classList.add("dark-mode");
         });
         dropdowns.forEach((dropdown) => {
             dropdown.querySelector(".dropbtn").classList.add("dark-mode");
@@ -51,33 +51,33 @@ document.addEventListener("DOMContentLoaded", () => {
     themeToggleItem.addEventListener("click", () => {
         const isDarkMode = body.classList.toggle("dark-mode");
         topMenu.classList.toggle("dark-mode");
-        footbar.classList.toggle("dark-mode");
-        navigate.classList.toggle("dark-mode");
-        textBox.classList.toggle("dark-mode");
-        textMenuButtons.classList.toggle("dark-mode");
+        if (navigate) navigate.classList.toggle("dark-mode");
+        if (textBox) textBox.classList.toggle("dark-mode");
+        if (textMenuButtons) textMenuButtons.classList.toggle("dark-mode");
+        if (mainContent) mainContent.classList.toggle("dark-mode");
         Array.from(fileBtns).forEach((fileBtn) => {
             fileBtn.classList.toggle("dark-mode");
         });
-        Array.from(docsBtns).forEach((docsBtn) => {
-            docsBtn.classList.toggle("dark-mode");
+        Array.from(homeBtns).forEach((homeBtn) => {
+            homeBtn.classList.toggle("dark-mode");
         });
-    dropdowns.forEach((dropdown) => {
-        dropdown.querySelector(".dropbtn").classList.toggle("dark-mode");
-        dropdown.querySelector(".dropdown-content").classList.toggle("dark-mode");
+        dropdowns.forEach((dropdown) => {
+            dropdown.querySelector(".dropbtn").classList.toggle("dark-mode");
+            dropdown.querySelector(".dropdown-content").classList.toggle("dark-mode");
+        });
+        // Change logos based on the theme
+        if (isDarkMode) {
+            pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
+            dropIcon.src = "Resources/drop-icon-dark-mode.png";
+            profileIcon.src = "Resources/profile-icon-dark-mode.png";
+        } else {
+            pndfLogo.src = "Resources/pndf-logo.png";
+            dropIcon.src = "Resources/drop-icon.png";
+            profileIcon.src = "Resources/profile-icon.png";
+        }
+        // Update the theme toggle button text
+        updateThemeToggleText();
+        // Save the user's preference in local storage
+        localStorage.setItem("theme", isDarkMode ? "dark" : "light");
     });
-    // Change logos based on the theme
-    if (isDarkMode) {
-        pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
-        dropIcon.src = "Resources/drop-icon-dark-mode.png";
-        profileIcon.src = "Resources/profile-icon-dark-mode.png";
-    } else {
-        pndfLogo.src = "Resources/pndf-logo.png";
-        dropIcon.src = "Resources/drop-icon.png";
-        profileIcon.src = "Resources/profile-icon.png";
-    }
-    // Update the theme toggle button text
-    updateThemeToggleText();
-    // Save the user's preference in local storage
-    localStorage.setItem("theme", isDarkMode ? "dark" : "light");
-});
 });

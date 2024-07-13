@@ -55,7 +55,9 @@ body {
 }
 
 .dropbtn,
-.filebtn {
+.filebtn,
+.homebtn,
+.docsbtn {
   background-color: #f4f4f4;
   border: none;
   cursor: pointer;
@@ -123,7 +125,9 @@ body.dark-mode {
 }
 
 .dropbtn.dark-mode,
-.filebtn.dark-mode {
+.filebtn.dark-mode,
+.homebtn.dark-mode,
+.docsbtn.dark-mode {
   background-color: #333333;
   color: #ffffff;
 }
@@ -469,6 +473,7 @@ body.speedread-active {
   border: 1px solid #ccc; /* Optional: add a border for better visibility */
   overflow-y: auto;
   height: 70vh;
+  width: 80vw;
 }
 
 #pdf-page {
@@ -558,6 +563,16 @@ body.speedread-active {
 
 .choose-file-button:hover {
   background-color: #45a049;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .choose-file-button {
+  background-color: #388e3c;
+  color: white;
+}
+
+body.dark-mode .choose-file-button:hover {
+  background-color: #2e7d32;
 }
 
 .upload-box p {
