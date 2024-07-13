@@ -8,15 +8,14 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 let pdfDoc = null,
   pageNum = 1,
-  pageRendering = false,
-  pageNumPending = null,
   scale = 1.5,
   canvases = [],
   renderTasks = [],
   renderingPdf = false,
+  mode = "",
   overlayActive = false;
 
-// PDF Loading
+// PDF RELATED FUNCTIONS ===================================
 async function loadPDF(url) {
   try {
     const loadingTask = pdfjsLib.getDocument(url);
@@ -45,8 +44,6 @@ async function initializePDF(url) {
 
 function reset() {
   (pageNum = 1),
-    (pageRendering = false),
-    (pageNumPending = null),
     (scale = 1.5),
     (canvases = []),
     (renderTasks = []),
@@ -126,6 +123,7 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
   }
 }
 
+// PAGE NUMBER RELATED FUNCTIONS ============================
 function updatePageNumBasedOnScroll() {
   const canvasContainer = document.getElementById("canvas-container");
   const scrollPosition = canvasContainer.scrollTop;
@@ -152,16 +150,6 @@ function updatePageNumBasedOnScroll() {
   }
 }
 
-
-function queueRenderPage(num) {
-  if (pageRendering) {
-    pageNumPending = num;
-  } else {
-    pageRendering = true;
-    renderPage(pdfDoc, num, scale);
-  }
-}
-
 function onPrevPage() {
   if (pageNum > 1) {
     pageNum--;
@@ -177,7 +165,7 @@ function onPrevPage() {
 function onNextPage() {
   if (pageNum < pdfDoc.numPages) {
     pageNum++;
-
+    console.log("Page Number: ", pageNum);
     const canvas = canvases[pageNum - 1];
     if (canvas) {
       canvas.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -185,6 +173,32 @@ function onNextPage() {
   }
 }
 
+function pressPrev() {
+  if (overlayActive) {
+    if (mode === "dyslexia") {
+      onPrevPage();
+      displayDyslexiaText();
+    } else if (mode === "speedread") {
+      onPrevPage();
+      displaySpeedreadText();
+    }
+  }
+}
+
+function pressNext() {
+  if (overlayActive) {
+    if (mode === "dyslexia") {
+      console.log("Next page button pressed!");
+      onNextPage();
+      displayDyslexiaText();
+    } else if (mode === "speedread") {
+      onNextPage();
+      displaySpeedreadText();
+    }
+  }
+}
+
+// OVERLAY RELATED FUNCTIONS ================================
 function blurPage(blur) {
   var elementsToBlur = document.body.children;
   for (var i = 0; i < elementsToBlur.length; i++) {
@@ -206,6 +220,25 @@ function toggleOverlay() {
   grayOverlay.style.display = overlayActive ? "block" : "none";
 }
 
+function exitOverlay(event) {
+  if (event.target.id === "grayOverlay") {
+    overlayActive = false;
+    blurPage(false);
+    let grayOverlay = document.getElementById("grayOverlay");
+    grayOverlay.style.display = "none";
+    let speedreadTextElement = document.getElementById("speedreadText");
+    speedreadTextElement.style.letterSpacing = "";
+    clearTextMenu();
+    mode = "";
+    const buttonPrev = document.getElementById("prevPage");
+    buttonPrev.removeEventListener("click", pressPrev);
+
+    const buttonNext = document.getElementById("nextPage");
+    buttonNext.removeEventListener("click", pressNext);
+  }
+}
+
+// TEXT RELATED FUNCTIONS ==================================
 async function extractParagraphs(pageNumber) {
   try {
     const page = await pdfDoc.getPage(pageNumber);
@@ -228,18 +261,6 @@ async function extractParagraphs(pageNumber) {
     return finalString;
   } catch (error) {
     console.error("Error extracting text:", error);
-  }
-}
-
-function exitOverlay(event) {
-  if (event.target.id === "grayOverlay") {
-    overlayActive = false;
-    blurPage(false);
-    let grayOverlay = document.getElementById("grayOverlay");
-    grayOverlay.style.display = "none";
-    let speedreadTextElement = document.getElementById("speedreadText");
-    speedreadTextElement.style.letterSpacing = "";
-    clearTextMenu();
   }
 }
 
@@ -306,10 +327,24 @@ function createFontSizeElements() {
   return { fontLabel, fontChooser, fontSizeLabel, fontSizeInput };
 }
 
+function updateSpacing() {
+  let spacing = document.getElementById("spacing").value;
+  let speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.style.wordSpacing = spacing + "px";
+}
+
+function updateAlignment() {
+  let alignmentChooser = document.getElementById("alignmentChooser");
+  let speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.style.textAlign = alignmentChooser.value;
+}
+
+// SPEEDREAD AND DYSLEXIA FUNCTIONS ========================
 async function speedread() {
   speedTextMenu();
   toggleOverlay();
   if (overlayActive) {
+    mode = "speedread";
     displaySpeedreadText();
   }
 }
@@ -339,15 +374,11 @@ function speedTextMenu() {
   textMenu.appendChild(wpmLabel);
   textMenu.appendChild(wpmInput);
 
-  document.getElementById("prevPage").addEventListener("click", function () {
-    onPrevPage();
-    displaySpeedreadText();
-  });
+  const buttonPrev = document.getElementById("prevPage");
+  buttonPrev.addEventListener("click", pressPrev);
 
-  document.getElementById("nextPage").addEventListener("click", function () {
-    onNextPage();
-    displaySpeedreadText();
-  });
+  const buttonNext = document.getElementById("nextPage");
+  buttonNext.addEventListener("click", pressNext);
 }
 
 async function displaySpeedreadText() {
@@ -362,7 +393,7 @@ async function displaySpeedreadText() {
 
     paragraphContainer.textContent = ""; // Clear previous content
 
-    // Apply font settings
+    // // Apply font settings
     let selectedFont = document.getElementById("fontChooser").value;
     let selectedFontSize = document.getElementById("fontSize").value;
     speedreadTextElement.style.fontFamily = selectedFont;
@@ -423,6 +454,7 @@ function dyslexia() {
   dyslexiaMenu();
   toggleOverlay();
   if (overlayActive) {
+    mode = "dyslexia";
     displayDyslexiaText();
   }
 }
@@ -431,7 +463,8 @@ function dyslexiaMenu() {
   const textMenu = document.getElementById("textMenu");
 
   // Create font controls
-  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } = createFontSizeElements();
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
+    createFontSizeElements();
   const fontChooserLabel = document.createElement("label");
   fontChooserLabel.setAttribute("for", "fontChooser");
   fontChooserLabel.textContent = "Font:";
@@ -485,7 +518,9 @@ function dyslexiaMenu() {
   boldButton.addEventListener("click", function () {
     boldButton.classList.toggle("active");
     const speedreadText = document.getElementById("speedreadText");
-    speedreadText.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
+    speedreadText.style.fontWeight = boldButton.classList.contains("active")
+      ? "bold"
+      : "normal";
   });
   alignmentContainer.appendChild(boldButton);
 
@@ -495,37 +530,20 @@ function dyslexiaMenu() {
   italicButton.addEventListener("click", function () {
     italicButton.classList.toggle("active");
     const speedreadText = document.getElementById("speedreadText");
-    speedreadText.style.fontStyle = italicButton.classList.contains("active") ? "italic" : "normal";
+    speedreadText.style.fontStyle = italicButton.classList.contains("active")
+      ? "italic"
+      : "normal";
   });
   alignmentContainer.appendChild(italicButton);
 
-  // Navigation buttons are separated from the text menu
   const buttonPrev = document.getElementById("prevPage");
-  buttonPrev.addEventListener("click", function () {
-    onPrevPage();
-    displayDyslexiaText();
-  });
+  buttonPrev.addEventListener("click", pressPrev);
 
   const buttonNext = document.getElementById("nextPage");
-  buttonNext.addEventListener("click", function () {
-    onNextPage();
-    displayDyslexiaText();
-  });
+  buttonNext.addEventListener("click", pressNext);
 
   // Initial text display
   displayDyslexiaText();
-}
-
-function updateSpacing() {
-  let spacing = document.getElementById("spacing").value;
-  let speedreadTextElement = document.getElementById("speedreadText");
-  speedreadTextElement.style.wordSpacing = spacing + "px";
-}
-
-function updateAlignment() {
-  let alignmentChooser = document.getElementById("alignmentChooser");
-  let speedreadTextElement = document.getElementById("speedreadText");
-  speedreadTextElement.style.textAlign = alignmentChooser.value;
 }
 
 async function displayDyslexiaText() {
@@ -561,14 +579,7 @@ function clearTextMenu() {
   }
 }
 
-function addEventListeners() {
-  document.getElementById("speedread").addEventListener("click", speedread);
-  document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
-  document.getElementById("choosefile").addEventListener("click", chooseFile);
-  document.getElementById("file").addEventListener("click", chooseFile);
-  document.getElementById("dyslexia").addEventListener("click", dyslexia);
-}
-
+// TEXT TO SPEECH FUNCTIONS ================================
 async function handleTextToSpeech() {
   try {
     const numPages = pdfDoc.numPages;
@@ -661,7 +672,7 @@ function tts(text) {
   document.getElementById("start").addEventListener("click", () => {
     speechUtteranceChunker.cancel = false;
     speechUtteranceChunker(utterance, { chunkLength: 120 }, () => {
-      console.log("done");
+      // console.log("done");
     });
   });
 
@@ -679,6 +690,15 @@ function tts(text) {
   });
 }
 
+// EVENT LISTENERS =========================================
+function addEventListeners() {
+  document.getElementById("speedread").addEventListener("click", speedread);
+  document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
+  document.getElementById("choosefile").addEventListener("click", chooseFile);
+  document.getElementById("file").addEventListener("click", chooseFile);
+  document.getElementById("dyslexia").addEventListener("click", dyslexia);
+}
+
 window.addEventListener("scroll", function () {
   const topMenuHeight = document.getElementById("topMenu").offsetHeight;
   const navigate = document.getElementById("navigate");
@@ -689,7 +709,7 @@ window.addEventListener("scroll", function () {
   }
 });
 
-// Main Function
+// MAIN FUNCTION ===========================================
 async function main() {
   // const url = "";
   // const url = "asdfasdf.pdf";

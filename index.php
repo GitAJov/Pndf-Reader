@@ -194,10 +194,10 @@ if ($isLoggedIn) {
       <!-- Start of text menu -->
       <div id="textMenu"></div>
       <div id="speedreadContainer">
-        <div id="speedreadTextContainer">
-          <span id="speedreadText"></span>
+          <div id="speedreadTextContainer">
+            <span id="speedreadText"></span>
+          </div>
           <div id="paragraphContainer"></div>
-        </div>
       </div>
       <div class="textMenu-buttons">
         <button id="prevPage">Previous Page</button>
@@ -212,6 +212,7 @@ if ($isLoggedIn) {
       const pauseButton = document.getElementById('pause');
       const resumeButton = document.getElementById('resume');
       const cancelButton = document.getElementById('cancel');
+      // const voicesSelect = document.getElementById('voices');
 
       pauseButton.style.display = 'none';
       resumeButton.style.display = 'none';
@@ -219,6 +220,7 @@ if ($isLoggedIn) {
       startButton.addEventListener('click', () => {
         startButton.style.display = 'none';
         pauseButton.style.display = 'inline-block';
+        // voicesSelect.style.display = 'inline-block';
       });
 
       pauseButton.addEventListener('click', () => {
