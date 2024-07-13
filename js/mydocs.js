@@ -31,18 +31,30 @@ export async function fetchDocuments() {
     const documents = await response.json();
     const documentList = document.getElementById('documentList');
     documentList.innerHTML = '';
-    documents.forEach(doc => {
+    if (documents.length === 0) {
+      // Display panda-eating gif and message if no documents are found
       const div = document.createElement('div');
-      div.className = 'document-item';
+      div.className = 'no-documents';
       div.innerHTML = `
-        <span>${doc.file_name}</span>
-        <div>
-        <button onclick="viewDocument(${doc.id})">View</button>
-        <button onclick="confirmDeleteDocument(${doc.id})">Delete</button>
-        </div>
+        <img src="Resources/panda-eating.gif" alt="No Documents" />
+        <p>No documents found. <br> Do you want to upload a file?</p>
       `;
       documentList.appendChild(div);
-    });
+    } else {
+      // Display documents if found
+      documents.forEach(doc => {
+        const div = document.createElement('div');
+        div.className = 'document-item';
+        div.innerHTML = `
+          <span>${doc.file_name}</span>
+          <div>
+          <button onclick="viewDocument(${doc.id})">View</button>
+          <button onclick="confirmDeleteDocument(${doc.id})">Delete</button>
+          </div>
+        `;
+        documentList.appendChild(div);
+      });
+    }
   } catch (error) {
     console.error('Error fetching documents:', error);
   }
@@ -84,6 +96,6 @@ function confirmDeleteDocument(id) {
   }
 }
 
-export { confirmDeleteDocument};
+export { confirmDeleteDocument };
 
 document.addEventListener('DOMContentLoaded', fetchDocuments);

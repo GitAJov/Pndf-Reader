@@ -14,6 +14,7 @@ let pdfDoc = null,
   renderTasks = [],
   renderingPdf = false,
   mode = "",
+  loadingTimeout = null,
   overlayActive = false;
 
 // Get doc_id from URL
@@ -47,7 +48,11 @@ async function initializePDF(url) {
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
     fetchBookmark();
   }
-  hideLoadingOverlay(); // Hide loading overlay
+  // Ensure overlay stays for at least 3 seconds
+  clearTimeout(loadingTimeout);
+  loadingTimeout = setTimeout(() => {
+    hideLoadingOverlay();
+  }, 3000);
 }
 
 function reset() {

@@ -160,7 +160,7 @@ if ($isLoggedIn) {
         <div class="upload-box">
           <button id="choosefile" class="choose-file-button">Choose File</button>
           <p>... or drop a file here</p>
-          <p>Files stay private. Automatically deletes after 2 hours</p>
+          <p>Files remain private and are automatically deleted after use.</p>
         </div>
         <img src="Resources/panda-upload.png" alt="Panda Image" class="panda-upload">
       </div>
