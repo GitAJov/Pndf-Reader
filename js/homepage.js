@@ -8,8 +8,6 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 let pdfDoc = null,
   pageNum = 1,
-  pageRendering = false,
-  pageNumPending = null,
   scale = 1.5,
   canvases = [],
   renderTasks = [],
@@ -46,8 +44,6 @@ async function initializePDF(url) {
 
 function reset() {
   (pageNum = 1),
-    (pageRendering = false),
-    (pageNumPending = null),
     (scale = 1.5),
     (canvases = []),
     (renderTasks = []),
@@ -676,7 +672,7 @@ function tts(text) {
   document.getElementById("start").addEventListener("click", () => {
     speechUtteranceChunker.cancel = false;
     speechUtteranceChunker(utterance, { chunkLength: 120 }, () => {
-      console.log("done");
+      // console.log("done");
     });
   });
 
