@@ -159,58 +159,6 @@ body.dark-mode {
   background-color: #555555;
 }
 
-/* Switch Styles */
-.switch {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  margin-left: 20px; /* Space between switch and other items */
-}
-
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-.slider {
-  position: relative;
-  cursor: pointer;
-  width: 60px;
-  height: 34px;
-  border-radius: 34px;
-  background-color: #ccc;
-  transition: 0.4s;
-}
-
-.slider:before {
-  position: absolute;
-  content: "";
-  height: 26px;
-  width: 26px;
-  border-radius: 50%;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  transition: 0.4s;
-}
-
-input:checked + .slider {
-  background-color: #424242;
-}
-
-input:checked + .slider:before {
-  transform: translateX(26px);
-}
-
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
 /* Navigation Styles */
 #navigate {
   color: #253237;
@@ -282,6 +230,7 @@ body.dark-mode #navigate button:hover {
   width: 100%;
 }
 
+/* Start of Overlay Styles */
 #grayOverlay {
   display: none;
   position: fixed;
@@ -300,7 +249,7 @@ body.dark-mode #navigate button:hover {
   transform: translate(-50%, -50%);
   width: 80%;
   max-width: 800px;
-  background-color: #fff;
+  background-color: #fff; /* Default background color */
   border-radius: 8px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
   padding: 20px;
@@ -312,25 +261,150 @@ body.dark-mode #navigate button:hover {
   z-index: 1001; /* Ensure it's above other content including sideMenu */
 }
 
+/* Dark mode styles for text box */
+#textBox.dark-mode {
+  background-color: #333; /* Dark mode background color */
+  color: #f9f9f9; /* Dark mode text color */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* Darker shadow for better contrast */
+}
+/* Start of Text Menu Changes */
 #textMenu {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 10px;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  background-color: #f9f9f9;
+  border-bottom: 1px solid #ccc;
+}
+
+/* Dark mode styles for text menu inside text box */
+
+#textBox.dark-mode #textMenu {
+  background-color: #444; /* Darker background for the text menu */
+  border-bottom: 1px solid #555; /* Darker border */
 }
 
 #textMenu label {
-  margin-right: 10px;
+  margin-right: 5px;
+  color: #333; /* Light mode text color */
+}
+
+#textBox.dark-mode #textMenu label {
+  color: #f9f9f9; /* Light text color for labels */
 }
 
 #textMenu select,
 #textMenu input[type="number"] {
   padding: 5px;
   font-size: 14px;
+  margin-right: 10px;
 }
 
-#speedreadTextContainer {
+#textBox.dark-mode #textMenu select,
+#textBox.dark-mode #textMenu input[type="number"] {
+  background-color: #555; /* Darker background for inputs */
+  color: #f9f9f9; /* Light text color for inputs */
+  border: 1px solid #777; /* Darker border for inputs */
+}
+
+.alignment-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Light Mode Styles for Alignment Container Buttons */
+.alignment-container .toggle-button {
+  font-size: 20px;
+  font-family: "Comic Sans MS";
+  padding: 5px 15px;
+  margin: 5px;
+  border-radius: 10px;
+  border-color: transparent;
+  background-color: #f4f4f4; /* Light mode button */
+  color: #333; /* Light mode text color */
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+}
+
+.alignment-container .toggle-button:hover {
+  background-color: #ddd;
+}
+
+.alignment-container .toggle-button.active {
+  background-color: #ddd; /* Consistent with hover state */
+}
+
+/* Dark Mode Styles for Alignment Container Buttons Inside Text Box */
+#textBox.dark-mode .alignment-container .toggle-button {
+  background-color: #555; /* Dark mode button background */
+  color: #f9f9f9; /* Dark mode text color */
+  border: none; /* Ensure border doesn't interfere with appearance */
+}
+
+#textBox.dark-mode .alignment-container .toggle-button:hover {
+  background-color: #666; /* Dark mode hover background */
+}
+
+
+#textBox.dark-mode .alignment-container .toggle-button.active {
+  background-color: #f9f9f9; /* Dark mode active state background */
+  color: #555; /* Ensure text color is still visible */
+}
+
+
+
+/* Light Mode Styles for Text Menu Buttons */
+.textMenu-buttons {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding-top: 10px;
+  background-color: #f9f9f9; /* Light mode background */
+  border-top: 1px solid #ccc; /* Light mode border */
+}
+
+.textMenu-buttons button {
+  font-size: 20px;
+  font-family: "Comic Sans MS";
+  padding: 5px 15px;
+  border-radius: 10px;
+  border-color: transparent;
+  background-color: #f4f4f4; /* Light mode button */
+  color: #333; /* Light mode text color */
+  transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
+}
+
+.textMenu-buttons button:hover {
+  background-color: #ddd;
+}
+
+
+/* Dark Mode Styles for Text Menu Buttons */
+.textMenu-buttons.dark-mode {
+  background-color: #333; /* Dark mode background */
+  border-top: 1px solid #555; /* Dark mode border */
+}
+
+.textMenu-buttons.dark-mode button {
+  background-color: #555; /* Dark mode button */
+  color: #f9f9f9; /* Dark mode text color */
+}
+
+.textMenu-buttons.dark-mode button:hover {
+  background-color: #666; /* Dark mode hover */
+}
+
+#speedreadContainer{
   flex: 1;
+}
+#speedreadTextContainer {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -351,7 +425,14 @@ body.speedread-active {
 #paragraphContainer {
   height: 400px; /* Adjust height as needed */
   overflow: auto;
+  display: none; /* Hide by default */
+  transition: opacity 0.3s; /* Optional: Add a transition effect */
 }
+
+#speedreadContainer:hover #paragraphContainer {
+  display: block; 
+}
+/* End of Container Changes */
 
 .current-word {
   text-decoration: underline;
@@ -379,6 +460,7 @@ body.speedread-active {
   overflow-y: auto;
   padding: 10px;
 }
+
 
 @font-face {
   font-family: "OpenDyslexic";

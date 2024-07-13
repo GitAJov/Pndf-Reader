@@ -1,4 +1,5 @@
 import { formatText } from "../js/gemini.js";
+import { formatDisplayText } from "../js/gemini.js";
 
 var { pdfjsLib } = globalThis;
 
@@ -128,16 +129,17 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
 function updatePageNumBasedOnScroll() {
   const canvasContainer = document.getElementById("canvas-container");
   const scrollPosition = canvasContainer.scrollTop;
+  const viewportHeight = canvasContainer.clientHeight;
+  const viewportMidpoint = scrollPosition + viewportHeight / 2;
   let visiblePage = 1;
 
-  // Calculate the visible page based on scroll position
+  // Calculate the visible page based on the midpoint of the viewport
   for (let i = 0; i < canvases.length; i++) {
     const canvas = canvases[i];
-    const pageHeight = canvas.height;
-    if (
-      scrollPosition >= canvas.offsetTop &&
-      scrollPosition < canvas.offsetTop + pageHeight
-    ) {
+    const pageTop = canvas.offsetTop;
+    const pageBottom = pageTop + canvas.height;
+
+    if (viewportMidpoint >= pageTop && viewportMidpoint < pageBottom) {
       visiblePage = i + 1; // Pages are 1-indexed
       break;
     }
@@ -149,6 +151,7 @@ function updatePageNumBasedOnScroll() {
     document.getElementById("page_num").textContent = pageNum;
   }
 }
+
 
 function queueRenderPage(num) {
   if (pageRendering) {
@@ -162,6 +165,7 @@ function queueRenderPage(num) {
 function onPrevPage() {
   if (pageNum > 1) {
     pageNum--;
+    console.log("test");
 
     const canvas = canvases[pageNum - 1];
     if (canvas) {
@@ -206,8 +210,22 @@ async function extractParagraphs(pageNumber) {
   try {
     const page = await pdfDoc.getPage(pageNumber);
     const textContent = await page.getTextContent();
-    const text = textContent.items.map((item) => item.str).join(" ");
-    return text;
+    const textItems = textContent.items;
+    let finalString = "";
+    let line = 0;
+
+    // Concatenate the string of the item to the final string
+    for (let i = 0; i < textItems.length; i++) {
+      if (line != textItems[i].transform[5]) {
+        if (line != 0) {
+          finalString += "\r\n";
+        }
+        line = textItems[i].transform[5];
+      }
+      finalString += textItems[i].str;
+    }
+
+    return finalString;
   } catch (error) {
     console.error("Error extracting text:", error);
   }
@@ -321,24 +339,15 @@ function speedTextMenu() {
   textMenu.appendChild(wpmLabel);
   textMenu.appendChild(wpmInput);
 
-  const buttonPrev = document.createElement("button");
-  buttonPrev.textContent = "Previous Page";
-  buttonPrev.id = "prevPage";
-  buttonPrev.addEventListener("click", function () {
+  document.getElementById("prevPage").addEventListener("click", function () {
     onPrevPage();
     displaySpeedreadText();
   });
 
-  const buttonNext = document.createElement("button");
-  buttonNext.textContent = "Next Page";
-  buttonNext.id = "nextPage";
-  buttonNext.addEventListener("click", function () {
+  document.getElementById("nextPage").addEventListener("click", function () {
     onNextPage();
     displaySpeedreadText();
   });
-
-  textMenu.appendChild(buttonPrev);
-  textMenu.appendChild(buttonNext);
 }
 
 async function displaySpeedreadText() {
@@ -348,9 +357,8 @@ async function displaySpeedreadText() {
     let speedreadTextElement = document.getElementById("speedreadText");
 
     let paragraph = await extractParagraphs(pageNum);
-    let splitParagraph = paragraph.split(" ").filter(function (el) {
-      return el != "";
-    });
+    let formattedParagraph = await formatDisplayText(paragraph);
+    let lines = formattedParagraph.split("\n"); // Split by new lines
 
     paragraphContainer.textContent = ""; // Clear previous content
 
@@ -360,25 +368,45 @@ async function displaySpeedreadText() {
     speedreadTextElement.style.fontFamily = selectedFont;
     speedreadTextElement.style.fontSize = selectedFontSize + "px";
 
-    for (let i = 0; i < splitParagraph.length; i++) {
+    // Create a fragment to hold the lines and words
+    let fragment = document.createDocumentFragment();
+    lines.forEach((line) => {
+      let lineElement = document.createElement("div");
+      let splitLine = line.split(" ").filter(function (el) {
+        return el != "";
+      });
+
+      splitLine.forEach((word, index) => {
+        let span = document.createElement("span");
+        span.textContent = word + " ";
+        lineElement.appendChild(span);
+      });
+
+      fragment.appendChild(lineElement);
+    });
+    paragraphContainer.appendChild(fragment);
+
+    let words = paragraphContainer.querySelectorAll("span");
+    for (let i = 0; i < words.length; i++) {
       if (!overlayActive) break;
-      let word = splitParagraph[i];
+      let word = words[i].textContent.trim();
 
       // Display current word with underline
       speedreadWordElement.textContent = word;
-      paragraphContainer.innerHTML = splitParagraph
-        .map((w, index) =>
-          index === i ? `<span class="current-word">${w}</span>` : w
-        )
-        .join(" ");
+
+      // Update the current word class
+      let currentWordElements =
+        paragraphContainer.querySelectorAll(".current-word");
+      currentWordElements.forEach((el) => el.classList.remove("current-word"));
+      let currentWordElement = words[i];
+      currentWordElement.classList.add("current-word");
 
       // Scroll down when the underlined word reaches the bottom
-      let currentWordElement = document.querySelector(".current-word");
       if (currentWordElement) {
         let rect = currentWordElement.getBoundingClientRect();
-        if (rect.bottom > paragraphContainer.clientHeight) {
-          paragraphContainer.scrollTop +=
-            rect.bottom - paragraphContainer.clientHeight;
+        let containerRect = paragraphContainer.getBoundingClientRect();
+        if (rect.bottom > containerRect.bottom) {
+          paragraphContainer.scrollTop += rect.bottom - containerRect.bottom;
         }
       }
 
@@ -400,19 +428,23 @@ function dyslexia() {
 }
 
 function dyslexiaMenu() {
-  let textMenu = document.getElementById("textMenu");
+  const textMenu = document.getElementById("textMenu");
 
-  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
-    createFontSizeElements();
-
-  textMenu.appendChild(fontLabel);
+  // Create font controls
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } = createFontSizeElements();
+  const fontChooserLabel = document.createElement("label");
+  fontChooserLabel.setAttribute("for", "fontChooser");
+  fontChooserLabel.textContent = "Font:";
+  textMenu.appendChild(fontChooserLabel);
   textMenu.appendChild(fontChooser);
   textMenu.appendChild(fontSizeLabel);
   textMenu.appendChild(fontSizeInput);
 
+  // Create spacing controls
   const spacingLabel = document.createElement("label");
   spacingLabel.setAttribute("for", "spacing");
   spacingLabel.textContent = "Spacing:";
+  textMenu.appendChild(spacingLabel);
 
   const spacingInput = document.createElement("input");
   spacingInput.type = "number";
@@ -420,19 +452,22 @@ function dyslexiaMenu() {
   spacingInput.value = 1;
   spacingInput.min = 0;
   spacingInput.max = 10;
-
-  textMenu.appendChild(spacingLabel);
   textMenu.appendChild(spacingInput);
-
   spacingInput.addEventListener("change", updateSpacing);
 
+  // Create alignment controls container
+  const alignmentContainer = document.createElement("div");
+  alignmentContainer.classList.add("alignment-container");
+  textMenu.appendChild(alignmentContainer);
+
+  // Create alignment controls
   const alignmentLabel = document.createElement("label");
   alignmentLabel.setAttribute("for", "alignmentChooser");
   alignmentLabel.textContent = "Text Alignment:";
+  alignmentContainer.appendChild(alignmentLabel);
 
   const alignmentChooser = document.createElement("select");
   alignmentChooser.id = "alignmentChooser";
-
   const alignments = ["left", "center", "right", "justify"];
   alignments.forEach((alignment) => {
     const option = document.createElement("option");
@@ -440,65 +475,45 @@ function dyslexiaMenu() {
     option.textContent = alignment.charAt(0).toUpperCase() + alignment.slice(1);
     alignmentChooser.appendChild(option);
   });
-
-  textMenu.appendChild(alignmentLabel);
-  textMenu.appendChild(alignmentChooser);
-
+  alignmentContainer.appendChild(alignmentChooser);
   alignmentChooser.addEventListener("change", updateAlignment);
 
-  // Adding Bold and Italic controls
-  const boldLabel = document.createElement("label");
-  boldLabel.textContent = "Bold:";
-  boldLabel.style.marginLeft = "10px";
-
-  const boldCheckbox = document.createElement("input");
-  boldCheckbox.type = "checkbox";
-  boldCheckbox.id = "boldCheckbox";
-
-  textMenu.appendChild(boldLabel);
-  textMenu.appendChild(boldCheckbox);
-
-  boldCheckbox.addEventListener("change", function () {
+  // Create Bold and Italic buttons with hover/click states
+  const boldButton = document.createElement("button");
+  boldButton.textContent = "B";
+  boldButton.classList.add("toggle-button");
+  boldButton.addEventListener("click", function () {
+    boldButton.classList.toggle("active");
     const speedreadText = document.getElementById("speedreadText");
-    speedreadText.style.fontWeight = boldCheckbox.checked ? "bold" : "normal";
+    speedreadText.style.fontWeight = boldButton.classList.contains("active") ? "bold" : "normal";
   });
+  alignmentContainer.appendChild(boldButton);
 
-  const italicLabel = document.createElement("label");
-  italicLabel.speedreadText = "Italic:";
-  italicLabel.style.marginLeft = "10px";
-
-  const italicCheckbox = document.createElement("input");
-  italicCheckbox.type = "checkbox";
-  italicCheckbox.id = "italicCheckbox";
-
-  textMenu.appendChild(italicLabel);
-  textMenu.appendChild(italicCheckbox);
-
-  italicCheckbox.addEventListener("change", function () {
+  const italicButton = document.createElement("button");
+  italicButton.textContent = "I";
+  italicButton.classList.add("toggle-button");
+  italicButton.addEventListener("click", function () {
+    italicButton.classList.toggle("active");
     const speedreadText = document.getElementById("speedreadText");
-    speedreadText.style.fontStyle = italicCheckbox.checked
-      ? "italic"
-      : "normal";
+    speedreadText.style.fontStyle = italicButton.classList.contains("active") ? "italic" : "normal";
   });
+  alignmentContainer.appendChild(italicButton);
 
-  const buttonPrev = document.createElement("button");
-  buttonPrev.textContent = "Previous Page";
-  buttonPrev.id = "prevPage";
+  // Navigation buttons are separated from the text menu
+  const buttonPrev = document.getElementById("prevPage");
   buttonPrev.addEventListener("click", function () {
     onPrevPage();
     displayDyslexiaText();
   });
 
-  const buttonNext = document.createElement("button");
-  buttonNext.textContent = "Next Page";
-  buttonNext.id = "nextPage";
+  const buttonNext = document.getElementById("nextPage");
   buttonNext.addEventListener("click", function () {
     onNextPage();
     displayDyslexiaText();
   });
 
-  textMenu.appendChild(buttonPrev);
-  textMenu.appendChild(buttonNext);
+  // Initial text display
+  displayDyslexiaText();
 }
 
 function updateSpacing() {
@@ -525,12 +540,19 @@ async function displayDyslexiaText() {
 
     // Extract and display the new paragraph
     let paragraph = await extractParagraphs(pageNum);
-    speedreadTextElement.textContent = paragraph;
+    let formattedParagraph = await formatDisplayText(paragraph);
+
+    console.log("Formatted paragraph:", formattedParagraph);
+
+    // Replace new lines with <br> tags for proper HTML rendering
+    let paragraphWithLineBreaks = formattedParagraph.replace(/\n/g, "<br>");
+
+    // Use innerHTML instead of textContent to render the HTML
+    speedreadTextElement.innerHTML = paragraphWithLineBreaks;
   } catch (error) {
     console.error("Error displaying text:", error);
   }
 }
-
 
 function clearTextMenu() {
   const textMenu = document.getElementById("textMenu");
@@ -546,80 +568,6 @@ function addEventListeners() {
   document.getElementById("file").addEventListener("click", chooseFile);
   document.getElementById("dyslexia").addEventListener("click", dyslexia);
 }
-
-document.addEventListener("DOMContentLoaded", () => {
-  const themeToggleItem = document.getElementById("theme-toggle-item"); // Dropdown item for toggling theme
-  const body = document.body;
-  const topMenu = document.getElementById("topMenu");
-  const navigate = document.getElementById("navigate");
-  const dropdowns = document.querySelectorAll(".dropdown, .profile-dropdown");
-  const pndfLogo = document.getElementById("pndf-logo");
-  const dropIcon = document.querySelector(".drop-icon");
-  const profileIcon = document.querySelector(".profile-icon");
-  const fileBtns = document.getElementsByClassName("filebtn");
-  const footbar = document.getElementById("footbar");
-
-  // Function to update the text of the theme toggle item
-  function updateThemeToggleText() {
-    if (body.classList.contains("dark-mode")) {
-      themeToggleItem.textContent = "Light Mode";
-    } else {
-      themeToggleItem.textContent = "Dark Mode";
-    }
-  }
-
-  // Check local storage for saved theme preference
-  if (localStorage.getItem("theme") === "dark") {
-    body.classList.add("dark-mode");
-    topMenu.classList.add("dark-mode");
-    footbar.classList.add("dark-mode");
-    navigate.classList.add("dark-mode");
-    Array.from(fileBtns).forEach((fileBtn) => {
-      fileBtn.classList.add("dark-mode");
-    });
-    dropdowns.forEach((dropdown) => {
-      dropdown.querySelector(".dropbtn").classList.add("dark-mode");
-      dropdown.querySelector(".dropdown-content").classList.add("dark-mode");
-    });
-    pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
-    dropIcon.src = "Resources/drop-icon-dark-mode.png";
-    profileIcon.src = "Resources/profile-icon-dark-mode.png";
-  }
-
-  // Update the button text based on the initial theme
-  updateThemeToggleText();
-
-  themeToggleItem.addEventListener("click", () => {
-    body.classList.toggle("dark-mode");
-    topMenu.classList.toggle("dark-mode");
-    footbar.classList.toggle("dark-mode");
-    navigate.classList.toggle("dark-mode");
-    Array.from(fileBtns).forEach((fileBtn) => {
-      fileBtn.classList.toggle("dark-mode");
-    });
-    dropdowns.forEach((dropdown) => {
-      dropdown.querySelector(".dropbtn").classList.toggle("dark-mode");
-      dropdown.querySelector(".dropdown-content").classList.toggle("dark-mode");
-    });
-    // Change logos based on the theme
-    if (body.classList.contains("dark-mode")) {
-      pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
-      dropIcon.src = "Resources/drop-icon-dark-mode.png";
-      profileIcon.src = "Resources/profile-icon-dark-mode.png";
-    } else {
-      pndfLogo.src = "Resources/pndf-logo.png";
-      dropIcon.src = "Resources/drop-icon.png";
-      profileIcon.src = "Resources/profile-icon.png";
-    }
-    // Update the theme toggle button text
-    updateThemeToggleText();
-    // Save the user's preference in local storage
-    localStorage.setItem(
-      "theme",
-      body.classList.contains("dark-mode") ? "dark" : "light"
-    );
-  });
-});
 
 async function handleTextToSpeech() {
   try {
