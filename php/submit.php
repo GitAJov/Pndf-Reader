@@ -26,15 +26,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result_username->num_rows > 0 && $result_email->num_rows > 0) {
         // Both username and email already exist
-        header('Location: register.php?error=Username dan Email sudah terdaftar, silakan gunakan yang lain!');
+        header('Location: ../register.php?error=Username dan Email sudah terdaftar, silakan gunakan yang lain!');
         exit();
     } elseif ($result_username->num_rows > 0) {
         // Username already exists
-        header('Location: register.php?error=Username sudah terdaftar, silakan gunakan yang lain!');
+        header('Location: ../register.php?error=Username sudah terdaftar, silakan gunakan yang lain!');
         exit();
     } elseif ($result_email->num_rows > 0) {
         // Email already exists
-        header('Location: register.php?error=Email sudah terdaftar, silakan gunakan yang lain!');
+        header('Location: ../register.php?error=Email sudah terdaftar, silakan gunakan yang lain!');
         exit();
     } else {
         // Insert the new user into the database
@@ -42,15 +42,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt_insert->bind_param("sss", $username, $email, $password_hash);
         
         if ($stmt_insert->execute()) {
-            header('Location: login.php?success=Registration successful! Please login.');
+            header('Location: ../login.php?success=Registration successful! Please login.');
             exit();
         } else {
-            header('Location: register.php?error=Error: ' . $stmt_insert->error);
+            header('Location: ../register.php?error=Error: ' . $stmt_insert->error);
             exit();
         }
     }
 } else {
-    header('Location: register.php?error=Metode pengiriman tidak valid.');
+    header('Location: ../register.php?error=Metode pengiriman tidak valid.');
     exit();
 }
 

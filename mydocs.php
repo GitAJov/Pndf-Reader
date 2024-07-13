@@ -5,7 +5,7 @@ if (!isset($_SESSION['user_id'])) {
   exit;
 }
 
-include 'database.php';
+include 'php/database.php';
 
 $user_id = $_SESSION['user_id'];
 $sql = "SELECT username FROM users WHERE id = ?";

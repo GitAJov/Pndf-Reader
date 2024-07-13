@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION['user_id'])) {
-    header("Location: homepage.php");
+    header("Location: index.php");
     exit();
 }
 ?>
@@ -50,7 +50,7 @@ if (isset($_SESSION['user_id'])) {
                 </div>
             <?php endif; ?>
         </div>
-        <form action="authenticate.php" id="form-login" method="POST">
+        <form action="php/authenticate.php" id="form-login" method="POST">
             <input type="text" id="email-username" name="email-username"
                 placeholder="Enter your email address or username">
             <input type="password" id="password" name="password" placeholder="Enter your password">

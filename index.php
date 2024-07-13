@@ -11,7 +11,7 @@ $username = '';
 $file_path = '';
 
 if ($isLoggedIn) {
-  include 'database.php';
+  include 'php/database.php';
 
   $user_id = $_SESSION['user_id'];
   $sql = "SELECT username FROM users WHERE id = ?";
@@ -126,7 +126,7 @@ if ($isLoggedIn) {
           <div id="profileDropdown" class="dropdown-content">
             <?php if ($isLoggedIn): ?>
               <a href="profile.php">Profile</a>
-              <a href="logout.php">Logout</a>
+              <a href="./php/logout.php">Logout</a>
             <?php else: ?>
               <a href="login.php">Login</a>
             <?php endif; ?>
