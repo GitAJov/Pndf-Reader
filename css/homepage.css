@@ -367,6 +367,8 @@ body.dark-mode #navigate button:hover {
   padding-top: 10px;
   background-color: #f9f9f9; /* Light mode background */
   border-top: 1px solid #ccc; /* Light mode border */
+  position: relative;
+  z-index: 2;
 }
 
 .textMenu-buttons button {
@@ -401,19 +403,29 @@ body.dark-mode #navigate button:hover {
   background-color: #666; /* Dark mode hover */
 }
 
-#speedreadContainer{
-  flex: 1;
+/* Start of Container Changes */
+#speedreadContainer {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  height: calc(100vh - 50px); /* Adjust the height minus the height of the button area */
+  overflow: hidden; /* Ensure content does not overflow the container */
 }
+
 #speedreadTextContainer {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 #speedreadText {
   text-align: center;
   line-height: 1.6;
-  overflow: auto; /* allow scrolling if content overflows */
   font-size: 36px;
   font-family: Arial, sans-serif;
 }
@@ -423,16 +435,24 @@ body.speedread-active {
 }
 
 #paragraphContainer {
-  height: 400px; /* Adjust height as needed */
+  position: absolute;
+  top: calc(50% + 36px); /* Adjust 36px based on font-size or the height of speedreadText */
+  left: 50%;
+  transform: translate(-50%, 0);
+  width: 100%;
+  height: calc(100% - 50px - (50% + 36px)); /* Adjust height based on the remaining space */
   overflow: auto;
   display: none; /* Hide by default */
-  transition: opacity 0.3s; /* Optional: Add a transition effect */
+  transition: opacity 0.3s;
+  z-index: 0;
 }
 
 #speedreadContainer:hover #paragraphContainer {
-  display: block; 
+  display: block;
 }
 /* End of Container Changes */
+
+
 
 .current-word {
   text-decoration: underline;
