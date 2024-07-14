@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jul 13, 2024 at 02:59 PM
+-- Generation Time: Jul 14, 2024 at 02:23 PM
 -- Server version: 10.4.28-MariaDB
 -- PHP Version: 8.2.4
 
@@ -31,10 +31,16 @@ CREATE TABLE `pdf_files` (
   `id` int(20) NOT NULL,
   `user_id` int(20) NOT NULL,
   `file_name` varchar(255) NOT NULL,
-  `file_data` longblob DEFAULT NULL,
   `file_path` varchar(255) NOT NULL,
   `last_page` int(11) DEFAULT 1
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `pdf_files`
+--
+
+INSERT INTO `pdf_files` (`id`, `user_id`, `file_name`, `file_path`, `last_page`) VALUES
+(6, 4, 'Profile.pdf', 'php/uploads/sayton/Profile.pdf', 1);
 
 -- --------------------------------------------------------
 
@@ -46,17 +52,19 @@ CREATE TABLE `users` (
   `id` int(20) NOT NULL,
   `username` varchar(50) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL
+  `password` varchar(255) NOT NULL,
+  `otp` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `username`, `email`, `password`) VALUES
-(1, 'a', 'a@gmail.com', '$2y$10$gIaU9t1CAOxcbHYdU0whDO5O7frevQ1Uabh8udaguzhLWIlkBIv8G'),
-(2, 'a12345', 'a12345@gmail.com', '$2y$10$mKp71Tvdhvy8tiDAwuAh/O5jA7Ov0tISlax6rk.pdNedq5TMYm9eu'),
-(3, 'setan', 'vaaa7673@gmail.com', '$2y$10$ui.KxGq8qpUE8EK9gmtpaeXHprlQ/ws.Vc39aA02m3eY/j/YzNPmG');
+INSERT INTO `users` (`id`, `username`, `email`, `password`, `otp`) VALUES
+(1, 'a', 'a@gmail.com', '$2y$10$gIaU9t1CAOxcbHYdU0whDO5O7frevQ1Uabh8udaguzhLWIlkBIv8G', NULL),
+(2, 'a12345', 'a12345@gmail.com', '$2y$10$mKp71Tvdhvy8tiDAwuAh/O5jA7Ov0tISlax6rk.pdNedq5TMYm9eu', NULL),
+(3, 'setan', 'vaaa7673@gmail.com', '$2y$10$ZgGhD0fG0rCtUlff3Up6AuyQI4z9YLIDGOLDasiMN9k1UXSpufFry', '244141'),
+(4, 'sayton', '123411@gmail.com', '$2y$10$.RondbxbjzzogYjwXU0jFeeVm6UtXUYqvRKwmary1LK192tFaGAN6', NULL);
 
 --
 -- Indexes for dumped tables
@@ -83,13 +91,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `pdf_files`
 --
 ALTER TABLE `pdf_files`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(20) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- Constraints for dumped tables
