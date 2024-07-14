@@ -1,5 +1,6 @@
 import { formatText } from "../js/gemini.js";
 import { formatDisplayText } from "../js/gemini.js";
+import { voiceRecognition } from "./voiceRecognition.js";
 
 var { pdfjsLib } = globalThis;
 
@@ -65,13 +66,44 @@ async function initializePDF(url) {
 }
 
 function reset() {
-  (pageNum = 1),
-    (scale = 1.5),
-    (canvases = []),
-    (renderTasks = []),
-    (document.getElementById("canvas-container").innerHTML = "");
+  pageNum = 1;
+  scale = 1.5;
+  canvases = [];
+  renderTasks = [];
+  document.getElementById("canvas-container").innerHTML = "";
+  document.getElementById("pageInput").value = pageNum;
+  document.getElementById("page_count").textContent = "-";
+
+  clearTextMenu();
+  document.getElementById("speedreadText").innerHTML = "";
+  document.getElementById("paragraphContainer").innerHTML = "";
+
+  resetTTS();
   console.log("Reset done");
 }
+
+function resetTTS() {
+  document.getElementById("cancel").click();
+  let btnStart = document.getElementById("start");
+  let btnPause = document.getElementById("pause");
+  let btnResume = document.getElementById("resume");
+  let btnCancel = document.getElementById("cancel");
+  let newBtnStart = btnStart.cloneNode(true);
+  let newBtnPause = btnPause.cloneNode(true);
+  let newBtnResume = btnResume.cloneNode(true);
+  let newBtnCancel = btnCancel.cloneNode(true);
+  btnStart.parentNode.replaceChild(newBtnStart, btnStart);
+  btnPause.parentNode.replaceChild(newBtnPause, btnPause);
+  btnResume.parentNode.replaceChild(newBtnResume, btnResume);
+  btnCancel.parentNode.replaceChild(newBtnCancel, btnCancel);
+}
+
+// <div class="texttospeech-nav">
+//           <button id="start"><i class="material-icons">play_arrow</i></button>
+//           <button id="pause"><i class="material-icons">pause</i></button>
+//           <button id="resume"><i class="material-icons">play_arrow</i></button>
+//           <button id="cancel"><i class="material-icons">stop</i></button>
+//         </div>
 
 async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
   try {
@@ -739,49 +771,6 @@ function tts(text) {
   });
 }
 
-// EVENT LISTENERS =========================================
-function addEventListeners() {
-  document.getElementById("speedread").addEventListener("click", speedread);
-  document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
-  document.getElementById("choosefile").addEventListener("click", chooseFile);
-  document.getElementById("file").addEventListener("click", chooseFile);
-  document.getElementById("dyslexia").addEventListener("click", dyslexia);
-  document.getElementById("prev").addEventListener("click", onPrevPage);
-  document.getElementById("next").addEventListener("click", onNextPage);
-  // Event listener for the page input field
-  let pageInputElement = document.getElementById("pageInput");
-  pageInputElement.addEventListener("keypress", function (event) {
-    if (event.key === "Enter") {
-      pageInput();
-    }
-  });
-  pageInputElement.addEventListener("focusout", function (event) {
-    let pageInputValue = pageInputElement.value;
-    if (!isNaN(pageInputValue)) {
-      pageInput();
-    } else {
-      pageInputValue = pageNum;
-    }
-  });
-  pageInputElement.addEventListener("input", function (event) {
-    let input = event.target.value.trim();
-    event.target.value = input.replace(/\D/g, "");
-  });
-  pageInputElement.addEventListener("focus", function (event) {
-    event.target.setSelectionRange(0, event.target.value.length);
-  });
-}
-
-window.addEventListener("scroll", function () {
-  const topMenuHeight = document.getElementById("topMenu").offsetHeight;
-  const navigate = document.getElementById("navigate");
-  if (window.scrollY > topMenuHeight) {
-    navigate.classList.add("fixed");
-  } else {
-    navigate.classList.remove("fixed");
-  }
-});
-
 // BOOKMARK FUNCTIONS =======================================
 async function fetchBookmark() {
   if (doc_id !== null) {
@@ -834,6 +823,87 @@ function hideLoadingOverlay() {
 }
 
 export { initializePDF, onNextPage, onPrevPage };
+
+// VOICE RECOGNITION ========================================
+async function getCommandfromResponse() {
+  const intent = await voiceRecognition();
+  switch (intent) {
+    case "start":
+      document.getElementById("start").click();
+      break;
+    case "stop":
+      document.getElementById("cancel").click();
+      break;
+    case "pause":
+      document.getElementById("pause").click();
+      break;
+    case "resume":
+      document.getElementById("resume").click();
+      break;
+    case "speedread":
+      speedread();
+      break;
+    case "dyslexia":
+      dyslexia();
+      break;
+    case "change":
+      chooseFile();
+      break;
+    case "dark mode":
+    case "night mode":
+    case "light mode":
+      // Toggle dark mode
+      break;
+    default:
+      console.log("No matching intent found");
+  }
+}
+
+// EVENT LISTENERS =========================================
+function addEventListeners() {
+  document.getElementById("speedread").addEventListener("click", speedread);
+  document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
+  document.getElementById("choosefile").addEventListener("click", chooseFile);
+  document.getElementById("file").addEventListener("click", chooseFile);
+  document.getElementById("dyslexia").addEventListener("click", dyslexia);
+  document.getElementById("prev").addEventListener("click", onPrevPage);
+  document.getElementById("next").addEventListener("click", onNextPage);
+  // Event listener for the page input field
+  let pageInputElement = document.getElementById("pageInput");
+  pageInputElement.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      pageInput();
+    }
+  });
+  pageInputElement.addEventListener("focusout", function (event) {
+    let pageInputValue = pageInputElement.value;
+    if (!isNaN(pageInputValue)) {
+      pageInput();
+    } else {
+      pageInputValue = pageNum;
+    }
+  });
+  pageInputElement.addEventListener("input", function (event) {
+    let input = event.target.value.trim();
+    event.target.value = input.replace(/\D/g, "");
+  });
+  pageInputElement.addEventListener("focus", function (event) {
+    event.target.setSelectionRange(0, event.target.value.length);
+  });
+  document
+    .getElementById("mic")
+    .addEventListener("click", getCommandfromResponse);
+}
+
+window.addEventListener("scroll", function () {
+  const topMenuHeight = document.getElementById("topMenu").offsetHeight;
+  const navigate = document.getElementById("navigate");
+  if (window.scrollY > topMenuHeight) {
+    navigate.classList.add("fixed");
+  } else {
+    navigate.classList.remove("fixed");
+  }
+});
 
 // MAIN FUNCTION ===========================================
 async function main() {

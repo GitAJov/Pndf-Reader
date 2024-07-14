@@ -45,6 +45,14 @@ export async function formatDisplayText(promptText) {
   return text;
 };
 
+export async function getIntent(promptText){
+  let smallText = promptText.toLowerCase();
+  if(smallText == "speedway" || smallText == "speed read") {
+    return "speedread";
+  }
+  return promptText;
+}
+
 export function initializeGemini(apiKey) {
   API_KEY = apiKey;
   genAI = new GoogleGenerativeAI(API_KEY);
