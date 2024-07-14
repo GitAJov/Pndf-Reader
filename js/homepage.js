@@ -750,13 +750,15 @@ function clearTextMenu() {
 // TEXT TO SPEECH FUNCTIONS ================================
 async function handleTextToSpeech() {
   try {
-    document.getElementById("start").removeEventListener("click", handleTextToSpeech);
+    document
+      .getElementById("start")
+      .removeEventListener("click", handleTextToSpeech);
     const numPages = pdfDoc.numPages;
     let allText = [];
 
     for (let pageNumber = pageNum; pageNumber <= numPages; pageNumber++) {
       const pageText = await extractParagraphs(pageNumber);
-      allText.push(pageText); 
+      allText.push(pageText);
     }
     let formattedTextArray = [];
 
@@ -834,6 +836,7 @@ function tts(text) {
     });
 
     utterances.push(newUtt);
+    console.log(newUtt); // do not remove. 
     speechSynthesis.speak(newUtt);
   };
 
