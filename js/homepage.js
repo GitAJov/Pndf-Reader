@@ -618,30 +618,37 @@ function dyslexia() {
 function dyslexiaMenu() {
   const textMenu = document.getElementById("textMenu");
 
+  // Function to create labeled input pairs
+  function createLabeledInput(labelText, inputElement) {
+    const container = document.createElement("div");
+    container.classList.add("labeled-input");
+
+    const label = document.createElement("label");
+    label.textContent = labelText;
+    container.appendChild(label);
+    container.appendChild(inputElement);
+
+    return container;
+  }
+
   // Create font controls
-  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
-    createFontSizeElements();
-  const fontChooserLabel = document.createElement("label");
-  fontChooserLabel.setAttribute("for", "fontChooser");
-  fontChooserLabel.textContent = "Font:";
-  textMenu.appendChild(fontChooserLabel);
-  textMenu.appendChild(fontChooser);
-  textMenu.appendChild(fontSizeLabel);
-  textMenu.appendChild(fontSizeInput);
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } = createFontSizeElements();
+  const fontChooserContainer = createLabeledInput("Font:", fontChooser);
+  const fontSizeContainer = createLabeledInput("Font Size:", fontSizeInput);
+
+  textMenu.appendChild(fontChooserContainer);
+  textMenu.appendChild(fontSizeContainer);
 
   // Create spacing controls
-  const spacingLabel = document.createElement("label");
-  spacingLabel.setAttribute("for", "spacing");
-  spacingLabel.textContent = "Spacing:";
-  textMenu.appendChild(spacingLabel);
-
   const spacingInput = document.createElement("input");
   spacingInput.type = "number";
   spacingInput.id = "spacing";
   spacingInput.value = 1;
   spacingInput.min = 0;
   spacingInput.max = 10;
-  textMenu.appendChild(spacingInput);
+  const spacingContainer = createLabeledInput("Spacing:", spacingInput);
+
+  textMenu.appendChild(spacingContainer);
   spacingInput.addEventListener("change", updateSpacing);
 
   // Create alignment controls container
@@ -650,11 +657,6 @@ function dyslexiaMenu() {
   textMenu.appendChild(alignmentContainer);
 
   // Create alignment controls
-  const alignmentLabel = document.createElement("label");
-  alignmentLabel.setAttribute("for", "alignmentChooser");
-  alignmentLabel.textContent = "Text Alignment:";
-  alignmentContainer.appendChild(alignmentLabel);
-
   const alignmentChooser = document.createElement("select");
   alignmentChooser.id = "alignmentChooser";
   const alignments = ["left", "center", "right", "justify"];
@@ -664,7 +666,8 @@ function dyslexiaMenu() {
     option.textContent = alignment.charAt(0).toUpperCase() + alignment.slice(1);
     alignmentChooser.appendChild(option);
   });
-  alignmentContainer.appendChild(alignmentChooser);
+  const alignmentChooserContainer = createLabeledInput("Text Alignment:", alignmentChooser);
+  alignmentContainer.appendChild(alignmentChooserContainer);
   alignmentChooser.addEventListener("change", updateAlignment);
 
   // Create Bold and Italic buttons with hover/click states
@@ -691,6 +694,18 @@ function dyslexiaMenu() {
       : "normal";
   });
   alignmentContainer.appendChild(italicButton);
+
+  // Create color picker controls
+  const colorPicker = document.createElement("input");
+  colorPicker.type = "color";
+  colorPicker.id = "colorPicker";
+  const colorPickerContainer = createLabeledInput("Font Color:", colorPicker);
+
+  textMenu.appendChild(colorPickerContainer);
+  colorPicker.addEventListener("change", function () {
+    const speedreadText = document.getElementById("speedreadText");
+    speedreadText.style.color = colorPicker.value;
+  });
 
   const buttonPrev = document.getElementById("prevPage");
   buttonPrev.addEventListener("click", pressPrev);
@@ -734,6 +749,7 @@ function clearTextMenu() {
     textMenu.removeChild(textMenu.firstChild);
   }
 }
+
 
 // TEXT TO SPEECH FUNCTIONS ================================
 async function handleTextToSpeech() {
