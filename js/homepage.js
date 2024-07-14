@@ -20,7 +20,7 @@ let pdfDoc = null,
 
 // Get doc_id from URL
 const urlParams = new URLSearchParams(window.location.search);
-const doc_id = urlParams.get("doc_id");
+let doc_id = urlParams.get("doc_id");
 
 // PDF RELATED FUNCTIONS ===================================
 async function loadPDF(url) {
@@ -47,7 +47,12 @@ async function initializePDF(url) {
     // Add scroll event listener to update pageNum based on visible page
     const canvasContainer = document.getElementById("canvas-container");
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
-    fetchBookmark();
+
+    if (doc_id !== null) {
+      fetchBookmark(); // Only fetch bookmark if doc_id is not null
+    } else {
+      document.getElementById("pageInput").value = 1; // Reset page input to 1
+    }
 
     // Hide main menu, show main content and footbar if a doc is present
     document.getElementById("mainMenu").style.display = "none";
@@ -321,6 +326,7 @@ function chooseFile() {
     if (files.length > 0) {
       const file = files[0];
       pdfDoc = URL.createObjectURL(file);
+      doc_id = null; // Set doc_id to null to indicate a new file is chosen
       if (!renderingPdf) {
         initializePDF(pdfDoc);
       }
