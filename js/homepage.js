@@ -932,7 +932,7 @@ async function getCommandfromResponse() {
     case "dark mode":
     case "night mode":
     case "light mode":
-      // Toggle dark mode
+      document.getElementById("theme-toggle-item").click(); // Trigger the theme toggle
       break;
     default:
       console.log("No matching intent found");
