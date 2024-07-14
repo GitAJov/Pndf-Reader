@@ -56,6 +56,7 @@ if (isset($_SESSION['user_id'])) {
             <input type="password" id="password" name="password" placeholder="Enter your password">
             <input type="submit" id="submit-login" name="log_user" value="Login">
             <p id="body-text">Don't have an account?<br> <a href="register.php">Register here</a></p>
+            <p id="body-text">Forgot Password?<br> <a href="forgot_password.php">Click here</a></p>
         </form>
 
         <img id="panda-login" src="Resources/panda-login.png" alt="Panda">

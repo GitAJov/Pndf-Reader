@@ -126,7 +126,8 @@ body {
 }
 
 #form-regis,
-#form-login {
+#form-login,
+#form-forgot-password {
   padding: 25px;
 }
 
@@ -135,7 +136,12 @@ body {
 #form-regis input[type="password"],
 #form-login input[type="text"],
 #form-login input[type="email"],
-#form-login input[type="password"] {
+#form-login input[type="password"],
+#form-forgot-password input[type="email"],
+#form-reset-password input[type="text"],
+#form-reset-password input[type="hidden"],
+#form-reset-password input[type="password"],
+#form-reset-password input[type="text"] {
   width: 100%;
   padding: 10px;
   box-sizing: border-box;
@@ -151,7 +157,9 @@ body {
 }
 
 #form-regis input[type="submit"],
-#form-login input[type="submit"] {
+#form-login input[type="submit"],
+#form-forgot-password input[type="submit"],
+#form-reset-password input[type="submit"] {
   width: 100%;
   padding: 10px;
   margin: 15px;
@@ -258,4 +266,34 @@ p {
 
 .upload-box p {
   margin: 5px 0;
+}
+
+/* Style for the overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.8);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+
+.overlay-content {
+  background: white;
+  padding: 20px;
+  border-radius: 5px;
+  width: 300px;
+  text-align: center;
+}
+
+.closebtn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: black;
+  font-size: 30px;
+  cursor: pointer;
 }
