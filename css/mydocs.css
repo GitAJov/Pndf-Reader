@@ -45,8 +45,7 @@
 }
 
 .document-item:hover {
-  background-color: #f1f1f1;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: inset 1px 1px 6px 0px rgba(0, 0, 0, 0.2);
 }
 
 .document-item span {
@@ -54,17 +53,35 @@
 }
 
 .document-item button {
-  background-color: #007bff;
-  color: white;
-  padding: 8px 16px;
+  background-color: transparent;
+  color: black;
+  padding: 10px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 14px;
+  box-shadow: 1px 1px 6px 0px rgba(0, 0, 0, 0.2);
 }
 
 .document-item button:hover {
-  background-color: #0056b3;
+  background-color: #0000000f;
+  box-shadow: inset 1px 1px 6px 0px rgba(0, 0, 0, 0.2);
+}
+
+button.delete-button {
+  background-color: #cd3e3e;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.1);
+}
+
+button.delete-button:hover {
+  background-color: #8b0000;
+  box-shadow: inset 3px 3px 8px 3px rgba(0, 0, 0, 0.1);
 }
 
 .no-documents {

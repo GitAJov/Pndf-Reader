@@ -824,22 +824,36 @@ function tts(text) {
     speechSynthesis.speak(newUtt);
   };
 
-  document.getElementById("start").addEventListener("click", () => {
+  const btnStart = document.getElementById("start");
+  const btnPause = document.getElementById("pause");
+  const btnResume = document.getElementById("resume");
+  const btnCancel = document.getElementById("cancel");
+
+  btnStart.addEventListener("click", () => {
+    btnStart.style.display = "none";
+    btnPause.style.display = "inline-block";
     speechUtteranceChunker.cancel = false;
     speechUtteranceChunker(utterance, { chunkLength: 120 }, () => {
       // console.log("done");
     });
   });
 
-  document.getElementById("pause").addEventListener("click", () => {
+  btnPause.addEventListener("click", () => {
     window.speechSynthesis.pause();
+    btnPause.style.display = "none";
+    btnResume.style.display = "inline-block";
   });
 
-  document.getElementById("resume").addEventListener("click", () => {
+  btnResume.addEventListener("click", () => {
     window.speechSynthesis.resume();
+    btnResume.style.display = "none";
+    btnPause.style.display = "inline-block";
   });
 
-  document.getElementById("cancel").addEventListener("click", () => {
+  btnCancel.addEventListener("click", () => {
+    btnStart.style.display = "inline-block";
+    btnPause.style.display = "none";
+    btnResume.style.display = "none";
     speechUtteranceChunker.cancel = true;
     window.speechSynthesis.cancel();
   });

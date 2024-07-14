@@ -48,8 +48,8 @@ export async function fetchDocuments() {
         div.innerHTML = `
           <span>${doc.file_name}</span>
           <div>
-          <button onclick="viewDocument(${doc.id})">View</button>
-          <button onclick="confirmDeleteDocument(${doc.id})">Delete</button>
+            <button onclick="viewDocument(${doc.id})">View</button>
+            <button class="delete-button" onclick="confirmDeleteDocument(${doc.id})">Delete</button>
           </div>
         `;
         documentList.appendChild(div);
