@@ -101,6 +101,7 @@ function resetTTS() {
   btnPause.parentNode.replaceChild(newBtnPause, btnPause);
   btnResume.parentNode.replaceChild(newBtnResume, btnResume);
   btnCancel.parentNode.replaceChild(newBtnCancel, btnCancel);
+  newBtnStart.addEventListener("click", handleTextToSpeech);
 }
 
 // <div class="texttospeech-nav">
@@ -125,7 +126,7 @@ async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
     }
     renderingPdf = false;
     console.log("All pages rendered");
-    handleTextToSpeech();
+    // handleTextToSpeech();
   } catch (error) {
     console.error("Error rendering pages:", error);
   }
@@ -175,9 +176,14 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
 
     // Insert the page container at the correct position
     const canvasContainer = document.getElementById("canvas-container");
-    const existingPageContainer = document.getElementById(`page-container-${pageNumber}`);
+    const existingPageContainer = document.getElementById(
+      `page-container-${pageNumber}`
+    );
     if (existingPageContainer) {
-      canvasContainer.insertBefore(pageContainer, existingPageContainer.nextSibling);
+      canvasContainer.insertBefore(
+        pageContainer,
+        existingPageContainer.nextSibling
+      );
       existingPageContainer.remove(); // Remove the old pageContainer
     } else {
       canvasContainer.appendChild(pageContainer); // Append new pageContainer if it doesn't exist
@@ -206,13 +212,13 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
       textContentSource: textContent,
       container: textLayerDiv,
       viewport: viewport,
-      enhanceTextSelection: true // Optional: enhances text selection for better UX
+      enhanceTextSelection: true, // Optional: enhances text selection for better UX
     });
-    
+
     // Apply styles to each span element in the text layer
     await textLayer.render();
     const spans = textLayerDiv.querySelectorAll("span");
-    spans.forEach(span => {
+    spans.forEach((span) => {
       span.style.position = "absolute";
       span.style.color = "transparent"; // Make the text transparent
       span.style.background = "none"; // Ensure no background by default
@@ -220,7 +226,9 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
       // Position each span correctly based on its transform attribute
       const transform = span.style.transform.match(/translate\(([^)]+)\)/);
       if (transform) {
-        const [x, y] = transform[1].split(',').map(coord => parseFloat(coord));
+        const [x, y] = transform[1]
+          .split(",")
+          .map((coord) => parseFloat(coord));
         span.style.left = `${x}px`;
         span.style.top = `${y}px`;
       }
@@ -572,7 +580,8 @@ async function displaySpeedreadText(startIndex = 0) {
       speedreadWordElement.textContent = word;
 
       // Update the current word class
-      let currentWordElements = paragraphContainer.querySelectorAll(".current-word");
+      let currentWordElements =
+        paragraphContainer.querySelectorAll(".current-word");
       currentWordElements.forEach((el) => el.classList.remove("current-word"));
       let currentWordElement = words[i];
       currentWordElement.classList.add("current-word");
@@ -741,15 +750,16 @@ function clearTextMenu() {
 // TEXT TO SPEECH FUNCTIONS ================================
 async function handleTextToSpeech() {
   try {
+    document
+      .getElementById("start")
+      .removeEventListener("click", handleTextToSpeech);
     const numPages = pdfDoc.numPages;
     let allText = [];
 
-    // Iterate through each page and extract text
-    for (let pageNumber = 1; pageNumber <= numPages; pageNumber++) {
+    for (let pageNumber = pageNum; pageNumber <= numPages; pageNumber++) {
       const pageText = await extractParagraphs(pageNumber);
-      allText.push(pageText); // Collect raw text for each page
+      allText.push(pageText);
     }
-
     let formattedTextArray = [];
 
     for (let text of allText) {
@@ -760,6 +770,7 @@ async function handleTextToSpeech() {
     for (let formattedText of formattedTextArray) {
       await tts(formattedText);
     }
+    document.getElementById("start").click();
   } catch (error) {
     console.error("Error handling text to speech:", error);
   }
@@ -825,6 +836,7 @@ function tts(text) {
     });
 
     utterances.push(newUtt);
+    console.log(newUtt); // do not remove. 
     speechSynthesis.speak(newUtt);
   };
 
@@ -846,6 +858,7 @@ function tts(text) {
   document.getElementById("cancel").addEventListener("click", () => {
     speechUtteranceChunker.cancel = true;
     window.speechSynthesis.cancel();
+    resetTTS();
   });
 }
 
@@ -873,7 +886,7 @@ async function fetchBookmark() {
 }
 
 async function updateBookmark() {
-  if (doc_id !== null){
+  if (doc_id !== null) {
     try {
       const response = await fetch("php/update_bookmark.php", {
         method: "POST",
