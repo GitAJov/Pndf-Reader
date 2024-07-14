@@ -9,7 +9,7 @@ const SpeechRecognitionEvent =
 
 const commands = [
   "start",
-  "stop",
+  "cancel",
   "pause",
   "resume",
   "speedread",
