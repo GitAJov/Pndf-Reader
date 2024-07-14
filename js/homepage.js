@@ -93,19 +93,6 @@ function reset() {
 
 function resetTTS() {
   document.getElementById("cancel").click();
-  let btnStart = document.getElementById("start");
-  let btnPause = document.getElementById("pause");
-  let btnResume = document.getElementById("resume");
-  let btnCancel = document.getElementById("cancel");
-  let newBtnStart = btnStart.cloneNode(true);
-  let newBtnPause = btnPause.cloneNode(true);
-  let newBtnResume = btnResume.cloneNode(true);
-  let newBtnCancel = btnCancel.cloneNode(true);
-  btnStart.parentNode.replaceChild(newBtnStart, btnStart);
-  btnPause.parentNode.replaceChild(newBtnPause, btnPause);
-  btnResume.parentNode.replaceChild(newBtnResume, btnResume);
-  btnCancel.parentNode.replaceChild(newBtnCancel, btnCancel);
-  newBtnStart.addEventListener("click", handleTextToSpeech);
 }
 
 // <div class="texttospeech-nav">
@@ -754,9 +741,6 @@ function clearTextMenu() {
 // TEXT TO SPEECH FUNCTIONS ================================
 async function handleTextToSpeech() {
   try {
-    document
-      .getElementById("start")
-      .removeEventListener("click", handleTextToSpeech);
     const numPages = pdfDoc.numPages;
     let allText = [];
 
@@ -941,8 +925,11 @@ async function getCommandfromResponse() {
     case "start":
       document.getElementById("start").click();
       break;
-    case "stop":
+    case "cancel":
       document.getElementById("cancel").click();
+      break;
+    case "handle":
+      handleTextToSpeech();
       break;
     case "pause":
       document.getElementById("pause").click();
@@ -1003,6 +990,9 @@ function addEventListeners() {
   document
     .getElementById("mic")
     .addEventListener("click", getCommandfromResponse);
+  document
+    .getElementById("speak")
+    .addEventListener("click", handleTextToSpeech);
 }
 
 window.addEventListener("scroll", function () {
