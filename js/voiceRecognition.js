@@ -8,13 +8,22 @@ const SpeechRecognitionEvent =
   window.SpeechRecognitionEvent || window.webkitSpeechRecognitionEvent;
 
 const commands = [
+  "text to speech",
+  "speak",
+  "pause",
   "start",
   "cancel",
-  "pause",
+  "stop",
+  "exit",
   "resume",
   "speedread",
   "dyslexia",
   "change",
+  "dark mode",
+  "night mode",
+  "light mode",
+  "jump",
+  "navigate",
 ];
 const grammar = `#JSGF V1.0; grammar commands; public <command> = ${commands.join(
   " | "
@@ -56,4 +65,3 @@ export async function voiceRecognition() {
     };
   });
 }
-

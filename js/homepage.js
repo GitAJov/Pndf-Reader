@@ -77,19 +77,19 @@ async function initializePDF(url) {
 }
 
 function reset() {
-  pageNum = 1,
-  visiblePage = 1,
-  scale = 1.5,
-  canvases = [],
-  renderTasks = [],
-  renderingPdf = false,
-  mode = "",
-  max = 1,
-  loadingTimeout = null,
-  overlayActive = false,
-  isSpeedreadActive = false, 
-  cancelSpeedread = false, 
-  currentWordIndex = 0; 
+  (pageNum = 1),
+    (visiblePage = 1),
+    (scale = 1.5),
+    (canvases = []),
+    (renderTasks = []),
+    (renderingPdf = false),
+    (mode = ""),
+    (max = 1),
+    (loadingTimeout = null),
+    (overlayActive = false),
+    (isSpeedreadActive = false),
+    (cancelSpeedread = false),
+    (currentWordIndex = 0);
 
   document.getElementById("canvas-container").innerHTML = "";
   document.getElementById("pageInput").value = pageNum;
@@ -632,7 +632,8 @@ function dyslexiaMenu() {
   }
 
   // Create font controls
-  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } = createFontSizeElements();
+  const { fontLabel, fontChooser, fontSizeLabel, fontSizeInput } =
+    createFontSizeElements();
   const fontChooserContainer = createLabeledInput("Font:", fontChooser);
   const fontSizeContainer = createLabeledInput("Font Size:", fontSizeInput);
 
@@ -666,7 +667,10 @@ function dyslexiaMenu() {
     option.textContent = alignment.charAt(0).toUpperCase() + alignment.slice(1);
     alignmentChooser.appendChild(option);
   });
-  const alignmentChooserContainer = createLabeledInput("Text Alignment:", alignmentChooser);
+  const alignmentChooserContainer = createLabeledInput(
+    "Text Alignment:",
+    alignmentChooser
+  );
   alignmentContainer.appendChild(alignmentChooserContainer);
   alignmentChooser.addEventListener("change", updateAlignment);
 
@@ -749,7 +753,6 @@ function clearTextMenu() {
     textMenu.removeChild(textMenu.firstChild);
   }
 }
-
 
 // TEXT TO SPEECH FUNCTIONS ================================
 async function handleTextToSpeech() {
@@ -948,18 +951,32 @@ export { initializePDF, onNextPage, onPrevPage };
 // VOICE RECOGNITION ========================================
 async function getCommandfromResponse() {
   const intent = await voiceRecognition();
+  let navigateCheck = intent.split(" ");
+  if(navigateCheck[0] == "navigate" || navigateCheck[0] == "jump" || navigateCheck[0] == "John"){
+    if(navigateCheck[1]=="to" || navigateCheck[1]=="two"){
+      navigateCheck[1] = "2";
+    } 
+    let pageNum = parseInt(navigateCheck[1]);
+    if(!isNaN(pageNum) && pageNum <= max && pageNum >= 1){
+      document.getElementById("pageInput").value = pageNum;
+      pageInput();
+    }
+  }
   switch (intent) {
-    case "start":
-      document.getElementById("start").click();
-      break;
-    case "cancel":
-      document.getElementById("cancel").click();
-      break;
-    case "handle":
+    case "text to speech":
+    case "speak":
       handleTextToSpeech();
       break;
     case "pause":
       document.getElementById("pause").click();
+      break;
+    case "start":
+      document.getElementById("start").click();
+      break;
+    case "cancel":
+    case "stop":
+    case "exit":
+      document.getElementById("cancel").click();
       break;
     case "resume":
       document.getElementById("resume").click();
