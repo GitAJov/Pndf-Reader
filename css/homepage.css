@@ -208,6 +208,7 @@ body.dark-mode {
 #pageInput {
   font-size: 20px;
   border: transparent;
+  background-color: transparent;
   width: 40px;
   text-align: right;
   font-family: 'Comic Sans MS';
@@ -239,6 +240,10 @@ body.dark-mode #navigate button {
 
 body.dark-mode #navigate button:hover {
   background-color: #444444;
+}
+
+body.dark-mode #pageInput {
+  color: #ffffff;
 }
 
 /* Other Styles */

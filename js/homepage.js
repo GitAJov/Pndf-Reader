@@ -831,20 +831,22 @@ async function fetchBookmark() {
 }
 
 async function updateBookmark() {
-  try {
-    const response = await fetch("php/update_bookmark.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `doc_id=${doc_id}&last_page=${pageNum}`,
-    });
-    const result = await response.json();
-    if (result.status !== "success") {
-      console.error("Failed to update bookmark:", result.message);
+  if (doc_id !== null){
+    try {
+      const response = await fetch("php/update_bookmark.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `doc_id=${doc_id}&last_page=${pageNum}`,
+      });
+      const result = await response.json();
+      if (result.status !== "success") {
+        console.error("Failed to update bookmark:", result.message);
+      }
+    } catch (error) {
+      console.error("Error updating bookmark:", error);
     }
-  } catch (error) {
-    console.error("Error updating bookmark:", error);
   }
 }
 
