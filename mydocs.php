@@ -56,7 +56,7 @@ $conn->close();
           </button>
           <div id="profileDropdown" class="dropdown-content">
             <a href="profile.php">Profile</a>
-            <a href="logout.php">Logout</a>
+            <a href="php/logout.php">Logout</a>
           </div>
         </div>
       </div>
