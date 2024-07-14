@@ -1,11 +1,4 @@
-body {
-  background-color: #ffffff;
-  font-family: "Comic Sans MS";
-  margin: 0;
-  transition: background-color 0.3s, color 0.3s;
-  overflow-y: hidden;
-}
-
+/* Light Mode Styles */
 #headerMydocs {
   display: flex;
   flex-direction: row;
@@ -72,4 +65,73 @@ body {
 
 .document-item button:hover {
   background-color: #0056b3;
+}
+
+.no-documents {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  text-align: center;
+  user-select: none;
+}
+
+.no-documents img {
+  width: 20vw; /* Adjust as needed */
+  margin: 40px;
+  border-radius: 40px;
+}
+
+.no-documents p {
+  font-size: 30px; /* Adjust as needed */
+  color: #000000; /* Adjust as needed */
+}
+
+/* Dark Mode Styles */
+body.dark-mode #headerMydocs {
+  color: white;
+}
+
+body.dark-mode #headerTxt {
+  color: white;
+}
+
+body.dark-mode .fileUpload {
+  background-color: #388e3c;
+  color: white;
+}
+
+body.dark-mode .fileUpload:hover {
+  background-color: #2e7d32;
+}
+
+body.dark-mode #documentList {
+  color: white;
+}
+
+body.dark-mode .document-item {
+  background-color: #1a1a1a;
+  border: 1px solid #666;
+}
+
+body.dark-mode .document-item:hover {
+  background-color: #333;
+  box-shadow: 0 2px 8px rgba(255, 255, 255, 0.1);
+}
+
+body.dark-mode .document-item span {
+  color: white;
+}
+
+body.dark-mode .document-item button {
+  background-color: transparent;
+}
+
+body.dark-mode .document-item button:hover {
+  background-color: #555;
+}
+
+body.dark-mode .no-documents p {
+  color: #ffffff; /* Adjust as needed */
 }

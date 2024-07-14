@@ -8,10 +8,10 @@ $api_key = $_ENV['MY_API_KEY'];
 session_start();
 $isLoggedIn = isset($_SESSION['user_id']);
 $username = '';
-$file_data_base64 = '';
+$file_path = '';
 
 if ($isLoggedIn) {
-  include 'database.php';
+  include 'php/database.php';
 
   $user_id = $_SESSION['user_id'];
   $sql = "SELECT username FROM users WHERE id = ?";
@@ -22,17 +22,15 @@ if ($isLoggedIn) {
   $stmt->fetch();
   $stmt->close();
 
-  // Check if doc_id is set and get the document data
+  // Check if doc_id is set and get the document path
   if (isset($_GET['doc_id'])) {
     $doc_id = $_GET['doc_id'];
-    $doc_sql = "SELECT file_data FROM pdf_files WHERE id = ? AND user_id = ?";
+    $doc_sql = "SELECT file_path FROM pdf_files WHERE id = ? AND user_id = ?";
     $doc_stmt = $conn->prepare($doc_sql);
     $doc_stmt->bind_param("ii", $doc_id, $user_id);
     $doc_stmt->execute();
-    $doc_stmt->bind_result($file_data);
-    if ($doc_stmt->fetch()) {
-      $file_data_base64 = base64_encode($file_data);
-    }
+    $doc_stmt->bind_result($file_path);
+    $doc_stmt->fetch();
     $doc_stmt->close();
   }
   $conn->close();
@@ -47,11 +45,11 @@ if ($isLoggedIn) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Reader</title>
   <script type="importmap">
-      {
-        "imports": {
-          "@google/generative-ai": "https://esm.run/@google/generative-ai"
-        }
+    {
+      "imports": {
+        "@google/generative-ai": "https://esm.run/@google/generative-ai"
       }
+    }
   </script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
   <script src="js/homepage.js" type="module"></script>
@@ -62,7 +60,9 @@ if ($isLoggedIn) {
 
   <script type="module">
     import { initializeGemini } from './js/gemini.js';
+    import { initializePDF, onNextPage, onPrevPage } from './js/homepage.js';  // Import initializePDF function
     const apiKey = "<?php echo htmlspecialchars($api_key); ?>";
+
     function getParameterByName(name, url = window.location.href) {
       name = name.replace(/[\[\]]/g, '\\$&');
       let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
@@ -71,14 +71,32 @@ if ($isLoggedIn) {
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
+
     window.onload = function () {
       let successMessage = getParameterByName('success');
       if (successMessage) {
         alert(successMessage);
       }
       initializeGemini(apiKey);
+      const filePath = "<?php echo $file_path; ?>";
+      if (filePath) {
+        //console.log("Initializing PDF with file path: " + filePath);
+        initializePDF(filePath);
+
+        // Hide main menu, show mainContent and show footbar if doc_id is present
+        document.getElementById('mainMenu').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'flex';
+        document.getElementById('footbar').style.display = 'flex';
+      }
     };
+
+    document.addEventListener('DOMContentLoaded', (event) => {
+      document.getElementById('next').addEventListener('click', onNextPage);
+      document.getElementById('prev').addEventListener('click', onPrevPage);
+    });
   </script>
+
+
 </head>
 
 <body>
@@ -113,7 +131,7 @@ if ($isLoggedIn) {
           <div id="profileDropdown" class="dropdown-content">
             <?php if ($isLoggedIn): ?>
               <a href="profile.php">Profile</a>
-              <a href="logout.php">Logout</a>
+              <a href="./php/logout.php">Logout</a>
             <?php else: ?>
               <a href="login.php">Login</a>
             <?php endif; ?>
@@ -147,7 +165,7 @@ if ($isLoggedIn) {
         <div class="upload-box">
           <button id="choosefile" class="choose-file-button">Choose File</button>
           <p>... or drop a file here</p>
-          <p>Files stay private. Automatically deletes after 2 hours</p>
+          <p>Files remain private and are automatically deleted after use.</p>
         </div>
         <img src="Resources/panda-upload.png" alt="Panda Image" class="panda-upload">
       </div>
@@ -179,6 +197,13 @@ if ($isLoggedIn) {
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay">
+      <img src="Resources/panda-slide.gif" alt="Loading..." />
+      <label>Rendering...</label>
     </div>
   </div>
 
@@ -231,15 +256,6 @@ if ($isLoggedIn) {
         pauseButton.style.display = 'none';
         resumeButton.style.display = 'none';
       });
-
-      // Check if there is a document to load
-      const fileDataBase64 = "<?php echo isset($file_data_base64) ? $file_data_base64 : ''; ?>";
-      if (fileDataBase64) {
-        const pdfData = atob(fileDataBase64);
-        const pdfAsArray = new Uint8Array(pdfData.split("").map(c => c.charCodeAt(0)));
-        document.getElementById('mainMenu').style.display = 'none';
-        document.getElementById('mainContent').style.display = 'block';
-      }
     });
   </script>
 </body>

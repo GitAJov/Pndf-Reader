@@ -8,13 +8,19 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 let pdfDoc = null,
   pageNum = 1,
+  visiblePage = 1,
   scale = 1.5,
   canvases = [],
   renderTasks = [],
   renderingPdf = false,
   mode = "",
   max = 1,
+  loadingTimeout = null,
   overlayActive = false;
+
+// Get doc_id from URL
+const urlParams = new URLSearchParams(window.location.search);
+const doc_id = urlParams.get('doc_id');
 
 // PDF RELATED FUNCTIONS ===================================
 async function loadPDF(url) {
@@ -30,6 +36,7 @@ async function loadPDF(url) {
 
 async function initializePDF(url) {
   reset();
+  showLoadingOverlay(); // Show loading overlay
   let tempDoc = await loadPDF(url);
   pdfDoc = tempDoc;
   if (pdfDoc) {
@@ -40,7 +47,21 @@ async function initializePDF(url) {
     // Add scroll event listener to update pageNum based on visible page
     const canvasContainer = document.getElementById("canvas-container");
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
+    fetchBookmark();
+    
+    // Hide main menu, show main content and footbar if a doc is present
+    document.getElementById('mainMenu').style.display = 'none';
+    document.getElementById('mainContent').style.display = 'flex';
+    document.getElementById('footbar').style.display = 'flex';
+  } else {
+    // Hide loading overlay and keep the main menu visible
+    hideLoadingOverlay();
   }
+  // Ensure overlay stays for at least 3 seconds
+  clearTimeout(loadingTimeout);
+  loadingTimeout = setTimeout(() => {
+    hideLoadingOverlay();
+  }, 3000);
 }
 
 function reset() {
@@ -130,13 +151,14 @@ function updatePageNumBasedOnScroll() {
   const scrollPosition = canvasContainer.scrollTop;
   const viewportHeight = canvasContainer.clientHeight;
   const viewportMidpoint = scrollPosition + viewportHeight / 2;
-  let visiblePage = 1;
 
   // Calculate the visible page based on the midpoint of the viewport
   for (let i = 0; i < canvases.length; i++) {
     const canvas = canvases[i];
     const pageTop = canvas.offsetTop;
-    const pageBottom = pageTop + canvas.height;
+    //const pageBottom = pageTop + canvas.height;
+    const pageBottom = pageTop + canvas.clientHeight; // Use clientHeight instead of height for more accurate measurement
+
 
     if (viewportMidpoint >= pageTop && viewportMidpoint < pageBottom) {
       visiblePage = i + 1; // Pages are 1-indexed
@@ -147,6 +169,7 @@ function updatePageNumBasedOnScroll() {
   if (visiblePage !== pageNum) {
     pageNum = visiblePage;
     document.getElementById("pageInput").value = pageNum;
+    updateBookmark();
   }
 }
 
@@ -170,8 +193,10 @@ function onNextPage() {
   }
 }
 
-function pressPrev() {
+async function pressPrev() {
   if (overlayActive) {
+    cancelSpeedread = true; // Set the cancel flag
+    await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to ensure the cancellation
     if (mode === "dyslexia") {
       onPrevPage();
       displayDyslexiaText();
@@ -182,8 +207,10 @@ function pressPrev() {
   }
 }
 
-function pressNext() {
+async function pressNext() {
   if (overlayActive) {
+    cancelSpeedread = true; // Set the cancel flag
+    await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to ensure the cancellation
     if (mode === "dyslexia") {
       console.log("Next page button pressed!");
       onNextPage();
@@ -297,13 +324,10 @@ function chooseFile() {
       pdfDoc = URL.createObjectURL(file);
       if (!renderingPdf) {
         initializePDF(pdfDoc);
-        document.getElementById("footbar").style.display = "flex";
       }
     }
   });
   inputElement.click();
-  document.getElementById("mainMenu").style.display = "none";
-  document.getElementById("mainContent").style.display = "flex";
 }
 
 function createFontSizeElements() {
@@ -393,7 +417,14 @@ function speedTextMenu() {
   buttonNext.addEventListener("click", pressNext);
 }
 
+let isSpeedreadActive = false; // Flag to indicate if speed reading is active
+let cancelSpeedread = false; // Flag to cancel the speed reading process
+
 async function displaySpeedreadText() {
+  if (isSpeedreadActive) return; // Exit if already running
+  isSpeedreadActive = true; // Set the flag
+  cancelSpeedread = false; // Reset the cancel flag
+
   try {
     let speedreadWordElement = document.getElementById("speedreadText");
     let paragraphContainer = document.getElementById("paragraphContainer");
@@ -405,7 +436,7 @@ async function displaySpeedreadText() {
 
     paragraphContainer.textContent = ""; // Clear previous content
 
-    // // Apply font settings
+    // Apply font settings
     let selectedFont = document.getElementById("fontChooser").value;
     let selectedFontSize = document.getElementById("fontSize").value;
     speedreadTextElement.style.fontFamily = selectedFont;
@@ -429,17 +460,23 @@ async function displaySpeedreadText() {
     });
     paragraphContainer.appendChild(fragment);
 
+    let wpmInput = document.getElementById("wpm");
+    let wpm = wpmInput ? parseInt(wpmInput.value, 10) : 300; // Default to 300 if wpmInput is not found
+    //console.log(`Current WPM: ${wpm}`); // Debugging WPM value
+
+    let delay = 60000 / wpm;
+    //console.log(`Delay between words: ${delay} ms`); // Debugging delay value
+
     let words = paragraphContainer.querySelectorAll("span");
     for (let i = 0; i < words.length; i++) {
-      if (!overlayActive) break;
+      if (!overlayActive || cancelSpeedread) break; // Check cancel flag
       let word = words[i].textContent.trim();
 
       // Display current word with underline
       speedreadWordElement.textContent = word;
 
       // Update the current word class
-      let currentWordElements =
-        paragraphContainer.querySelectorAll(".current-word");
+      let currentWordElements = paragraphContainer.querySelectorAll(".current-word");
       currentWordElements.forEach((el) => el.classList.remove("current-word"));
       let currentWordElement = words[i];
       currentWordElement.classList.add("current-word");
@@ -453,12 +490,12 @@ async function displaySpeedreadText() {
         }
       }
 
-      let wpm = document.getElementById("wpm").value;
-      let delay = 60000 / wpm;
       await new Promise((resolve) => setTimeout(resolve, delay));
     }
   } catch (error) {
     console.error("Error displaying text:", error);
+  } finally {
+    isSpeedreadActive = false; // Reset the flag
   }
 }
 
@@ -744,6 +781,57 @@ window.addEventListener("scroll", function () {
     navigate.classList.remove("fixed");
   }
 });
+
+async function fetchBookmark() {
+  if (doc_id !== null) {
+    try {
+      const response = await fetch(`php/get_bookmark.php?doc_id=${doc_id}`);
+      const result = await response.json();
+      if (result.status === 'success') {
+        pageNum = result.last_page;
+        document.getElementById("page_num").textContent = pageNum;
+        const canvas = canvases[pageNum - 1];
+        if (canvas) {
+          canvas.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      } else {
+        console.error('Failed to fetch bookmark:', result.message);
+      }
+    } catch (error) {
+      console.error('Error fetching bookmark:', error);
+    }
+  }
+}
+
+async function updateBookmark() {
+  try {
+    const response = await fetch('php/update_bookmark.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/x-www-form-urlencoded'
+      },
+      body: `doc_id=${doc_id}&last_page=${pageNum}`
+    });
+    const result = await response.json();
+    if (result.status !== 'success') {
+      console.error('Failed to update bookmark:', result.message);
+    }
+  } catch (error) {
+    console.error('Error updating bookmark:', error);
+  }
+}
+
+document.addEventListener('DOMContentLoaded', fetchBookmark);
+
+function showLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'flex';
+}
+
+function hideLoadingOverlay() {
+  document.getElementById('loadingOverlay').style.display = 'none';
+}
+
+export { initializePDF, onNextPage, onPrevPage };
 
 // MAIN FUNCTION ===========================================
 async function main() {

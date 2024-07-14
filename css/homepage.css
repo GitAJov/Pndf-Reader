@@ -55,7 +55,9 @@ body {
 }
 
 .dropbtn,
-.filebtn {
+.filebtn,
+.homebtn,
+.docsbtn {
   background-color: #f4f4f4;
   border: none;
   cursor: pointer;
@@ -127,7 +129,9 @@ body.dark-mode {
 }
 
 .dropbtn.dark-mode,
-.filebtn.dark-mode {
+.filebtn.dark-mode,
+.homebtn.dark-mode,
+.docsbtn.dark-mode {
   background-color: #333333;
   color: #ffffff;
 }
@@ -457,7 +461,6 @@ body.speedread-active {
 /* End of Container Changes */
 
 
-
 .current-word {
   text-decoration: underline;
 }
@@ -473,6 +476,7 @@ body.speedread-active {
   border: 1px solid #ccc; /* Optional: add a border for better visibility */
   overflow-y: auto;
   height: 70vh;
+  width: 80vw;
 }
 
 #pdf-page {
@@ -564,6 +568,16 @@ body.speedread-active {
   background-color: #45a049;
 }
 
+/* Dark Mode Styles */
+body.dark-mode .choose-file-button {
+  background-color: #388e3c;
+  color: white;
+}
+
+body.dark-mode .choose-file-button:hover {
+  background-color: #2e7d32;
+}
+
 .upload-box p {
   margin: 5px 0;
 }
@@ -602,4 +616,32 @@ body.speedread-active {
 .material-icons {
   vertical-align: middle;
   font-size: 24px;
+}
+
+/* Loading Overlay */
+#loadingOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.9);
+  display: none;
+  flex-direction: column;
+
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+#loadingOverlay label {
+  color: white;
+  font-size: 40px;
+  font-weight: bold;
+  margin: 20px;
+}
+
+#loadingOverlay img {
+  border-radius: 30px;
+  width: 30vw;
 }

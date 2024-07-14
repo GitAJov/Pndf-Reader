@@ -1,7 +1,7 @@
 <?php
 session_start();
 if (isset($_SESSION['user_id'])) {
-    header("Location: homepage.php");
+    header("Location: index.php");
     exit();
 }
 ?>
@@ -92,7 +92,7 @@ if (isset($_SESSION['user_id'])) {
                 <label id="error-message" style="color: red; font-size: 20px;"></label>
             </div>
         </div>
-        <form action="submit.php" id="form-regis" method="post" onsubmit="return validateForm()">
+        <form action="php/submit.php" id="form-regis" method="post" onsubmit="return validateForm()">
             <input type="email" id="email" name="email" placeholder="Enter your email address" required>
             <input type="text" id="username" name="username" placeholder="Choose a username" required>
             <input type="password" id="password" name="password" placeholder="Create a password" required>
