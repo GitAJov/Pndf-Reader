@@ -205,6 +205,14 @@ body.dark-mode {
   background-color: #ddd;
 }
 
+#pageInput {
+  font-size: 20px;
+  border: transparent;
+  width: 40px;
+  text-align: right;
+  font-family: 'Comic Sans MS';
+}
+
 /* Dark Mode Navigation Styles */
 body.dark-mode #navigate {
   color: #ffffff;
