@@ -496,10 +496,12 @@ body.speedread-active {
 #canvas-container {
   display: flex;
   flex-direction: column;
+  align-items: center;
   border: 1px solid #ccc; /* Optional: add a border for better visibility */
   overflow-y: auto;
   height: 70vh;
-  width: 80vw;
+  max-width: 80vw;
+  min-width: 60vw;
 }
 
 #pdf-page {
@@ -510,6 +512,17 @@ body.speedread-active {
   max-height: 400px; /* or any height you prefer */
   overflow-y: auto;
   padding: 10px;
+}
+
+/* Style for selected text */
+::selection {
+  background: yellow; /* Highlight color */
+  color: black; /* Text color in highlight */
+}
+
+/* Style for text while being clicked and held */
+span:active {
+  background: orange; /* Background color while holding click */
 }
 
 

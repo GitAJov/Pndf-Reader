@@ -110,6 +110,14 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
     const page = await pdf.getPage(pageNumber);
     const viewport = page.getViewport({ scale: scale });
 
+    // Create a container for the canvas and text layer
+    const pageContainer = document.createElement("div");
+    pageContainer.className = "pdf-page-container";
+    pageContainer.id = `page-container-${pageNumber}`;
+    pageContainer.style.position = "relative";
+    pageContainer.style.width = `${viewport.width}px`;
+    pageContainer.style.height = `${viewport.height}px`;
+
     // Create a new canvas element for this page
     const canvas = document.createElement("canvas");
     canvas.id = `page-${pageNumber}`;
@@ -117,14 +125,30 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
-    // Insert the new canvas at the correct position
+    // Create a text layer div for this page
+    const textLayerDiv = document.createElement("div");
+    textLayerDiv.className = "textLayer";
+    textLayerDiv.id = `textLayer-${pageNumber}`;
+    textLayerDiv.style.position = "absolute";
+    textLayerDiv.style.top = "0";
+    textLayerDiv.style.left = "0";
+    textLayerDiv.style.height = `${viewport.height}px`;
+    textLayerDiv.style.width = `${viewport.width}px`;
+    textLayerDiv.style.zIndex = "1";
+    textLayerDiv.style.setProperty("--scale-factor", scale);
+
+    // Append the canvas and text layer to the page container
+    pageContainer.appendChild(canvas);
+    pageContainer.appendChild(textLayerDiv);
+
+    // Insert the page container at the correct position
     const canvasContainer = document.getElementById("canvas-container");
-    const existingCanvas = document.getElementById(`page-${pageNumber}`);
-    if (existingCanvas) {
-      canvasContainer.insertBefore(canvas, existingCanvas.nextSibling);
-      existingCanvas.remove(); // Remove the old canvas
+    const existingPageContainer = document.getElementById(`page-container-${pageNumber}`);
+    if (existingPageContainer) {
+      canvasContainer.insertBefore(pageContainer, existingPageContainer.nextSibling);
+      existingPageContainer.remove(); // Remove the old pageContainer
     } else {
-      canvasContainer.appendChild(canvas); // Append new canvas if it doesn't exist
+      canvasContainer.appendChild(pageContainer); // Append new pageContainer if it doesn't exist
     }
 
     canvases.push(canvas); // Add canvas to the array
@@ -144,6 +168,35 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
     renderTasks[pageNumber - 1] = page.render(renderContext);
     await renderTasks[pageNumber - 1].promise;
 
+    // Render the text layer using the new TextLayer API
+    const textContent = await page.getTextContent();
+    const textLayer = new pdfjsLib.TextLayer({
+      textContentSource: textContent,
+      container: textLayerDiv,
+      viewport: viewport,
+      enhanceTextSelection: true // Optional: enhances text selection for better UX
+    });
+    
+    // Apply styles to each span element in the text layer
+    await textLayer.render();
+    const spans = textLayerDiv.querySelectorAll("span");
+    spans.forEach(span => {
+      span.style.position = "absolute";
+      span.style.color = "transparent"; // Make the text transparent
+      span.style.background = "none"; // Ensure no background by default
+
+      // Position each span correctly based on its transform attribute
+      const transform = span.style.transform.match(/translate\(([^)]+)\)/);
+      if (transform) {
+        const [x, y] = transform[1].split(',').map(coord => parseFloat(coord));
+        span.style.left = `${x}px`;
+        span.style.top = `${y}px`;
+      }
+
+      // Reset transform to prevent double translation
+      span.style.transform = "none";
+    });
+
     console.log(`Page ${pageNumber} rendered`);
   } catch (error) {
     console.error("Error rendering page:", error);
@@ -160,9 +213,9 @@ function updatePageNumBasedOnScroll() {
   // Calculate the visible page based on the midpoint of the viewport
   for (let i = 0; i < canvases.length; i++) {
     const canvas = canvases[i];
-    const pageTop = canvas.offsetTop;
-    //const pageBottom = pageTop + canvas.height;
-    const pageBottom = pageTop + canvas.clientHeight; // Use clientHeight instead of height for more accurate measurement
+    const pageContainer = canvas.parentElement;
+    const pageTop = pageContainer.offsetTop;
+    const pageBottom = pageTop + pageContainer.clientHeight; // Use clientHeight instead of height for more accurate measurement
 
     if (viewportMidpoint >= pageTop && viewportMidpoint < pageBottom) {
       visiblePage = i + 1; // Pages are 1-indexed
