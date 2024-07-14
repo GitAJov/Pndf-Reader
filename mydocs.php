@@ -55,7 +55,7 @@ $conn->close();
             <img src="Resources/profile-icon.png" alt="Profile Icon" class="profile-icon">
           </button>
           <div id="profileDropdown" class="dropdown-content">
-            <a href="profile.php">Profile</a>
+            <!-- <a href="profile.php">Profile</a> -->
             <a href="php/logout.php">Logout</a>
           </div>
         </div>
