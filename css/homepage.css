@@ -326,7 +326,7 @@ body.dark-mode #pageInput {
 }
 
 #textMenu label {
-  margin-right: 5px;
+  margin-right: 10px;
   color: #333; /* Light mode text color */
 }
 
@@ -439,6 +439,13 @@ body.dark-mode #pageInput {
 
 .textMenu-buttons.dark-mode button:hover {
   background-color: #666; /* Dark mode hover */
+}
+
+/* Container for labeled inputs */
+.labeled-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
 }
 
 /* Start of Container Changes */

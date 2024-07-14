@@ -223,11 +223,11 @@ if ($isLoggedIn) {
         </div>
         <div id="footbar">
           <div class="texttospeech-nav">
-            <button id="speak"><i class="material-icons">speak</i></button>
-            <button id="start"><i class="material-icons">play_arrow</i></button>
-            <button id="pause"><i class="material-icons">pause</i></button>
-            <button id="resume"><i class="material-icons">play_arrow</i></button>
-            <button id="cancel"><i class="material-icons">stop</i></button>
+            <button id="speak" style="display:inline-block;"><i class="material-icons">headphones</i></button>
+            <button id="start" style="display:none;"><i class="material-icons">play_arrow</i></button>
+            <button id="pause" style="display:none;"><i class="material-icons">pause</i></button>
+            <button id="resume" style="display:none;"><i class="material-icons">play_arrow</i></button>
+            <button id="cancel" style="display:none;"><i class="material-icons">stop</i></button>
             <button id="mic"><i class="material-icons">mic</i></button>
           </div>
         </div>
