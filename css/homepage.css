@@ -199,6 +199,7 @@ body.dark-mode {
   background-color: #f4f4f4; /* Light mode button */
   color: #333; /* Light mode text color */
   transition: background-color 0.3s, color 0.3s;
+  cursor: pointer;
 }
 
 #navigate button:hover {
