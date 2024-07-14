@@ -105,7 +105,7 @@ if ($isLoggedIn) {
       <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
       <div class="nav-right">
         <button id="docs" class="docsbtn" onclick="window.location.href='mydocs.php'">My Documents</button>
-        <button id="file" class="filebtn">File</button>
+        <button id="file" class="filebtn">New File</button>
 
         <div class="dropdown">
           <button class="dropbtn">Tools

@@ -21,7 +21,7 @@ let pdfDoc = null,
 
 // Get doc_id from URL
 const urlParams = new URLSearchParams(window.location.search);
-const doc_id = urlParams.get("doc_id");
+let doc_id = urlParams.get("doc_id");
 
 // PDF RELATED FUNCTIONS ===================================
 async function loadPDF(url) {
@@ -48,7 +48,12 @@ async function initializePDF(url) {
     // Add scroll event listener to update pageNum based on visible page
     const canvasContainer = document.getElementById("canvas-container");
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
-    fetchBookmark();
+
+    if (doc_id !== null) {
+      fetchBookmark(); // Only fetch bookmark if doc_id is not null
+    } else {
+      document.getElementById("pageInput").value = 1; // Reset page input to 1
+    }
 
     // Hide main menu, show main content and footbar if a doc is present
     document.getElementById("mainMenu").style.display = "none";
@@ -137,6 +142,14 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
     const page = await pdf.getPage(pageNumber);
     const viewport = page.getViewport({ scale: scale });
 
+    // Create a container for the canvas and text layer
+    const pageContainer = document.createElement("div");
+    pageContainer.className = "pdf-page-container";
+    pageContainer.id = `page-container-${pageNumber}`;
+    pageContainer.style.position = "relative";
+    pageContainer.style.width = `${viewport.width}px`;
+    pageContainer.style.height = `${viewport.height}px`;
+
     // Create a new canvas element for this page
     const canvas = document.createElement("canvas");
     canvas.id = `page-${pageNumber}`;
@@ -144,14 +157,30 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
     canvas.height = viewport.height;
     canvas.width = viewport.width;
 
-    // Insert the new canvas at the correct position
+    // Create a text layer div for this page
+    const textLayerDiv = document.createElement("div");
+    textLayerDiv.className = "textLayer";
+    textLayerDiv.id = `textLayer-${pageNumber}`;
+    textLayerDiv.style.position = "absolute";
+    textLayerDiv.style.top = "0";
+    textLayerDiv.style.left = "0";
+    textLayerDiv.style.height = `${viewport.height}px`;
+    textLayerDiv.style.width = `${viewport.width}px`;
+    textLayerDiv.style.zIndex = "1";
+    textLayerDiv.style.setProperty("--scale-factor", scale);
+
+    // Append the canvas and text layer to the page container
+    pageContainer.appendChild(canvas);
+    pageContainer.appendChild(textLayerDiv);
+
+    // Insert the page container at the correct position
     const canvasContainer = document.getElementById("canvas-container");
-    const existingCanvas = document.getElementById(`page-${pageNumber}`);
-    if (existingCanvas) {
-      canvasContainer.insertBefore(canvas, existingCanvas.nextSibling);
-      existingCanvas.remove(); // Remove the old canvas
+    const existingPageContainer = document.getElementById(`page-container-${pageNumber}`);
+    if (existingPageContainer) {
+      canvasContainer.insertBefore(pageContainer, existingPageContainer.nextSibling);
+      existingPageContainer.remove(); // Remove the old pageContainer
     } else {
-      canvasContainer.appendChild(canvas); // Append new canvas if it doesn't exist
+      canvasContainer.appendChild(pageContainer); // Append new pageContainer if it doesn't exist
     }
 
     canvases.push(canvas); // Add canvas to the array
@@ -171,6 +200,35 @@ async function renderPage(pdf = pdfDoc, pageNumber = pageNum, scale = 1.5) {
     renderTasks[pageNumber - 1] = page.render(renderContext);
     await renderTasks[pageNumber - 1].promise;
 
+    // Render the text layer using the new TextLayer API
+    const textContent = await page.getTextContent();
+    const textLayer = new pdfjsLib.TextLayer({
+      textContentSource: textContent,
+      container: textLayerDiv,
+      viewport: viewport,
+      enhanceTextSelection: true // Optional: enhances text selection for better UX
+    });
+    
+    // Apply styles to each span element in the text layer
+    await textLayer.render();
+    const spans = textLayerDiv.querySelectorAll("span");
+    spans.forEach(span => {
+      span.style.position = "absolute";
+      span.style.color = "transparent"; // Make the text transparent
+      span.style.background = "none"; // Ensure no background by default
+
+      // Position each span correctly based on its transform attribute
+      const transform = span.style.transform.match(/translate\(([^)]+)\)/);
+      if (transform) {
+        const [x, y] = transform[1].split(',').map(coord => parseFloat(coord));
+        span.style.left = `${x}px`;
+        span.style.top = `${y}px`;
+      }
+
+      // Reset transform to prevent double translation
+      span.style.transform = "none";
+    });
+
     console.log(`Page ${pageNumber} rendered`);
   } catch (error) {
     console.error("Error rendering page:", error);
@@ -187,9 +245,9 @@ function updatePageNumBasedOnScroll() {
   // Calculate the visible page based on the midpoint of the viewport
   for (let i = 0; i < canvases.length; i++) {
     const canvas = canvases[i];
-    const pageTop = canvas.offsetTop;
-    //const pageBottom = pageTop + canvas.height;
-    const pageBottom = pageTop + canvas.clientHeight; // Use clientHeight instead of height for more accurate measurement
+    const pageContainer = canvas.parentElement;
+    const pageTop = pageContainer.offsetTop;
+    const pageBottom = pageTop + pageContainer.clientHeight; // Use clientHeight instead of height for more accurate measurement
 
     if (viewportMidpoint >= pageTop && viewportMidpoint < pageBottom) {
       visiblePage = i + 1; // Pages are 1-indexed
@@ -353,6 +411,7 @@ function chooseFile() {
     if (files.length > 0) {
       const file = files[0];
       pdfDoc = URL.createObjectURL(file);
+      doc_id = null; // Set doc_id to null to indicate a new file is chosen
       if (!renderingPdf) {
         initializePDF(pdfDoc);
       }
@@ -450,8 +509,9 @@ function speedTextMenu() {
 
 let isSpeedreadActive = false; // Flag to indicate if speed reading is active
 let cancelSpeedread = false; // Flag to cancel the speed reading process
+let currentWordIndex = 0; // Track the current word index
 
-async function displaySpeedreadText() {
+async function displaySpeedreadText(startIndex = 0) {
   if (isSpeedreadActive) return; // Exit if already running
   isSpeedreadActive = true; // Set the flag
   cancelSpeedread = false; // Reset the cancel flag
@@ -475,15 +535,19 @@ async function displaySpeedreadText() {
 
     // Create a fragment to hold the lines and words
     let fragment = document.createDocumentFragment();
+    let wordIndex = 0; // Initialize word index
     lines.forEach((line) => {
       let lineElement = document.createElement("div");
       let splitLine = line.split(" ").filter(function (el) {
         return el != "";
       });
 
-      splitLine.forEach((word, index) => {
+      splitLine.forEach((word) => {
         let span = document.createElement("span");
         span.textContent = word + " ";
+        span.dataset.index = wordIndex++;
+        span.addEventListener("click", () => jumpToWord(span.dataset.index));
+        span.classList.add("clickable-word");
         lineElement.appendChild(span);
       });
 
@@ -499,16 +563,16 @@ async function displaySpeedreadText() {
     //console.log(`Delay between words: ${delay} ms`); // Debugging delay value
 
     let words = paragraphContainer.querySelectorAll("span");
-    for (let i = 0; i < words.length; i++) {
+    for (let i = startIndex; i < words.length; i++) {
       if (!overlayActive || cancelSpeedread) break; // Check cancel flag
+      currentWordIndex = i; // Update the current word index
       let word = words[i].textContent.trim();
 
       // Display current word with underline
       speedreadWordElement.textContent = word;
 
       // Update the current word class
-      let currentWordElements =
-        paragraphContainer.querySelectorAll(".current-word");
+      let currentWordElements = paragraphContainer.querySelectorAll(".current-word");
       currentWordElements.forEach((el) => el.classList.remove("current-word"));
       let currentWordElement = words[i];
       currentWordElement.classList.add("current-word");
@@ -530,6 +594,20 @@ async function displaySpeedreadText() {
     isSpeedreadActive = false; // Reset the flag
   }
 }
+
+function jumpToWord(index) {
+  cancelSpeedread = true;
+  setTimeout(() => {
+    currentWordIndex = parseInt(index);
+    displaySpeedreadText(currentWordIndex);
+  }, 200); // Small delay to ensure the cancellation
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".clickable-word").forEach((span) => {
+    span.addEventListener("click", () => jumpToWord(span.dataset.index));
+  });
+});
 
 function dyslexia() {
   dyslexiaMenu();
@@ -795,20 +873,22 @@ async function fetchBookmark() {
 }
 
 async function updateBookmark() {
-  try {
-    const response = await fetch("php/update_bookmark.php", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: `doc_id=${doc_id}&last_page=${pageNum}`,
-    });
-    const result = await response.json();
-    if (result.status !== "success") {
-      console.error("Failed to update bookmark:", result.message);
+  if (doc_id !== null){
+    try {
+      const response = await fetch("php/update_bookmark.php", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/x-www-form-urlencoded",
+        },
+        body: `doc_id=${doc_id}&last_page=${pageNum}`,
+      });
+      const result = await response.json();
+      if (result.status !== "success") {
+        console.error("Failed to update bookmark:", result.message);
+      }
+    } catch (error) {
+      console.error("Error updating bookmark:", error);
     }
-  } catch (error) {
-    console.error("Error updating bookmark:", error);
   }
 }
 
