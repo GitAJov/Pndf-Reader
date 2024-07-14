@@ -13,6 +13,7 @@ let pdfDoc = null,
   renderTasks = [],
   renderingPdf = false,
   mode = "",
+  max = 1,
   overlayActive = false;
 
 // PDF RELATED FUNCTIONS ===================================
@@ -33,7 +34,7 @@ async function initializePDF(url) {
   pdfDoc = tempDoc;
   if (pdfDoc) {
     document.getElementById("page_count").textContent = pdfDoc.numPages;
-    document.getElementById("page_num").textContent = pageNum; // Update page number immediately
+    max = pdfDoc.numPages;
     await renderAllPages(pdfDoc, scale); // Render all pages at once
 
     // Add scroll event listener to update pageNum based on visible page
@@ -145,16 +146,13 @@ function updatePageNumBasedOnScroll() {
 
   if (visiblePage !== pageNum) {
     pageNum = visiblePage;
-    console.log(`Visible page: ${pageNum}`);
-    document.getElementById("page_num").textContent = pageNum;
+    document.getElementById("pageInput").value = pageNum;
   }
 }
 
 function onPrevPage() {
   if (pageNum > 1) {
     pageNum--;
-    console.log("test");
-
     const canvas = canvases[pageNum - 1];
     if (canvas) {
       canvas.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -165,7 +163,6 @@ function onPrevPage() {
 function onNextPage() {
   if (pageNum < pdfDoc.numPages) {
     pageNum++;
-    console.log("Page Number: ", pageNum);
     const canvas = canvases[pageNum - 1];
     if (canvas) {
       canvas.scrollIntoView({ behavior: "smooth", block: "start" });
@@ -195,6 +192,21 @@ function pressNext() {
       onNextPage();
       displaySpeedreadText();
     }
+  }
+}
+
+function pageInput() {
+  let input = document.getElementById("pageInput");
+  let parsedInput = parseInt(input.value);
+
+  if (!isNaN(parsedInput) && parsedInput >= 1 && parsedInput <= max) {
+    pageNum = parsedInput;
+    const canvas = canvases[pageNum - 1];
+    canvas.scrollIntoView({ behavior: "smooth", block: "start" });
+  } else {
+    input.setAttribute("disabled", true);
+    input.value = pageNum;
+    input.removeAttribute("disabled");
   }
 }
 
@@ -697,6 +709,30 @@ function addEventListeners() {
   document.getElementById("choosefile").addEventListener("click", chooseFile);
   document.getElementById("file").addEventListener("click", chooseFile);
   document.getElementById("dyslexia").addEventListener("click", dyslexia);
+  document.getElementById("prev").addEventListener("click", onPrevPage);
+  document.getElementById("next").addEventListener("click", onNextPage);
+  // Event listener for the page input field
+  let pageInputElement = document.getElementById("pageInput");
+  pageInputElement.addEventListener("keypress", function (event) {
+    if (event.key === "Enter") {
+      pageInput();
+    }
+  });
+  pageInputElement.addEventListener("focusout", function (event) {
+    let pageInputValue = pageInputElement.value;
+    if (!isNaN(pageInputValue)) {
+      pageInput();
+    } else {
+      pageInputValue = pageNum;
+    }
+  });
+  pageInputElement.addEventListener("input", function (event) {
+    let input = event.target.value.trim();
+    event.target.value = input.replace(/\D/g, "");
+  });
+  pageInputElement.addEventListener("focus", function (event) {
+    event.target.setSelectionRange(0, event.target.value.length);
+  });
 }
 
 window.addEventListener("scroll", function () {

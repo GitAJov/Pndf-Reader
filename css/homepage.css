@@ -110,6 +110,10 @@ body {
   background-color: #ddd;
 }
 
+.filebtn:hover {
+  background-color: #ddd;
+}
+
 /* Dark Mode Styles */
 body.dark-mode {
   background-color: #1e1e1e;

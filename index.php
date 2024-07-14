@@ -157,7 +157,11 @@ if ($isLoggedIn) {
       <div id="pdf">
         <div id="navigate">
           <button id="prev">Previous</button>
-          <span>Page: <span id="page_num">loading</span> / <span id="page_count">-</span></span>
+          <span>Page:
+            <span><input type="text" id="pageInput" value="1"/></span>
+            /
+            <span id="page_count">-</span>
+          </span>
           <button id="next">Next</button>
           &nbsp; &nbsp;
           <br />
@@ -183,10 +187,10 @@ if ($isLoggedIn) {
       <!-- Start of text menu -->
       <div id="textMenu"></div>
       <div id="speedreadContainer">
-          <div id="speedreadTextContainer">
-            <span id="speedreadText"></span>
-          </div>
-          <div id="paragraphContainer"></div>
+        <div id="speedreadTextContainer">
+          <span id="speedreadText"></span>
+        </div>
+        <div id="paragraphContainer"></div>
       </div>
       <div class="textMenu-buttons">
         <button id="prevPage">Previous Page</button>
