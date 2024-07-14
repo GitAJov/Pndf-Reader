@@ -20,7 +20,7 @@ let pdfDoc = null,
 
 // Get doc_id from URL
 const urlParams = new URLSearchParams(window.location.search);
-const doc_id = urlParams.get('doc_id');
+const doc_id = urlParams.get("doc_id");
 
 // PDF RELATED FUNCTIONS ===================================
 async function loadPDF(url) {
@@ -48,11 +48,11 @@ async function initializePDF(url) {
     const canvasContainer = document.getElementById("canvas-container");
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
     fetchBookmark();
-    
+
     // Hide main menu, show main content and footbar if a doc is present
-    document.getElementById('mainMenu').style.display = 'none';
-    document.getElementById('mainContent').style.display = 'flex';
-    document.getElementById('footbar').style.display = 'flex';
+    document.getElementById("mainMenu").style.display = "none";
+    document.getElementById("mainContent").style.display = "flex";
+    document.getElementById("footbar").style.display = "flex";
   } else {
     // Hide loading overlay and keep the main menu visible
     hideLoadingOverlay();
@@ -159,7 +159,6 @@ function updatePageNumBasedOnScroll() {
     //const pageBottom = pageTop + canvas.height;
     const pageBottom = pageTop + canvas.clientHeight; // Use clientHeight instead of height for more accurate measurement
 
-
     if (viewportMidpoint >= pageTop && viewportMidpoint < pageBottom) {
       visiblePage = i + 1; // Pages are 1-indexed
       break;
@@ -196,7 +195,7 @@ function onNextPage() {
 async function pressPrev() {
   if (overlayActive) {
     cancelSpeedread = true; // Set the cancel flag
-    await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to ensure the cancellation
+    await new Promise((resolve) => setTimeout(resolve, 200)); // Small delay to ensure the cancellation
     if (mode === "dyslexia") {
       onPrevPage();
       displayDyslexiaText();
@@ -210,7 +209,7 @@ async function pressPrev() {
 async function pressNext() {
   if (overlayActive) {
     cancelSpeedread = true; // Set the cancel flag
-    await new Promise(resolve => setTimeout(resolve, 200)); // Small delay to ensure the cancellation
+    await new Promise((resolve) => setTimeout(resolve, 200)); // Small delay to ensure the cancellation
     if (mode === "dyslexia") {
       console.log("Next page button pressed!");
       onNextPage();
@@ -476,7 +475,8 @@ async function displaySpeedreadText() {
       speedreadWordElement.textContent = word;
 
       // Update the current word class
-      let currentWordElements = paragraphContainer.querySelectorAll(".current-word");
+      let currentWordElements =
+        paragraphContainer.querySelectorAll(".current-word");
       currentWordElements.forEach((el) => el.classList.remove("current-word"));
       let currentWordElement = words[i];
       currentWordElement.classList.add("current-word");
@@ -782,53 +782,55 @@ window.addEventListener("scroll", function () {
   }
 });
 
+// BOOKMARK FUNCTIONS =======================================
 async function fetchBookmark() {
   if (doc_id !== null) {
     try {
       const response = await fetch(`php/get_bookmark.php?doc_id=${doc_id}`);
       const result = await response.json();
-      if (result.status === 'success') {
+      if (result.status === "success") {
         pageNum = result.last_page;
-        document.getElementById("page_num").textContent = pageNum;
+        // document.getElementById("page_num").textContent = pageNum;
+        document.getElementById("pageInput").value = pageNum;
         const canvas = canvases[pageNum - 1];
         if (canvas) {
           canvas.scrollIntoView({ behavior: "smooth", block: "start" });
         }
       } else {
-        console.error('Failed to fetch bookmark:', result.message);
+        console.error("Failed to fetch bookmark:", result.message);
       }
     } catch (error) {
-      console.error('Error fetching bookmark:', error);
+      console.error("Error fetching bookmark:", error);
     }
   }
 }
 
 async function updateBookmark() {
   try {
-    const response = await fetch('php/update_bookmark.php', {
-      method: 'POST',
+    const response = await fetch("php/update_bookmark.php", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `doc_id=${doc_id}&last_page=${pageNum}`
+      body: `doc_id=${doc_id}&last_page=${pageNum}`,
     });
     const result = await response.json();
-    if (result.status !== 'success') {
-      console.error('Failed to update bookmark:', result.message);
+    if (result.status !== "success") {
+      console.error("Failed to update bookmark:", result.message);
     }
   } catch (error) {
-    console.error('Error updating bookmark:', error);
+    console.error("Error updating bookmark:", error);
   }
 }
 
-document.addEventListener('DOMContentLoaded', fetchBookmark);
+document.addEventListener("DOMContentLoaded", fetchBookmark);
 
 function showLoadingOverlay() {
-  document.getElementById('loadingOverlay').style.display = 'flex';
+  document.getElementById("loadingOverlay").style.display = "flex";
 }
 
 function hideLoadingOverlay() {
-  document.getElementById('loadingOverlay').style.display = 'none';
+  document.getElementById("loadingOverlay").style.display = "none";
 }
 
 export { initializePDF, onNextPage, onPrevPage };
