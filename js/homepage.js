@@ -83,12 +83,7 @@ function reset() {
   document.getElementById("speedreadText").innerHTML = "";
   document.getElementById("paragraphContainer").innerHTML = "";
 
-  resetTTS();
   console.log("Reset done");
-}
-
-function resetTTS() {
-  document.getElementById("cancel").click();
 }
 
 // <div class="texttospeech-nav">
@@ -438,9 +433,9 @@ function createFontSizeElements() {
   const fontSizeInput = document.createElement("input");
   fontSizeInput.type = "number";
   fontSizeInput.id = "fontSize";
-  fontSizeInput.value = 36;
+  fontSizeInput.value = 72;
   fontSizeInput.min = 10;
-  fontSizeInput.max = 72;
+  fontSizeInput.max = 144;
 
   fontChooser.addEventListener("change", chooseFont);
   fontSizeInput.addEventListener("change", chooseFont);
@@ -828,35 +823,47 @@ function tts(text) {
   const btnPause = document.getElementById("pause");
   const btnResume = document.getElementById("resume");
   const btnCancel = document.getElementById("cancel");
+  const btnSpeak = document.getElementById("speak");
 
-  btnStart.addEventListener("click", () => {
+  function handleStartClick() {
     btnStart.style.display = "none";
     btnPause.style.display = "inline-block";
     speechUtteranceChunker.cancel = false;
     speechUtteranceChunker(utterance, { chunkLength: 120 }, () => {
       // console.log("done");
     });
-  });
+  }
 
-  btnPause.addEventListener("click", () => {
+  function handlePauseClick() {
     window.speechSynthesis.pause();
     btnPause.style.display = "none";
     btnResume.style.display = "inline-block";
-  });
+  }
 
-  btnResume.addEventListener("click", () => {
+  function handleResumeClick() {
     window.speechSynthesis.resume();
     btnResume.style.display = "none";
     btnPause.style.display = "inline-block";
-  });
+  }
 
-  btnCancel.addEventListener("click", () => {
-    btnStart.style.display = "inline-block";
+  function handleCancelClick() {
+    btnStart.style.display = "none";
     btnPause.style.display = "none";
     btnResume.style.display = "none";
+    btnCancel.style.display = "none";
+    btnSpeak.style.display = "inline-block";
     speechUtteranceChunker.cancel = true;
     window.speechSynthesis.cancel();
-  });
+    btnStart.removeEventListener("click", handleStartClick);
+    btnPause.removeEventListener("click", handlePauseClick);
+    btnResume.removeEventListener("click", handleResumeClick);
+    btnCancel.removeEventListener("click", handleCancelClick);
+  }
+
+  btnStart.addEventListener("click", handleStartClick);
+  btnPause.addEventListener("click", handlePauseClick);
+  btnResume.addEventListener("click", handleResumeClick);
+  btnCancel.addEventListener("click", handleCancelClick);
 }
 
 // BOOKMARK FUNCTIONS =======================================
@@ -986,9 +993,13 @@ function addEventListeners() {
   document
     .getElementById("mic")
     .addEventListener("click", getCommandfromResponse);
-  document
-    .getElementById("speak")
-    .addEventListener("click", handleTextToSpeech);
+    
+  document.getElementById("speak").addEventListener("click", function () {
+    handleTextToSpeech();
+    document.getElementById("start").style.display = "inline-block";
+    document.getElementById("cancel").style.display = "inline-block";
+    document.getElementById("speak").style.display = "none";
+  });
 }
 
 window.addEventListener("scroll", function () {
