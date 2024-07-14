@@ -44,6 +44,11 @@ if ($isLoggedIn) {
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>PDF Reader</title>
+  <style>
+    .hiddenCanvasElement {
+      display: none;
+    }
+  </style>
   <script type="importmap">
     {
       "imports": {
@@ -80,7 +85,6 @@ if ($isLoggedIn) {
       initializeGemini(apiKey);
       const filePath = "<?php echo $file_path; ?>";
       if (filePath) {
-        //console.log("Initializing PDF with file path: " + filePath);
         initializePDF(filePath);
 
         // Hide main menu, show mainContent and show footbar if doc_id is present
@@ -93,10 +97,39 @@ if ($isLoggedIn) {
     document.addEventListener('DOMContentLoaded', (event) => {
       document.getElementById('next').addEventListener('click', onNextPage);
       document.getElementById('prev').addEventListener('click', onPrevPage);
+
+      const startButton = document.getElementById('start');
+      const pauseButton = document.getElementById('pause');
+      const resumeButton = document.getElementById('resume');
+      const cancelButton = document.getElementById('cancel');
+      // const voicesSelect = document.getElementById('voices');
+
+      pauseButton.style.display = 'none';
+      resumeButton.style.display = 'none';
+
+      startButton.addEventListener('click', () => {
+        startButton.style.display = 'none';
+        pauseButton.style.display = 'inline-block';
+        // voicesSelect.style.display = 'inline-block';
+      });
+
+      pauseButton.addEventListener('click', () => {
+        pauseButton.style.display = 'none';
+        resumeButton.style.display = 'inline-block';
+      });
+
+      resumeButton.addEventListener('click', () => {
+        resumeButton.style.display = 'none';
+        pauseButton.style.display = 'inline-block';
+      });
+
+      cancelButton.addEventListener('click', () => {
+        startButton.style.display = 'inline-block';
+        pauseButton.style.display = 'none';
+        resumeButton.style.display = 'none';
+      });
     });
   </script>
-
-
 </head>
 
 <body>
@@ -176,7 +209,7 @@ if ($isLoggedIn) {
         <div id="navigate">
           <button id="prev">Previous</button>
           <span>Page:
-            <span><input type="text" id="pageInput" value="1"/></span>
+            <span><input type="text" id="pageInput" value="1" /></span>
             /
             <span id="page_count">-</span>
           </span>
@@ -203,9 +236,9 @@ if ($isLoggedIn) {
 
   <!-- Loading Overlay -->
   <div id="loadingOverlay">
-      <img src="Resources/panda-slide.gif" alt="Loading..." />
-      <label>Rendering...</label>
-    </div>
+    <img src="Resources/panda-slide.gif" alt="Loading..." />
+    <label>Rendering...</label>
+  </div>
   </div>
 
   <div id="grayOverlay">
@@ -224,41 +257,6 @@ if ($isLoggedIn) {
       </div>
     </div>
   </div>
-
-  <script>
-    window.addEventListener('DOMContentLoaded', (event) => {
-      const startButton = document.getElementById('start');
-      const pauseButton = document.getElementById('pause');
-      const resumeButton = document.getElementById('resume');
-      const cancelButton = document.getElementById('cancel');
-      // const voicesSelect = document.getElementById('voices');
-
-      pauseButton.style.display = 'none';
-      resumeButton.style.display = 'none';
-
-      startButton.addEventListener('click', () => {
-        startButton.style.display = 'none';
-        pauseButton.style.display = 'inline-block';
-        // voicesSelect.style.display = 'inline-block';
-      });
-
-      pauseButton.addEventListener('click', () => {
-        pauseButton.style.display = 'none';
-        resumeButton.style.display = 'inline-block';
-      });
-
-      resumeButton.addEventListener('click', () => {
-        resumeButton.style.display = 'none';
-        pauseButton.style.display = 'inline-block';
-      });
-
-      cancelButton.addEventListener('click', () => {
-        startButton.style.display = 'inline-block';
-        pauseButton.style.display = 'none';
-        resumeButton.style.display = 'none';
-      });
-    });
-  </script>
 </body>
 
 </html>
