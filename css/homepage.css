@@ -522,7 +522,7 @@ body.speedread-active {
 }
 
 /* Style for selected text */
-::selection {
+span::selection {
   background: yellow; /* Highlight color */
   color: black; /* Text color in highlight */
 }

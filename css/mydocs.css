@@ -142,6 +142,7 @@ body.dark-mode .document-item span {
 }
 
 body.dark-mode .document-item button {
+  color: white;
   background-color: transparent;
 }
 
