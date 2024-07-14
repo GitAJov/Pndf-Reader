@@ -213,6 +213,16 @@ body.dark-mode {
   font-family: 'Comic Sans MS';
 }
 
+.clickable-word {
+  cursor: pointer;
+  transition: color 0.3s;
+}
+
+.clickable-word:hover {
+  color: blue;
+  text-decoration: underline;
+}
+
 /* Dark Mode Navigation Styles */
 body.dark-mode #navigate {
   color: #ffffff;

@@ -418,8 +418,9 @@ function speedTextMenu() {
 
 let isSpeedreadActive = false; // Flag to indicate if speed reading is active
 let cancelSpeedread = false; // Flag to cancel the speed reading process
+let currentWordIndex = 0; // Track the current word index
 
-async function displaySpeedreadText() {
+async function displaySpeedreadText(startIndex = 0) {
   if (isSpeedreadActive) return; // Exit if already running
   isSpeedreadActive = true; // Set the flag
   cancelSpeedread = false; // Reset the cancel flag
@@ -443,15 +444,19 @@ async function displaySpeedreadText() {
 
     // Create a fragment to hold the lines and words
     let fragment = document.createDocumentFragment();
+    let wordIndex = 0; // Initialize word index
     lines.forEach((line) => {
       let lineElement = document.createElement("div");
       let splitLine = line.split(" ").filter(function (el) {
         return el != "";
       });
 
-      splitLine.forEach((word, index) => {
+      splitLine.forEach((word) => {
         let span = document.createElement("span");
         span.textContent = word + " ";
+        span.dataset.index = wordIndex++;
+        span.addEventListener("click", () => jumpToWord(span.dataset.index));
+        span.classList.add("clickable-word");
         lineElement.appendChild(span);
       });
 
@@ -467,16 +472,16 @@ async function displaySpeedreadText() {
     //console.log(`Delay between words: ${delay} ms`); // Debugging delay value
 
     let words = paragraphContainer.querySelectorAll("span");
-    for (let i = 0; i < words.length; i++) {
+    for (let i = startIndex; i < words.length; i++) {
       if (!overlayActive || cancelSpeedread) break; // Check cancel flag
+      currentWordIndex = i; // Update the current word index
       let word = words[i].textContent.trim();
 
       // Display current word with underline
       speedreadWordElement.textContent = word;
 
       // Update the current word class
-      let currentWordElements =
-        paragraphContainer.querySelectorAll(".current-word");
+      let currentWordElements = paragraphContainer.querySelectorAll(".current-word");
       currentWordElements.forEach((el) => el.classList.remove("current-word"));
       let currentWordElement = words[i];
       currentWordElement.classList.add("current-word");
@@ -498,6 +503,20 @@ async function displaySpeedreadText() {
     isSpeedreadActive = false; // Reset the flag
   }
 }
+
+function jumpToWord(index) {
+  cancelSpeedread = true;
+  setTimeout(() => {
+    currentWordIndex = parseInt(index);
+    displaySpeedreadText(currentWordIndex);
+  }, 200); // Small delay to ensure the cancellation
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  document.querySelectorAll(".clickable-word").forEach((span) => {
+    span.addEventListener("click", () => jumpToWord(span.dataset.index));
+  });
+});
 
 function dyslexia() {
   dyslexiaMenu();
