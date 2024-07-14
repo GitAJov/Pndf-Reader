@@ -2,22 +2,27 @@ import { formatText } from "../js/gemini.js";
 import { formatDisplayText } from "../js/gemini.js";
 import { voiceRecognition } from "./voiceRecognition.js";
 
+// PDF.JS CONFIGURATION ====================================
 var { pdfjsLib } = globalThis;
 
+// Set the worker source for PDF.js
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
 
-let pdfDoc = null,
-  pageNum = 1,
-  visiblePage = 1,
-  scale = 1.5,
-  canvases = [],
-  renderTasks = [],
-  renderingPdf = false,
-  mode = "",
-  max = 1,
-  loadingTimeout = null,
-  overlayActive = false;
+let pdfDoc = null, // PDF document object
+  pageNum = 1, // Current page number
+  visiblePage = 1, // Visible page number based on scroll
+  scale = 1.5, // Initial zoom scale
+  canvases = [], // Array to store all canvas elements
+  renderTasks = [], // Array to store all rendering tasks
+  renderingPdf = false, // Flag to indicate if PDF is being rendered
+  mode = "", // Current mode (speedread or dyslexia)
+  max = 1, // Maximum number of pages in the PDF
+  loadingTimeout = null, // Timeout to hide the loading overlay
+  overlayActive = false, // Flag to indicate if overlay is active
+  isSpeedreadActive = false, // Flag to indicate if speed reading is active
+  cancelSpeedread = false, // Flag to cancel the speed reading process
+  currentWordIndex = 0; // Track the current word index
 
 // Get doc_id from URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -28,7 +33,6 @@ async function loadPDF(url) {
   try {
     const loadingTask = pdfjsLib.getDocument(url);
     const pdf = await loadingTask.promise;
-    console.log("PDF loaded");
     return pdf;
   } catch (error) {
     console.error("Error loading PDF:", error);
@@ -37,19 +41,17 @@ async function loadPDF(url) {
 
 async function initializePDF(url) {
   reset();
-  showLoadingOverlay(); // Show loading overlay
+  showLoadingOverlay();
 
   document.getElementById("speedread").style.display = "block";
   document.getElementById("dyslexia").style.display = "block";
-
   let tempDoc = await loadPDF(url);
   pdfDoc = tempDoc;
   if (pdfDoc) {
     document.getElementById("page_count").textContent = pdfDoc.numPages;
     max = pdfDoc.numPages;
-    await renderAllPages(pdfDoc, scale); // Render all pages at once
+    await renderAllPages(pdfDoc, scale);
 
-    // Add scroll event listener to update pageNum based on visible page
     const canvasContainer = document.getElementById("canvas-container");
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
 
@@ -75,10 +77,20 @@ async function initializePDF(url) {
 }
 
 function reset() {
-  pageNum = 1;
-  scale = 1.5;
-  canvases = [];
-  renderTasks = [];
+  pageNum = 1,
+  visiblePage = 1,
+  scale = 1.5,
+  canvases = [],
+  renderTasks = [],
+  renderingPdf = false,
+  mode = "",
+  max = 1,
+  loadingTimeout = null,
+  overlayActive = false,
+  isSpeedreadActive = false, 
+  cancelSpeedread = false, 
+  currentWordIndex = 0; 
+
   document.getElementById("canvas-container").innerHTML = "";
   document.getElementById("pageInput").value = pageNum;
   document.getElementById("page_count").textContent = "-";
@@ -87,15 +99,10 @@ function reset() {
   document.getElementById("speedreadText").innerHTML = "";
   document.getElementById("paragraphContainer").innerHTML = "";
 
-  console.log("Reset done");
+  if (document.getElementById("speak").style.display == "none") {
+    document.getElementById("cancel").click();
+  }
 }
-
-// <div class="texttospeech-nav">
-//           <button id="start"><i class="material-icons">play_arrow</i></button>
-//           <button id="pause"><i class="material-icons">pause</i></button>
-//           <button id="resume"><i class="material-icons">play_arrow</i></button>
-//           <button id="cancel"><i class="material-icons">stop</i></button>
-//         </div>
 
 async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
   try {
@@ -111,7 +118,6 @@ async function renderAllPages(pdf = pdfDoc, scale = 1.5) {
       await renderPage(pdf, pageNumber, scale);
     }
     renderingPdf = false;
-    console.log("All pages rendered");
     // handleTextToSpeech();
   } catch (error) {
     console.error("Error rendering pages:", error);
@@ -501,10 +507,6 @@ function speedTextMenu() {
   buttonNext.addEventListener("click", pressNext);
 }
 
-let isSpeedreadActive = false; // Flag to indicate if speed reading is active
-let cancelSpeedread = false; // Flag to cancel the speed reading process
-let currentWordIndex = 0; // Track the current word index
-
 async function displaySpeedreadText(startIndex = 0) {
   if (isSpeedreadActive) return; // Exit if already running
   isSpeedreadActive = true; // Set the flag
@@ -739,8 +741,10 @@ async function handleTextToSpeech() {
     const numPages = pdfDoc.numPages;
     let allText = [];
 
+    console.log(pageNum);
     for (let pageNumber = pageNum; pageNumber <= numPages; pageNumber++) {
       const pageText = await extractParagraphs(pageNumber);
+      console.log("extracted from page" + pageNumber + ":" + pageText);
       allText.push(pageText);
     }
     let formattedTextArray = [];
@@ -997,7 +1001,7 @@ function addEventListeners() {
   document
     .getElementById("mic")
     .addEventListener("click", getCommandfromResponse);
-    
+
   document.getElementById("speak").addEventListener("click", function () {
     handleTextToSpeech();
     document.getElementById("start").style.display = "inline-block";
