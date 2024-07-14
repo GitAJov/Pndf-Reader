@@ -135,7 +135,7 @@ if ($isLoggedIn) {
 <body>
   <div id="container">
     <div id="topMenu">
-      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
+      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader" onclick="window.location.href = 'index.php';">
       <div class="nav-right">
         <button id="docs" class="docsbtn" onclick="window.location.href='mydocs.php'">My Documents</button>
         <button id="file" class="filebtn">New File</button>

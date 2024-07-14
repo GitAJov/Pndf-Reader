@@ -100,7 +100,9 @@ body {
 #brand-title img {
   height: auto;
   width: 350px;
+  cursor: pointer;
 }
+
 #header-text {
   font-size: 42px;
 }
@@ -295,5 +297,9 @@ p {
   right: 10px;
   color: black;
   font-size: 30px;
+  cursor: pointer;
+}
+
+#logo-hov:hover {
   cursor: pointer;
 }

@@ -39,6 +39,10 @@ body {
   height: 100px;
 }
 
+#pndf-logo:hover {
+  cursor: pointer;
+}
+
 #logo {
   height: 40px;
 }
@@ -112,7 +116,9 @@ body {
   background-color: #ddd;
 }
 
-.filebtn:hover {
+.filebtn:hover,
+.docsbtn:hover,
+.homebtn:hover {
   background-color: #ddd;
 }
 

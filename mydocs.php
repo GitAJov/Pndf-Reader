@@ -38,7 +38,7 @@ $conn->close();
 <body>
   <div id="container">
     <div id="topMenu">
-      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
+      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader" onclick="window.location.href = 'index.php';">
       <div class="nav-right">
         <button onclick="window.location.href='index.php'" class="homebtn">Home</button>
         <div class="dropdown">
