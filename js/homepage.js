@@ -38,6 +38,10 @@ async function loadPDF(url) {
 async function initializePDF(url) {
   reset();
   showLoadingOverlay(); // Show loading overlay
+
+  document.getElementById("speedread").style.display = "block";
+  document.getElementById("dyslexia").style.display = "block";
+
   let tempDoc = await loadPDF(url);
   pdfDoc = tempDoc;
   if (pdfDoc) {

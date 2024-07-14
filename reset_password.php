@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -26,9 +27,10 @@
         };
     </script>
 </head>
+
 <body>
     <div id="brand-title">
-        <img src="Resources/pndf-logo.png" alt="PNDF Reader">
+        <img src="Resources/pndf-logo.png" alt="PNDF Reader" onclick="window.location.href = 'index.php';">
     </div>
 
     <div id="form-login-container">
@@ -50,4 +52,5 @@
         <img id="panda-login" src="Resources/panda-login.png" alt="Panda">
     </div>
 </body>
+
 </html>

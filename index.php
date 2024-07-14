@@ -135,7 +135,7 @@ if ($isLoggedIn) {
 <body>
   <div id="container">
     <div id="topMenu">
-      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader">
+      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader" onclick="window.location.href = 'index.php';">
       <div class="nav-right">
         <button id="docs" class="docsbtn" onclick="window.location.href='mydocs.php'">My Documents</button>
         <button id="file" class="filebtn">New File</button>
@@ -145,8 +145,8 @@ if ($isLoggedIn) {
             <img src="Resources/drop-icon.png" alt="Drop Icon" class="drop-icon">
           </button>
           <div class="dropdown-content">
-            <a href="#" id="speedread">Speedread</a>
-            <a href="#" id="dyslexia">Dyslexia</a>
+            <a href="#" id="speedread" style="display: none">Speedread</a>
+            <a href="#" id="dyslexia" style="display: none">Dyslexia</a>
             <a href="#" id="theme-toggle-item">Toggle Theme</a>
           </div>
         </div>
@@ -163,7 +163,7 @@ if ($isLoggedIn) {
           </button>
           <div id="profileDropdown" class="dropdown-content">
             <?php if ($isLoggedIn): ?>
-              <a href="profile.php">Profile</a>
+              <!-- <a href="profile.php">Profile</a> -->
               <a href="./php/logout.php">Logout</a>
             <?php else: ?>
               <a href="login.php">Login</a>

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,52 +18,53 @@
                 },
                 body: JSON.stringify({ email: email, otp: otp })
             })
-            .then(response => response.json())
-            .then(data => {
-                if(data.status === "success") {
-                    fetch("https://api.emailjs.com/api/v1.0/email/send", {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json"
-                        },
-                        body: JSON.stringify({
-                            service_id: "service_t0zfyzj",
-                            template_id: "template_swfrv9e",
-                            user_id: "RrEwYdZ5Fd01DZxzD",
-                            template_params: {
-                                to_name: email,
-                                from_name: "PNDF Reader",
-                                message: `Your OTP for password reset is: ${otp}`
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === "success") {
+                        fetch("https://api.emailjs.com/api/v1.0/email/send", {
+                            method: "POST",
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+                            body: JSON.stringify({
+                                service_id: "service_t0zfyzj",
+                                template_id: "template_swfrv9e",
+                                user_id: "RrEwYdZ5Fd01DZxzD",
+                                template_params: {
+                                    to_name: email,
+                                    from_name: "PNDF Reader",
+                                    message: `Your OTP for password reset is: ${otp}`
+                                }
+                            })
+                        }).then(response => {
+                            if (response.ok) {
+                                alert("OTP sent to your email. Please check your inbox.");
+                                window.location.href = `reset_password.php?email=${encodeURIComponent(email)}`;
+                            } else {
+                                response.json().then(data => {
+                                    console.error("Failed to send OTP via EmailJS:", data);
+                                    alert("Failed to send OTP. Please try again.");
+                                });
                             }
-                        })
-                    }).then(response => {
-                        if (response.ok) {
-                            alert("OTP sent to your email. Please check your inbox.");
-                            window.location.href = `reset_password.php?email=${encodeURIComponent(email)}`;
-                        } else {
-                            response.json().then(data => {
-                                console.error("Failed to send OTP via EmailJS:", data);
-                                alert("Failed to send OTP. Please try again.");
-                            });
-                        }
-                    }).catch(error => {
-                        console.error("Error in EmailJS request:", error);
-                        alert("Failed to send OTP. Please try again.");
-                    });
-                } else {
-                    console.error("Failed to store OTP:", data.message);
-                    alert("Failed to store OTP. Please try again.");
-                }
-            }).catch(error => {
-                console.error("Error in fetch request:", error);
-                alert("An error occurred. Please try again.");
-            });
+                        }).catch(error => {
+                            console.error("Error in EmailJS request:", error);
+                            alert("Failed to send OTP. Please try again.");
+                        });
+                    } else {
+                        console.error("Failed to store OTP:", data.message);
+                        alert("Failed to store OTP. Please try again.");
+                    }
+                }).catch(error => {
+                    console.error("Error in fetch request:", error);
+                    alert("An error occurred. Please try again.");
+                });
         }
     </script>
 </head>
+
 <body>
     <div id="brand-title">
-        <img src="Resources/pndf-logo.png" alt="PNDF Reader">
+        <img src="Resources/pndf-logo.png" alt="PNDF Reader" onclick="window.location.href = 'index.php';">
     </div>
 
     <div id="form-login-container">
@@ -77,4 +79,5 @@
         <img id="panda-login" src="Resources/panda-login.png" alt="Panda">
     </div>
 </body>
+
 </html>
