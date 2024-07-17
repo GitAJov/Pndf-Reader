@@ -5,10 +5,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const navigate = document.getElementById("navigate");
     const dropdowns = document.querySelectorAll(".dropdown, .profile-dropdown");
     const pndfLogo = document.getElementById("pndf-logo");
-    const dropIcon = document.querySelector(".drop-icon");
-    const profileIcon = document.querySelector(".profile-icon");
     const fileBtns = document.getElementsByClassName("filebtn");
     const homeBtns = document.getElementsByClassName("homebtn");
+    const pdfBtns = document.getElementsByClassName("pdfbtn");
     const textBox = document.getElementById("textBox");
     const textMenuButtons = document.querySelector(".textMenu-buttons");
     const mainContent = document.getElementById("mainContent");
@@ -36,13 +35,14 @@ document.addEventListener("DOMContentLoaded", () => {
         Array.from(homeBtns).forEach((homeBtn) => {
             homeBtn.classList.add("dark-mode");
         });
+        Array.from(pdfBtns).forEach((pdfBtn) => {
+            pdfBtn.classList.add("dark-mode");
+        });
         dropdowns.forEach((dropdown) => {
             dropdown.querySelector(".dropbtn").classList.add("dark-mode");
             dropdown.querySelector(".dropdown-content").classList.add("dark-mode");
         });
         pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
-        dropIcon.src = "Resources/drop-icon-dark-mode.png";
-        profileIcon.src = "Resources/profile-icon-dark-mode.png";
     }
 
     // Update the button text based on the initial theme
@@ -61,6 +61,9 @@ document.addEventListener("DOMContentLoaded", () => {
         Array.from(homeBtns).forEach((homeBtn) => {
             homeBtn.classList.toggle("dark-mode");
         });
+        Array.from(pdfBtns).forEach((pdfBtn) => {
+            pdfBtn.classList.toggle("dark-mode");
+        });
         dropdowns.forEach((dropdown) => {
             dropdown.querySelector(".dropbtn").classList.toggle("dark-mode");
             dropdown.querySelector(".dropdown-content").classList.toggle("dark-mode");
@@ -68,12 +71,8 @@ document.addEventListener("DOMContentLoaded", () => {
         // Change logos based on the theme
         if (isDarkMode) {
             pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
-            dropIcon.src = "Resources/drop-icon-dark-mode.png";
-            profileIcon.src = "Resources/profile-icon-dark-mode.png";
         } else {
             pndfLogo.src = "Resources/pndf-logo.png";
-            dropIcon.src = "Resources/drop-icon.png";
-            profileIcon.src = "Resources/profile-icon.png";
         }
         // Update the theme toggle button text
         updateThemeToggleText();

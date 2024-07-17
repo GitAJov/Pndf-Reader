@@ -23,9 +23,13 @@ body {
   justify-content: space-between;
   align-items: center;
   padding: 10px 20px;
-  background-color: #f4f4f4;
+  background-color: #ffffff;
   border-bottom: 4px solid #ddd; /* Light mode border */
   transition: background-color 0.3s, border-bottom-color 0.3s;
+}
+
+.material-symbols-outlined {
+  margin: 5px;
 }
 
 #mainMenu {
@@ -36,7 +40,7 @@ body {
 }
 
 #pndf-logo {
-  height: 100px;
+  height: 60px;
 }
 
 #pndf-logo:hover {
@@ -50,33 +54,50 @@ body {
 .nav-right {
   display: flex;
   align-items: center;
+  height: 100%;
 }
 
 .dropdown,
 .profile-dropdown {
   position: relative;
-  margin-left: 20px;
+  display: flex;
+  align-items: center;
+  height: 100%;
 }
 
 .dropbtn,
 .filebtn,
 .homebtn,
-.docsbtn {
-  background-color: #f4f4f4;
+.docsbtn,
+.pdfbtn {
+  background-color: #ffffff;
   border: none;
   cursor: pointer;
   font-size: 16px;
   padding: 10px;
   display: flex;
   align-items: center;
-  height: 100%; /* Fill navbar height */
+  margin: 0;
+  height: 100%;
   transition: background-color 0.3s, color 0.3s;
 }
 
-.profile-icon {
-  height: 60px; /* Enlarged icon */
-  width: 60px; /* Enlarged icon */
+.drop-icon {
+  width: 20px;
   margin-left: 10px; /* Space between text and icon */
+}
+
+.drop-icon:hover {
+  color: #2e7d32;
+}
+
+.profile-icon {
+  height: 50px; /* Enlarged icon */
+  margin-left: 10px; /* Space between text and icon */
+}
+
+.profile-icon:hover {
+  color: #2e7d32;
 }
 
 .dropdown-content,
@@ -103,7 +124,7 @@ body {
 
 .dropdown-content a:hover,
 .profile-dropdown-content a:hover {
-  background-color: #ddd;
+  color: #2e7d32;
   border-radius: 15px;
 }
 
@@ -113,13 +134,14 @@ body {
 }
 
 .dropbtn:hover {
-  background-color: #ddd;
+  color: #2e7d32;
 }
 
 .filebtn:hover,
 .docsbtn:hover,
-.homebtn:hover {
-  background-color: #ddd;
+.homebtn:hover,
+.pdfbtn:hover {
+  color: #2e7d32;
 }
 
 /* Dark Mode Styles */
@@ -130,16 +152,26 @@ body.dark-mode {
 
 #topMenu.dark-mode,
 #footbar.dark-mode {
-  background-color: #333333;
-  border-bottom-color: #444444; /* Dark mode border */
+  background-color: #1e1e1e;
+  border-bottom-color: #181818; /* Dark mode border */
 }
 
 .dropbtn.dark-mode,
 .filebtn.dark-mode,
 .homebtn.dark-mode,
-.docsbtn.dark-mode {
-  background-color: #333333;
+.docsbtn.dark-mode,
+.pdfbtn.dark-mode {
+  background-color: #1e1e1e;
   color: #ffffff;
+  transition: all 0.3s ease-in-out;
+}
+
+.dropbtn.dark-mode:hover,
+.filebtn.dark-mode:hover,
+.homebtn.dark-mode:hover,
+.docsbtn.dark-mode:hover,
+.pdfbtn.dark-mode:hover {
+  transform: scale(1.1);
 }
 
 #footbar.dark-mode .texttospeech-nav button {
@@ -159,7 +191,7 @@ body.dark-mode {
 
 .dropdown-content.dark-mode,
 .profile-dropdown-content.dark-mode {
-  background-color: #333333;
+  background-color: #1e1e1e;
   color: white;
 }
 
@@ -170,7 +202,7 @@ body.dark-mode {
 
 .dropdown-content.dark-mode a:hover,
 .profile-dropdown-content.dark-mode a:hover {
-  background-color: #555555;
+  background-color: #181818;
 }
 
 /* Navigation Styles */
@@ -218,7 +250,7 @@ body.dark-mode {
   background-color: transparent;
   width: 40px;
   text-align: right;
-  font-family: 'Comic Sans MS';
+  font-family: "Comic Sans MS";
 }
 
 .clickable-word {
@@ -388,13 +420,10 @@ body.dark-mode #pageInput {
   background-color: #666; /* Dark mode hover background */
 }
 
-
 #textBox.dark-mode .alignment-container .toggle-button.active {
   background-color: #f9f9f9; /* Dark mode active state background */
   color: #555; /* Ensure text color is still visible */
 }
-
-
 
 /* Light Mode Styles for Text Menu Buttons */
 .textMenu-buttons {
@@ -425,7 +454,6 @@ body.dark-mode #pageInput {
   background-color: #ddd;
 }
 
-
 /* Dark Mode Styles for Text Menu Buttons */
 .textMenu-buttons.dark-mode {
   background-color: #333; /* Dark mode background */
@@ -455,7 +483,9 @@ body.dark-mode #pageInput {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  height: calc(100vh - 50px); /* Adjust the height minus the height of the button area */
+  height: calc(
+    100vh - 50px
+  ); /* Adjust the height minus the height of the button area */
   overflow: hidden; /* Ensure content does not overflow the container */
 }
 
@@ -481,11 +511,15 @@ body.speedread-active {
 
 #paragraphContainer {
   position: absolute;
-  top: calc(50% + 36px); /* Adjust 36px based on font-size or the height of speedreadText */
+  top: calc(
+    50% + 36px
+  ); /* Adjust 36px based on font-size or the height of speedreadText */
   left: 50%;
   transform: translate(-50%, 0);
   width: 100%;
-  height: calc(100% - 50px - (50% + 36px)); /* Adjust height based on the remaining space */
+  height: calc(
+    100% - 50px - (50% + 36px)
+  ); /* Adjust height based on the remaining space */
   overflow: auto;
   display: none; /* Hide by default */
   transition: opacity 0.3s;
@@ -496,7 +530,6 @@ body.speedread-active {
   display: block;
 }
 /* End of Container Changes */
-
 
 .current-word {
   text-decoration: underline;
@@ -538,7 +571,6 @@ span::selection {
 span:active {
   background: orange; /* Background color while holding click */
 }
-
 
 @font-face {
   font-family: "OpenDyslexic";
@@ -612,10 +644,12 @@ span:active {
   border-radius: 10px;
   cursor: pointer;
   font-size: 20px;
+  transition: all 0.3s ease-in-out;
 }
 
 .choose-file-button:hover {
   background-color: #45a049;
+  transform: scale(1.1);
 }
 
 /* Dark Mode Styles */
@@ -666,6 +700,7 @@ body.dark-mode .choose-file-button:hover {
 .material-icons {
   vertical-align: middle;
   font-size: 24px;
+  margin: 5px;
 }
 
 /* Loading Overlay */

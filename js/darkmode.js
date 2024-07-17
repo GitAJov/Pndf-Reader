@@ -5,8 +5,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const navigate = document.getElementById("navigate");
     const dropdowns = document.querySelectorAll(".dropdown, .profile-dropdown");
     const pndfLogo = document.getElementById("pndf-logo");
-    const dropIcon = document.querySelector(".drop-icon");
-    const profileIcon = document.querySelector(".profile-icon");
     const fileBtns = document.getElementsByClassName("filebtn");
     const docsBtns = document.getElementsByClassName("docsbtn");
     const footbar = document.getElementById("footbar");
@@ -41,8 +39,6 @@ document.addEventListener("DOMContentLoaded", () => {
             dropdown.querySelector(".dropdown-content").classList.add("dark-mode");
         });
         pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
-        dropIcon.src = "Resources/drop-icon-dark-mode.png";
-        profileIcon.src = "Resources/profile-icon-dark-mode.png";
     }
 
     // Update the button text based on the initial theme
@@ -68,12 +64,8 @@ document.addEventListener("DOMContentLoaded", () => {
     // Change logos based on the theme
     if (isDarkMode) {
         pndfLogo.src = "Resources/pndf-logo-dark-mode.png";
-        dropIcon.src = "Resources/drop-icon-dark-mode.png";
-        profileIcon.src = "Resources/profile-icon-dark-mode.png";
     } else {
         pndfLogo.src = "Resources/pndf-logo.png";
-        dropIcon.src = "Resources/drop-icon.png";
-        profileIcon.src = "Resources/profile-icon.png";
     }
     // Update the theme toggle button text
     updateThemeToggleText();

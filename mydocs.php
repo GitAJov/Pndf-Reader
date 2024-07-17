@@ -27,6 +27,8 @@ $conn->close();
   <title>My Documents</title>
   <link rel="stylesheet" href="css/mydocs.css">
   <link rel="stylesheet" href="css/homepage.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
   <script type="module">
     import { fetchDocuments, confirmDeleteDocument } from './js/mydocs.js';
     document.addEventListener('DOMContentLoaded', fetchDocuments);
@@ -40,10 +42,11 @@ $conn->close();
     <div id="topMenu">
       <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader" onclick="window.location.href = 'index.php';">
       <div class="nav-right">
-        <button onclick="window.location.href='index.php'" class="homebtn">Home</button>
+        <button onclick="window.location.href='welcome.php'" class="homebtn">Home</button>
+        <button onclick="window.location.href='index.php'" class="pdfbtn">Upload File</button>
         <div class="dropdown">
           <button class="dropbtn">Tools
-            <img src="Resources/drop-icon.png" alt="Drop Icon" class="drop-icon">
+          <i class="material-symbols-outlined" style="font-size: 36px"> arrow_drop_down </i>
           </button>
           <div class="dropdown-content">
             <a href="#" id="theme-toggle-item">Toggle Theme</a>
@@ -52,7 +55,7 @@ $conn->close();
         <div class="dropdown">
           <button class="dropbtn" onclick="toggleDropdown()">
             <?php echo htmlspecialchars($username); ?>
-            <img src="Resources/profile-icon.png" alt="Profile Icon" class="profile-icon">
+            <i class="material-symbols-outlined" style="font-size: 36px"> account_circle </i>
           </button>
           <div id="profileDropdown" class="dropdown-content">
             <!-- <a href="profile.php">Profile</a> -->
@@ -64,9 +67,7 @@ $conn->close();
     <div id="headerMydocs">
       <label id="headerTxt">My Documents</label>
       <input type="file" id="fileInput" accept=".pdf" style="display: none;">
-      <button class="fileUpload" onclick="document.getElementById('fileInput').click();">
-        Upload File
-      </button>
+      <button class="fileUpload" onclick="document.getElementById('fileInput').click();">Upload File</button>
     </div>
     <div id="documentList">
       <!-- List of uploaded documents will be displayed here -->
@@ -77,6 +78,7 @@ $conn->close();
       </script>
     </div>
   </div>
+  <script src="js/mydocs.js" type="module"></script>
 </body>
 
 </html>

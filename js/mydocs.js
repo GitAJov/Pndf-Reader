@@ -1,3 +1,10 @@
+// PDF.JS CONFIGURATION ====================================
+var { pdfjsLib } = globalThis;
+
+// Set the worker source for PDF.js
+pdfjsLib.GlobalWorkerOptions.workerSrc =
+  "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
+
 document.getElementById('fileInput').addEventListener('change', async function () {
   const file = this.files[0];
   if (file) {
@@ -32,7 +39,6 @@ export async function fetchDocuments() {
     const documentList = document.getElementById('documentList');
     documentList.innerHTML = '';
     if (documents.length === 0) {
-      // Display panda-eating gif and message if no documents are found
       const div = document.createElement('div');
       div.className = 'no-documents';
       div.innerHTML = `
@@ -41,11 +47,11 @@ export async function fetchDocuments() {
       `;
       documentList.appendChild(div);
     } else {
-      // Display documents if found
       documents.forEach(doc => {
         const div = document.createElement('div');
         div.className = 'document-item';
         div.innerHTML = `
+        <canvas id="pdf-${doc.id}"></canvas>
           <span>${doc.file_name}</span>
           <div>
             <button onclick="viewDocument(${doc.id})">View</button>
@@ -53,6 +59,7 @@ export async function fetchDocuments() {
           </div>
         `;
         documentList.appendChild(div);
+        renderPDFPage(`php/uploads/${doc.username}/${doc.file_name}`, `pdf-${doc.id}`);
       });
     }
   } catch (error) {
@@ -65,19 +72,16 @@ function viewDocument(id) {
 }
 
 export async function deleteDocument(id) {
-  //console.log('Deleting document with id:', id);
   try {
     const response = await fetch(`php/delete_document.php`, {
       method: 'DELETE',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded' // Change to form-urlencoded
+        'Content-Type': 'application/x-www-form-urlencoded'
       },
-      body: `id=${id}` // Send id in the body
+      body: `id=${id}`
     });
     const responseText = await response.text();
-    //console.log('Response text that caused error:', responseText);
     const result = JSON.parse(responseText);
-    //console.log('Delete response:', result);
     if (result.status === 'success') {
       alert('Document deleted successfully');
       fetchDocuments();
@@ -86,7 +90,6 @@ export async function deleteDocument(id) {
     }
   } catch (error) {
     console.error('Error deleting document:', error);
-    //console.error('Response text that caused error:', error.message);
   }
 }
 
@@ -99,3 +102,39 @@ function confirmDeleteDocument(id) {
 export { confirmDeleteDocument };
 
 document.addEventListener('DOMContentLoaded', fetchDocuments);
+
+async function renderPDFPage(url, canvasId) {
+  const loadingTask = pdfjsLib.getDocument(url);
+  loadingTask.promise.then(function (pdf) {
+    pdf.getPage(1).then(function (page) {
+      const viewport = page.getViewport({ scale: 1 });
+      const scale = Math.max(200 / viewport.width, 200 / viewport.height);
+      const scaledViewport = page.getViewport({ scale: scale });
+
+      const canvas = document.getElementById(canvasId);
+      const context = canvas.getContext('2d');
+      canvas.height = 200;
+      canvas.width = 200;
+
+      // Clear the canvas
+      context.clearRect(0, 0, canvas.width, canvas.height);
+
+      const renderContext = {
+        canvasContext: context,
+        viewport: scaledViewport
+      };
+
+      // Center the page in the canvas
+      const translateX = (canvas.width - scaledViewport.width) / 2;
+      const translateY = (canvas.height - scaledViewport.height) / 2;
+      context.translate(translateX, translateY);
+
+      page.render(renderContext).promise.then(() => {
+        // Reset the transform after rendering
+        context.setTransform(1, 0, 0, 1, 0, 0);
+      });
+    });
+  }).catch(function (error) {
+    console.error('Error rendering PDF page:', error);
+  });
+}

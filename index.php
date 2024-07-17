@@ -62,6 +62,7 @@ if ($isLoggedIn) {
   <script src="js/voiceRecognition.js" type="module"></script>
   <link rel="stylesheet" href="css/homepage.css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
 
   <script type="module">
     import { initializeGemini } from './js/gemini.js';
@@ -135,14 +136,14 @@ if ($isLoggedIn) {
 <body>
   <div id="container">
     <div id="topMenu">
-      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader" onclick="window.location.href = 'index.php';">
+      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader" onclick="window.location.href = 'welcome.php';">
       <div class="nav-right">
         <button id="docs" class="docsbtn" onclick="window.location.href='mydocs.php'">My Documents</button>
         <button id="file" class="filebtn">New File</button>
 
         <div class="dropdown">
           <button class="dropbtn">Tools
-            <img src="Resources/drop-icon.png" alt="Drop Icon" class="drop-icon">
+            <i class="material-symbols-outlined" style="font-size: 36px"> arrow_drop_down </i>
           </button>
           <div class="dropdown-content">
             <a href="#" id="speedread" style="display: none">Speedread</a>
@@ -159,7 +160,7 @@ if ($isLoggedIn) {
               echo "Guest";
             }
             ?>
-            <img src="Resources/profile-icon.png" alt="Profile Icon" class="profile-icon">
+            <i class="material-symbols-outlined" style="font-size: 36px"> account_circle </i>
           </button>
           <div id="profileDropdown" class="dropdown-content">
             <?php if ($isLoggedIn): ?>
