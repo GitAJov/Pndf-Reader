@@ -5,6 +5,8 @@ var { pdfjsLib } = globalThis;
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
 
+let documentList = document.getElementById('documentList');
+
 document.getElementById('fileInput').addEventListener('change', async function () {
   const file = this.files[0];
   if (file) {
@@ -36,9 +38,10 @@ export async function fetchDocuments() {
   try {
     const response = await fetch('php/fetch_documents.php');
     const documents = await response.json();
-    const documentList = document.getElementById('documentList');
     documentList.innerHTML = '';
+
     if (documents.length === 0) {
+      documentList.style.justifyContent = 'center';
       const div = document.createElement('div');
       div.className = 'no-documents';
       div.innerHTML = `
@@ -47,12 +50,13 @@ export async function fetchDocuments() {
       `;
       documentList.appendChild(div);
     } else {
+      documentList.style.justifyContent = 'none';
       documents.forEach(doc => {
         const div = document.createElement('div');
         div.className = 'document-item';
         div.innerHTML = `
-        <canvas id="pdf-${doc.id}"></canvas>
-          <span>${doc.file_name}</span>
+          <canvas id="pdf-${doc.id}"></canvas>
+          <span class="doc-file-txt">${doc.file_name}</span>
           <div>
             <button onclick="viewDocument(${doc.id})">View</button>
             <button class="delete-button" onclick="confirmDeleteDocument(${doc.id})">Delete</button>
@@ -65,10 +69,6 @@ export async function fetchDocuments() {
   } catch (error) {
     console.error('Error fetching documents:', error);
   }
-}
-
-function viewDocument(id) {
-  window.location.href = `index.php?doc_id=${id}`;
 }
 
 export async function deleteDocument(id) {

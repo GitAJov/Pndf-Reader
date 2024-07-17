@@ -62,7 +62,8 @@ if ($isLoggedIn) {
   <script src="js/voiceRecognition.js" type="module"></script>
   <link rel="stylesheet" href="css/homepage.css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
 
   <script type="module">
     import { initializeGemini } from './js/gemini.js';
@@ -136,7 +137,8 @@ if ($isLoggedIn) {
 <body>
   <div id="container">
     <div id="topMenu">
-      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader" onclick="window.location.href = 'welcome.php';">
+      <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader"
+        onclick="window.location.href = 'welcome.php';">
       <div class="nav-right">
         <button id="docs" class="docsbtn" onclick="window.location.href='mydocs.php'">My Documents</button>
         <button id="file" class="filebtn">New File</button>
@@ -207,29 +209,33 @@ if ($isLoggedIn) {
 
     <div id="mainContent">
       <div id="pdf">
-        <div id="navigate">
-          <button id="prev">Previous</button>
-          <span>Page:
-            <span><input type="text" id="pageInput" value="1" /></span>
-            /
-            <span id="page_count">-</span>
-          </span>
-          <button id="next">Next</button>
-          &nbsp; &nbsp;
-          <br />
-        </div>
-        <div class="before-canvas-container">
-          <div id="canvas-container">
-          </div> <br />
-        </div>
-        <div id="footbar">
-          <div class="texttospeech-nav">
-            <button id="speak" style="display:inline-block;"><i class="material-icons">headphones</i></button>
-            <button id="start" style="display:none;"><i class="material-icons">play_arrow</i></button>
-            <button id="pause" style="display:none;"><i class="material-icons">pause</i></button>
-            <button id="resume" style="display:none;"><i class="material-icons">play_arrow</i></button>
-            <button id="cancel" style="display:none;"><i class="material-icons">stop</i></button>
-            <button id="mic"><i class="material-icons">mic</i></button>
+        <div>
+          <div id="navigate">
+            <button id="prev">Previous</button>
+            <div>
+              <span>Page:
+                <span><input type="text" id="pageInput" value="1" /></span>
+                /
+                <span id="page_count">-</span>
+              </span>
+            </div>
+            <button id="next">Next</button>
+            &nbsp; &nbsp;
+            <br />
+          </div>
+          <div class="before-canvas-container">
+            <div id="canvas-container">
+            </div> <br />
+          </div>
+          <div id="footbar">
+            <div class="texttospeech-nav">
+              <button id="speak" style="display:inline-block;"><i class="material-icons">headphones</i></button>
+              <button id="start" style="display:none;"><i class="material-icons">play_arrow</i></button>
+              <button id="pause" style="display:none;"><i class="material-icons">pause</i></button>
+              <button id="resume" style="display:none;"><i class="material-icons">play_arrow</i></button>
+              <button id="cancel" style="display:none;"><i class="material-icons">stop</i></button>
+              <button id="mic"><i class="material-icons">mic</i></button>
+            </div>
           </div>
         </div>
       </div>
