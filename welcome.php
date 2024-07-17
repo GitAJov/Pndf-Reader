@@ -75,7 +75,7 @@ if ($isLoggedIn) {
         <!-- New Welcome Page Content -->
         <div class="pndf-reader-container">
             <section class="hero-section">
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e87e1c1bb4bdb777c8d2bce00b936d100e2061d08fbee611eaeb915b0b1acfa7?"
+                <img src="Resources/panda-read2.png"
                     alt="PNDF Reader Hero Background" class="hero-image" />
                 <h1 class="hero-title"><?php
                 if ($isLoggedIn) {
@@ -92,7 +92,7 @@ if ($isLoggedIn) {
                 <div class="features-container">
                     <article class="feature-column">
                         <div class="feature-item" onclick="window.location.href = 'index.php'">
-                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/1b49f92d71b1854b068665cb204180a5fd9f9627d1eee10b7411728e14475108?"
+                            <img src="Resources/feature1.png"
                                 alt="Upload PDFs Icon" class="feature-icon" />
                             <h2 class="feature-title">Upload PDFs</h2>
                             <p class="feature-description">Easily upload any PDF from your computer.</p>
@@ -100,7 +100,7 @@ if ($isLoggedIn) {
                     </article>
                     <article class="feature-column">
                         <div class="feature-item" onclick="window.location.href = 'mydocs.php'">
-                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/f65807204f2ca7070de8467e61e2734324660c3735669d0415201b49009143c8?"
+                            <img src="Resources/feature2.png"
                                 alt="Organize PDFs Icon" class="feature-icon" />
                             <h2 class="feature-title">Organize your PDFs</h2>
                             <p class="feature-description">Create folders to organize your PDFs.</p>
@@ -108,7 +108,7 @@ if ($isLoggedIn) {
                     </article>
                     <article class="feature-column">
                         <div class="feature-item" onclick="window.location.href = 'index.php'">
-                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/9ad0432ff97524d4a1b294da49a8fd484cbf4ce0fd2c0703974659f918160b72?"
+                            <img src="Resources/feature3.png"
                                 alt="Read with Ease Icon" class="feature-icon" />
                             <h2 class="feature-title">Read with ease</h2>
                             <p class="feature-description">Enjoy a simple and beautiful reading experience.</p>
