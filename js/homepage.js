@@ -483,7 +483,7 @@ function speedTextMenu() {
 
   const wpmLabel = document.createElement("label");
   wpmLabel.setAttribute("for", "wpm");
-  wpmLabel.textContent = "Words Per Minute:";
+  wpmLabel.textContent = "Speed (words/minute):";
 
   const wpmInput = document.createElement("input");
   wpmInput.type = "number";
@@ -952,12 +952,16 @@ export { initializePDF, onNextPage, onPrevPage };
 async function getCommandfromResponse() {
   const intent = await voiceRecognition();
   let navigateCheck = intent.split(" ");
-  if(navigateCheck[0] == "navigate" || navigateCheck[0] == "jump" || navigateCheck[0] == "John"){
-    if(navigateCheck[1]=="to" || navigateCheck[1]=="two"){
+  if (
+    navigateCheck[0] == "navigate" ||
+    navigateCheck[0] == "jump" ||
+    navigateCheck[0] == "John"
+  ) {
+    if (navigateCheck[1] == "to" || navigateCheck[1] == "two") {
       navigateCheck[1] = "2";
-    } 
+    }
     let pageNum = parseInt(navigateCheck[1]);
-    if(!isNaN(pageNum) && pageNum <= max && pageNum >= 1){
+    if (!isNaN(pageNum) && pageNum <= max && pageNum >= 1) {
       document.getElementById("pageInput").value = pageNum;
       pageInput();
     }
@@ -1040,6 +1044,74 @@ function addEventListeners() {
     document.getElementById("start").style.display = "inline-block";
     document.getElementById("cancel").style.display = "inline-block";
     document.getElementById("speak").style.display = "none";
+  });
+
+  document.addEventListener("keydown", function (event) {
+    const key = event.key.toLowerCase(); // Convert key to lowercase
+    const overlay = document.getElementById("grayOverlay");
+
+    switch (key) {
+      case "a":
+        console.log("You pressed a");
+        break;
+      case "f":
+        window.location.href = "mydocs.php"; // Navigate to My Documents page on 'f' key press
+        break;
+      case "m":
+        window.location.href = "welcome.php"; // Navigate to homepage on 'm' key press
+        break;
+      case "r":
+        // Toggle Speedread functionality visibility
+        const speedreadLink = document.getElementById("speedread");
+
+        if (overlay) {
+          overlay.click();
+        }
+        speedreadLink.click();
+        break;
+      case "d":
+        // Toggle Dyslexia functionality visibility
+        const dyslexiaLink = document.getElementById("dyslexia");
+        if (overlay) {
+          overlay.click();
+        }
+        dyslexiaLink.click();
+        break;
+      case "t":
+        // Toggle dark mode
+        const themeToggle = document.getElementById("theme-toggle-item");
+        if (themeToggle) {
+          themeToggle.click();
+        }
+        break;
+      case ",":
+        // Navigate to previous page
+        onPrevPage();
+        break;
+      case ".":
+        // Navigate to next page
+        onNextPage();
+        break;
+      case "1":
+        document.getElementById("speak").click();
+        break;
+      case "2":
+        document.getElementById("start").click();
+        break;
+      case "3":
+        document.getElementById("pause").click();
+        break;
+      case "4":
+        document.getElementById("resume").click();
+        break;
+      case "5":
+        document.getElementById("cancel").click();
+        break;
+      case "s":
+        document.getElementById("mic").click();
+      default:
+        break;
+    }
   });
 }
 
