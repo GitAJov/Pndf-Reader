@@ -1048,7 +1048,6 @@ function addEventListeners() {
 
   document.addEventListener("keydown", function (event) {
     const key = event.key.toLowerCase(); // Convert key to lowercase
-    const overlay = document.getElementById("grayOverlay");
 
     switch (key) {
       case "a":
@@ -1063,8 +1062,8 @@ function addEventListeners() {
       case "r":
         // Toggle Speedread functionality visibility
         const speedreadLink = document.getElementById("speedread");
-
-        if (overlay) {
+        let overlay = document.getElementById("grayOverlay");
+        if (overlayActive) {
           overlay.click();
         }
         speedreadLink.click();
@@ -1072,7 +1071,7 @@ function addEventListeners() {
       case "d":
         // Toggle Dyslexia functionality visibility
         const dyslexiaLink = document.getElementById("dyslexia");
-        if (overlay) {
+        if (overlayActive) {
           overlay.click();
         }
         dyslexiaLink.click();
