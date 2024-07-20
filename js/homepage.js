@@ -345,8 +345,22 @@ function toggleOverlay() {
   overlayActive = !overlayActive;
   blurPage(overlayActive);
   let grayOverlay = document.getElementById("grayOverlay");
-  grayOverlay.style.display = overlayActive ? "block" : "none";
+
+  if (overlayActive) {
+    grayOverlay.style.display = "block";
+    // Trigger reflow to restart the animation
+    grayOverlay.offsetHeight; // No need to store this value, the reading forces a reflow
+    grayOverlay.classList.add('show');
+  } else {
+    // Add an event listener to hide the overlay after the animation ends
+    grayOverlay.addEventListener('animationend', function handleAnimationEnd() {
+      grayOverlay.style.display = "none";
+      grayOverlay.removeEventListener('animationend', handleAnimationEnd);
+    });
+    grayOverlay.classList.remove('show');
+  }
 }
+
 
 function exitOverlay(event) {
   if (event.target.id === "grayOverlay") {

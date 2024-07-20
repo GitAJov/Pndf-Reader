@@ -300,7 +300,17 @@ body.dark-mode #pageInput {
   width: 100%;
 }
 
-/* Start of Overlay Styles */
+/* Define keyframes for the pop-up animation */
+@keyframes popup {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translate(-50%, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
 #grayOverlay {
   display: none;
   position: fixed;
@@ -329,6 +339,7 @@ body.dark-mode #pageInput {
   justify-content: space-between;
   height: calc(66vh + 40px);
   z-index: 1001; /* Ensure it's above other content including sideMenu */
+  animation: popup 0.5s ease-out;
 }
 
 /* Dark mode styles for text box */
@@ -337,6 +348,15 @@ body.dark-mode #pageInput {
   color: #f9f9f9; /* Dark mode text color */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* Darker shadow for better contrast */
 }
+
+
+/* Dark mode styles for text box */
+#textBox.dark-mode {
+  background-color: #333; /* Dark mode background color */
+  color: #f9f9f9; /* Dark mode text color */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* Darker shadow for better contrast */
+}
+
 /* Start of Text Menu Changes */
 #textMenu {
   display: flex;
