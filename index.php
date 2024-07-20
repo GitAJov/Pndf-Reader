@@ -101,7 +101,7 @@ if ($isLoggedIn) {
     };
 
     document.addEventListener('DOMContentLoaded', (event) => {
-        document.getElementById('next').addEventListener('click', onNextPage);
+      document.getElementById('next').addEventListener('click', onNextPage);
       document.getElementById('prev').addEventListener('click', onPrevPage);
 
       const startButton = document.getElementById('start');
