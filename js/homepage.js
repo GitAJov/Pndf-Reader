@@ -345,8 +345,22 @@ function toggleOverlay() {
   overlayActive = !overlayActive;
   blurPage(overlayActive);
   let grayOverlay = document.getElementById("grayOverlay");
-  grayOverlay.style.display = overlayActive ? "block" : "none";
+
+  if (overlayActive) {
+    grayOverlay.style.display = "block";
+    // Trigger reflow to restart the animation
+    grayOverlay.offsetHeight; // No need to store this value, the reading forces a reflow
+    grayOverlay.classList.add('show');
+  } else {
+    // Add an event listener to hide the overlay after the animation ends
+    grayOverlay.addEventListener('animationend', function handleAnimationEnd() {
+      grayOverlay.style.display = "none";
+      grayOverlay.removeEventListener('animationend', handleAnimationEnd);
+    });
+    grayOverlay.classList.remove('show');
+  }
 }
+
 
 function exitOverlay(event) {
   if (event.target.id === "grayOverlay") {
@@ -483,7 +497,7 @@ function speedTextMenu() {
 
   const wpmLabel = document.createElement("label");
   wpmLabel.setAttribute("for", "wpm");
-  wpmLabel.textContent = "Words Per Minute:";
+  wpmLabel.textContent = "Speed (words/minute):";
 
   const wpmInput = document.createElement("input");
   wpmInput.type = "number";
@@ -952,12 +966,16 @@ export { initializePDF, onNextPage, onPrevPage };
 async function getCommandfromResponse() {
   const intent = await voiceRecognition();
   let navigateCheck = intent.split(" ");
-  if(navigateCheck[0] == "navigate" || navigateCheck[0] == "jump" || navigateCheck[0] == "John"){
-    if(navigateCheck[1]=="to" || navigateCheck[1]=="two"){
+  if (
+    navigateCheck[0] == "navigate" ||
+    navigateCheck[0] == "jump" ||
+    navigateCheck[0] == "John"
+  ) {
+    if (navigateCheck[1] == "to" || navigateCheck[1] == "two") {
       navigateCheck[1] = "2";
-    } 
+    }
     let pageNum = parseInt(navigateCheck[1]);
-    if(!isNaN(pageNum) && pageNum <= max && pageNum >= 1){
+    if (!isNaN(pageNum) && pageNum <= max && pageNum >= 1) {
       document.getElementById("pageInput").value = pageNum;
       pageInput();
     }
@@ -1040,6 +1058,73 @@ function addEventListeners() {
     document.getElementById("start").style.display = "inline-block";
     document.getElementById("cancel").style.display = "inline-block";
     document.getElementById("speak").style.display = "none";
+  });
+
+  document.addEventListener("keydown", function (event) {
+    const key = event.key.toLowerCase(); // Convert key to lowercase
+
+    switch (key) {
+      case "a":
+        console.log("You pressed a");
+        break;
+      case "f":
+        window.location.href = "mydocs.php"; // Navigate to My Documents page on 'f' key press
+        break;
+      case "m":
+        window.location.href = "welcome.php"; // Navigate to homepage on 'm' key press
+        break;
+      case "r":
+        // Toggle Speedread functionality visibility
+        const speedreadLink = document.getElementById("speedread");
+        let overlay = document.getElementById("grayOverlay");
+        if (overlayActive) {
+          overlay.click();
+        }
+        speedreadLink.click();
+        break;
+      case "d":
+        // Toggle Dyslexia functionality visibility
+        const dyslexiaLink = document.getElementById("dyslexia");
+        if (overlayActive) {
+          overlay.click();
+        }
+        dyslexiaLink.click();
+        break;
+      case "t":
+        // Toggle dark mode
+        const themeToggle = document.getElementById("theme-toggle-item");
+        if (themeToggle) {
+          themeToggle.click();
+        }
+        break;
+      case ",":
+        // Navigate to previous page
+        onPrevPage();
+        break;
+      case ".":
+        // Navigate to next page
+        onNextPage();
+        break;
+      case "1":
+        document.getElementById("speak").click();
+        break;
+      case "2":
+        document.getElementById("start").click();
+        break;
+      case "3":
+        document.getElementById("pause").click();
+        break;
+      case "4":
+        document.getElementById("resume").click();
+        break;
+      case "5":
+        document.getElementById("cancel").click();
+        break;
+      case "s":
+        document.getElementById("mic").click();
+      default:
+        break;
+    }
   });
 }
 

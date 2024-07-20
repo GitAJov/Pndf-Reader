@@ -300,7 +300,17 @@ body.dark-mode #pageInput {
   width: 100%;
 }
 
-/* Start of Overlay Styles */
+/* Define keyframes for the pop-up animation */
+@keyframes popup {
+  from {
+    opacity: 0;
+    transform: scale(0.9) translate(-50%, -50%);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translate(-50%, -50%);
+  }
+}
 #grayOverlay {
   display: none;
   position: fixed;
@@ -329,6 +339,7 @@ body.dark-mode #pageInput {
   justify-content: space-between;
   height: calc(66vh + 40px);
   z-index: 1001; /* Ensure it's above other content including sideMenu */
+  animation: popup 0.5s ease-out;
 }
 
 /* Dark mode styles for text box */
@@ -337,6 +348,15 @@ body.dark-mode #pageInput {
   color: #f9f9f9; /* Dark mode text color */
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* Darker shadow for better contrast */
 }
+
+
+/* Dark mode styles for text box */
+#textBox.dark-mode {
+  background-color: #333; /* Dark mode background color */
+  color: #f9f9f9; /* Dark mode text color */
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* Darker shadow for better contrast */
+}
+
 /* Start of Text Menu Changes */
 #textMenu {
   display: flex;
@@ -730,4 +750,48 @@ body.dark-mode .choose-file-button:hover {
 #loadingOverlay img {
   border-radius: 30px;
   width: 30vw;
+}
+
+/* CSS UNTUK TOOLTIP */
+[title] {
+  position: relative;
+}
+
+[title]:after {
+  content: attr(title);
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  background-color: white;
+  color: black;
+  font-size: 14px;
+  border: 1px solid black;
+  padding: 5px;
+  width: max-content;
+  opacity: 0;
+  white-space: nowrap; 
+  -webkit-transition: opacity 0.75s ease-in-out; /* Chrome, Safari */
+  -moz-transition: opacity 0.75s ease-in-out; /* Firefox */
+  -o-transition: opacity 0.75s ease-in-out; /* Opera */
+  transition: opacity 0.75s ease-in-out; /* Standard */
+  transform: translateX(-50%);
+  z-index: 999;
+}
+
+[title]:hover:after {
+  opacity: 1;
+}
+
+@media screen and (max-width: 500px) {
+  [title]:after {
+    left: auto;
+    right: 0;
+    transform: none;
+  }
+}
+
+div[style*="--tooltip-position: bottom;"]::after {
+  top: calc(100% + 10px); /* position at the bottom */
+  transform: none;
+  padding: 19px;
 }
