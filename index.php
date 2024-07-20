@@ -60,10 +60,6 @@ if ($isLoggedIn) {
   <script src="js/homepage.js" type="module"></script>
   <script src="js/darkmode.js" type="module"></script>
   <script src="js/voiceRecognition.js" type="module"></script>
-  <script src="https://unpkg.com/browse/@rwh/keystrokes@latest/dist/keystrokes.umd.cjs"></script>
-  <script>
-    keystrokes.bindKey('a', () => console.log('you pressed a'))
-  </script>
   <link rel="stylesheet" href="css/homepage.css" />
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   <link rel="stylesheet"
@@ -189,9 +185,9 @@ if ($isLoggedIn) {
         <div class="text-large-bold">
           <?php
           if ($isLoggedIn) {
-            echo "Welcome, " . htmlspecialchars($username) . "!";
+            echo "Hello, " . htmlspecialchars($username) . "!";
           } else {
-            echo "Welcome, Guest";
+            echo "Hello, Guest!";
           }
           ?>
         </div>

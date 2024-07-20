@@ -55,7 +55,7 @@ export async function fetchDocuments() {
         const div = document.createElement('div');
         div.className = 'document-item';
         div.innerHTML = `
-          <canvas id="pdf-${doc.id}"></canvas>
+          <canvas class="doc-canvas" id="pdf-${doc.id}"></canvas>
           <span class="doc-file-txt">${doc.file_name}</span>
           <div>
             <button onclick="viewDocument(${doc.id})">View</button>
