@@ -185,9 +185,9 @@ if ($isLoggedIn) {
         <div class="text-large-bold">
           <?php
           if ($isLoggedIn) {
-            echo "Welcome, " . htmlspecialchars($username) . "!";
+            echo "Hello, " . htmlspecialchars($username) . "!";
           } else {
-            echo "Welcome, Guest";
+            echo "Hello, Guest!";
           }
           ?>
         </div>
