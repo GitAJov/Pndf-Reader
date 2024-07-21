@@ -69,11 +69,11 @@ async function initializePDF(url) {
     // Hide loading overlay and keep the main menu visible
     hideLoadingOverlay();
   }
-  // Ensure overlay stays for at least 3 seconds
+  // Ensure overlay stays for at least 0.5 seconds
   clearTimeout(loadingTimeout);
   loadingTimeout = setTimeout(() => {
     hideLoadingOverlay();
-  }, 50);
+  }, 500);
 }
 
 function reset() {
@@ -391,8 +391,21 @@ function exitOverlay(event) {
 
 function hideGrayOverlay() {
   const grayOverlay = document.getElementById("grayOverlay");
-  grayOverlay.style.display = "none";
+  const textBox = document.getElementById("textBox");
+
+  if (textBox) {
+    textBox.classList.add("close");
+    textBox.addEventListener("animationend", function handleAnimationEnd() {
+      grayOverlay.style.display = "none";
+      textBox.classList.remove("close");
+      textBox.removeEventListener("animationend", handleAnimationEnd);
+    });
+  } else {
+    grayOverlay.style.display = "none";
+  }
 }
+
+document.getElementById('grayOverlay').addEventListener('click', exitOverlay);
 
 function resetSpeedreadText() {
   const speedreadTextElement = document.getElementById("speedreadText");
@@ -1028,8 +1041,7 @@ function microphoneMenu() {
   const speedreadContainer = document.getElementById("speedreadContainer");
 
   // Hide text menu buttons
-  const textMenuButtons =
-    document.getElementsByClassName("textMenu-buttons")[0];
+  const textMenuButtons = document.getElementsByClassName("textMenu-buttons")[0];
   textMenuButtons.style.display = "none";
 
   // Create and configure main elements
@@ -1050,6 +1062,8 @@ function microphoneMenu() {
 
   // Append elements
   textMenu.appendChild(helpButton);
+  // Add event listener to the help button
+  helpButton.addEventListener('click', showHelp);
 
   const micDiv = document.createElement("div");
   micDiv.id = "micDiv";
@@ -1060,6 +1074,78 @@ function microphoneMenu() {
   micDiv.appendChild(commandStatusSpan);
 
   speedreadContainer.appendChild(micDiv);
+}
+
+function showHelp() {
+  const helpOverlay = document.createElement("div");
+  helpOverlay.id = "helpOverlay";
+  helpOverlay.style.position = "fixed";
+  helpOverlay.style.top = "0";
+  helpOverlay.style.left = "0";
+  helpOverlay.style.width = "100%";
+  helpOverlay.style.height = "100%";
+  helpOverlay.style.backgroundColor = "rgba(0,0,0,0.8)";
+  helpOverlay.style.color = "white";
+  helpOverlay.style.display = "flex";
+  helpOverlay.style.flexDirection = "column";
+  helpOverlay.style.justifyContent = "center";
+  helpOverlay.style.alignItems = "center";
+  helpOverlay.style.zIndex = "1000";
+  helpOverlay.classList.add("fade-in");
+
+  const helpContent = document.createElement("div");
+  helpContent.style.backgroundColor = "black";
+  helpContent.style.padding = "20px";
+  helpContent.style.borderRadius = "10px";
+  helpContent.style.maxWidth = "80%";
+  helpContent.style.textAlign = "left";
+  helpContent.classList.add("slide-in");
+
+  const helpText = `
+    <h2>Available Commands</h2>
+    <ul>
+      <li>navigate to [page number]</li>
+      <li>jump to [page number]</li>
+      <li>text to speech</li>
+      <li>speak</li>
+      <li>pause</li>
+      <li>start</li>
+      <li>cancel</li>
+      <li>stop</li>
+      <li>exit</li>
+      <li>resume</li>
+      <li>speedread</li>
+      <li>dyslexia</li>
+      <li>change</li>
+      <li>dark mode</li>
+      <li>night mode</li>
+      <li>light mode</li>
+    </ul>
+  `;
+  helpContent.innerHTML = helpText;
+
+  helpOverlay.appendChild(helpContent);
+
+  // Append the overlay to the document body
+  document.body.appendChild(helpOverlay);
+
+  // Add an event listener to close the help overlay when clicking outside the help content
+  helpOverlay.addEventListener('click', function(event) {
+    if (event.target === helpOverlay) {
+      closeHelp();
+    }
+  });
+}
+
+function closeHelp() {
+  const helpOverlay = document.getElementById("helpOverlay");
+  if (helpOverlay) {
+    helpOverlay.classList.remove("fade-in");
+    helpOverlay.classList.add("fade-out");
+    setTimeout(() => {
+      helpOverlay.remove();
+    }, 500);
+  }
 }
 
 async function getCommandfromResponse() {
