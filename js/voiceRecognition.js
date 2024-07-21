@@ -1,4 +1,3 @@
-import { getIntent } from "../js/gemini.js";
 
 export async function RecognizeandVisualize() {
   const AudioVisualizer = class {
@@ -85,23 +84,20 @@ export async function RecognizeandVisualize() {
       recognition.start();
 
       recognition.onresult = async (event) => {
-        document.getElementById("commandStatus").textContent = "Listening...";
         let transcript = "";
         for (let i = 0; i < event.results.length; i++) {
           transcript += event.results[i][0].transcript + " ";
         }
         transcript = transcript.trim();
 
-        // Update the liveWords span with the recognized text
         const liveWordsSpan = document.getElementById("liveWords");
         if (liveWordsSpan) {
           liveWordsSpan.textContent = transcript;
         }
 
         try {
-          const intent = await getIntent(transcript);
-          console.log("Command recognized:", intent);
-          resolve(intent);
+          console.log("User says:", transcript);
+          resolve(transcript);
         } catch (error) {
           console.error("Error getting intent:", error);
           reject(error);
@@ -173,7 +169,7 @@ export async function RecognizeandVisualize() {
 
     try {
       const userCommand = await voiceRecognition();
-      console.log("Voice command recognized:", userCommand);
+      console.log("voiceRecognition returned to init:", userCommand);
       return userCommand; // Return the recognized intent
     } catch (error) {
       console.error("Voice recognition error:", error);

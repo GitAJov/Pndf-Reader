@@ -1,7 +1,7 @@
 import { formatText } from "../js/gemini.js";
 import { formatDisplayText } from "../js/gemini.js";
 import { RecognizeandVisualize } from "./voiceRecognition.js";
-
+import { getIntent } from "../js/gemini.js";
 // PDF.JS CONFIGURATION ====================================
 var { pdfjsLib } = globalThis;
 
@@ -371,7 +371,6 @@ function toggleOverlay() {
 function clickOverlay() {
   let overlay = document.getElementById("grayOverlay");
   if (overlayActive) {
-    console.log("clicking overlay");
     overlay.click();
   }
 }
@@ -1160,17 +1159,16 @@ function closeHelp() {
 }
 
 async function getCommandfromResponse() {
-  const userCommand = await RecognizeandVisualize();
+  const Response = await RecognizeandVisualize();
+  console.log("Response: " + Response);
+
+  const userCommand = await getIntent(Response);
+  console.log("userCommand: " + userCommand);
+
   let commandStatus = document.getElementById("commandStatus");
+
   let navigateCheck = userCommand.split(" ");
-  if (
-    navigateCheck[0] == "navigate" ||
-    navigateCheck[0] == "jump" ||
-    navigateCheck[0] == "John"
-  ) {
-    if (navigateCheck[1] == "to" || navigateCheck[1] == "two") {
-      navigateCheck[1] = "2";
-    }
+  if (navigateCheck[0] == "navigate") {
     let pageNum = parseInt(navigateCheck[1]);
     if (!isNaN(pageNum) && pageNum <= max && pageNum >= 1) {
       document.getElementById("pageInput").value = pageNum;
@@ -1178,17 +1176,19 @@ async function getCommandfromResponse() {
       return;
     }
   }
-  commandStatus.textContent = "Command found: " + userCommand;
+
   switch (userCommand) {
     case "text to speech":
-    case "speak":
-    case "speak speak":
       clickOverlay();
       document.getElementById("speak").click();
       break;
     case "pause":
       clickOverlay();
       document.getElementById("pause").click();
+      break;
+    case "resume":
+      clickOverlay();
+      document.getElementById("resume").click();
       break;
     case "start":
       clickOverlay();
@@ -1198,15 +1198,9 @@ async function getCommandfromResponse() {
         document.getElementById("speak").click();
       }
       break;
-    case "cancel":
     case "stop":
-    case "exit":
       clickOverlay();
       document.getElementById("cancel").click();
-      break;
-    case "resume":
-      clickOverlay();
-      document.getElementById("resume").click();
       break;
     case "speedread":
       clickOverlay();
@@ -1220,9 +1214,7 @@ async function getCommandfromResponse() {
       clickOverlay();
       chooseFile();
       break;
-    case "dark mode":
-    case "night mode":
-    case "light mode":
+    case "toggle":
       clickOverlay();
       document.getElementById("theme-toggle-item").click(); // Trigger the theme toggle
       break;
