@@ -7,6 +7,34 @@ pdfjsLib.GlobalWorkerOptions.workerSrc =
 
 const documentList = document.getElementById('documentList');
 
+function showPopup(message, type, confirmCallback = null) {
+  const popupBox = document.getElementById('popupBox');
+  const popupMessage = document.getElementById('popupMessage');
+  const popupConfirmButton = document.getElementById('popupConfirmButton');
+  const popupCloseButton = document.getElementById('popupCloseButton');
+
+  popupMessage.textContent = message;
+
+  // Show confirm button if confirmCallback is provided
+  if (confirmCallback) {
+    popupConfirmButton.style.display = 'inline-block';
+    popupConfirmButton.onclick = confirmCallback;
+  } else {
+    popupConfirmButton.style.display = 'none';
+  }
+
+  popupCloseButton.onclick = function () {
+    popupBox.style.display = 'none';
+  };
+
+  popupBox.style.display = 'flex';
+}
+
+// Override alert function to use popup
+window.alert = function (message) {
+  showPopup(message);
+};
+
 document.getElementById('fileInput').addEventListener('change', async function () {
   const file = this.files[0];
   if (file) {
@@ -23,13 +51,14 @@ document.getElementById('fileInput').addEventListener('change', async function (
       const result = JSON.parse(text);
 
       if (result.status === 'success') {
-        alert('File uploaded successfully');
+        showPopup('File uploaded successfully', 'success');
         fetchDocuments();
       } else {
-        alert('Failed to upload PDF: ' + result.message);
+        showPopup('Failed to upload PDF: ' + result.message, 'error');
       }
     } catch (error) {
       console.error('Error uploading PDF:', error);
+      showPopup('Error uploading PDF: ' + error.message, 'error');
     }
   }
 });
@@ -98,9 +127,10 @@ export async function deleteDocument(id) {
 }
 
 function confirmDeleteDocument(event, id) {
-  if (confirm('Are you sure you want to delete this document?')) {
+  showPopup('Are you sure you want to delete this document?', 'confirm', function () {
     deleteDocument(id);
-  }
+    document.getElementById('popupBox').style.display = 'none';
+  });
   event.stopPropagation();
 }
 

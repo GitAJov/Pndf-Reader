@@ -30,6 +30,14 @@ $conn->close();
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <link rel="stylesheet"
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./js/three/build/three.module.js",
+      "objloader": "./js/three/examples/jsm/loaders/OBJLoader.js"
+    }
+  }
+</script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
   <script type="module">
     import { fetchDocuments, confirmDeleteDocument } from './js/mydocs.js';
@@ -81,6 +89,23 @@ $conn->close();
       </script>
     </div>
   </div>
+
+  <!-- Popup Box -->
+  <div id="popupBox" class="popup-box">
+    <div class="popup-content">
+      <div>
+        <!-- 3D Panda Head Container -->
+        <div id="panda-container"></div>
+      </div>
+      <span id="popupMessage"></span>
+      <div id="popupButtons" class="popup-buttons">
+        <button id="popupConfirmButton" class="popup-button" style="display: none;">Confirm</button>
+        <button id="popupCloseButton" class="popup-button">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="panda-container"></div>
   <script src="js/mydocs.js" type="module"></script>
 </body>
 
