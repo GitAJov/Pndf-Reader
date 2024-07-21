@@ -1,7 +1,7 @@
 /* Base Styles */
 body {
   background-color: #f1f2f2;
-  font-family: "Comic Sans MS";
+  font-family: "Roboto";
   margin: 0;
   transition: background-color 0.3s, color 0.3s;
   overflow-y: hidden;
@@ -80,7 +80,22 @@ body {
   margin: 0;
   height: 100%;
   transition: background-color 0.3s, color 0.3s;
-  font-family: 'sans-serif';
+  font-family: "Roboto";
+}
+
+#helpbtn,
+#commandButton {
+  border-radius: 10px;
+  background-color: #ffffff;
+  border: solid 1px;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  margin: 0;
+  transition: background-color 0.3s, color 0.3s;
+  font-family: "Roboto";
 }
 
 .drop-icon {
@@ -161,7 +176,10 @@ body.dark-mode {
 .filebtn.dark-mode,
 .homebtn.dark-mode,
 .docsbtn.dark-mode,
-.pdfbtn.dark-mode {
+.pdfbtn.dark-mode,
+body.dark-mode .docsbtn,
+body.dark-mode #commandButton,
+body.dark-mode #helpbtn {
   background-color: #1e1e1e;
   color: #ffffff;
   transition: all 0.3s ease-in-out;
@@ -171,7 +189,10 @@ body.dark-mode {
 .filebtn.dark-mode:hover,
 .homebtn.dark-mode:hover,
 .docsbtn.dark-mode:hover,
-.pdfbtn.dark-mode:hover {
+.pdfbtn.dark-mode:hover,
+body.dark-mode .docsbtn:hover,
+body.dark-mode #commandButton:hover,
+body.dark-mode #helpbtn:hover {
   transform: scale(1.1);
 }
 
@@ -212,7 +233,7 @@ body.dark-mode {
   font-size: 20px;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   margin-top: 10px;
   width: 100%; /* Ensure it takes the full width */
   transition: top 0.3s;
@@ -230,7 +251,7 @@ body.dark-mode {
 
 #navigate button {
   font-size: 20px;
-  font-family: "Comic Sans MS";
+  font-family: "Roboto";
   padding: 5px 15px;
   margin: 10px;
   border-radius: 10px;
@@ -239,6 +260,8 @@ body.dark-mode {
   color: #333; /* Light mode text color */
   transition: background-color 0.3s, color 0.3s;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 #navigate button:hover {
@@ -251,7 +274,7 @@ body.dark-mode {
   background-color: transparent;
   width: 40px;
   text-align: right;
-  font-family: "Comic Sans MS";
+  font-family: "Roboto";
 }
 
 .clickable-word {
@@ -350,7 +373,6 @@ body.dark-mode #pageInput {
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.7); /* Darker shadow for better contrast */
 }
 
-
 /* Dark mode styles for text box */
 #textBox.dark-mode {
   background-color: #333; /* Dark mode background color */
@@ -411,7 +433,7 @@ body.dark-mode #pageInput {
 /* Light Mode Styles for Alignment Container Buttons */
 .alignment-container .toggle-button {
   font-size: 20px;
-  font-family: "Comic Sans MS";
+  font-family: "Roboto";
   padding: 5px 15px;
   margin: 5px;
   border-radius: 10px;
@@ -461,7 +483,7 @@ body.dark-mode #pageInput {
 
 .textMenu-buttons button {
   font-size: 20px;
-  font-family: "Comic Sans MS";
+  font-family: "Roboto";
   padding: 5px 15px;
   border-radius: 10px;
   border-color: transparent;
@@ -583,13 +605,13 @@ body.speedread-active {
 }
 
 /* Style for selected text */
-span::selection {
+.pdf-page-container span::selection {
   background: yellow; /* Highlight color */
   color: black; /* Text color in highlight */
 }
 
 /* Style for text while being clicked and held */
-span:active {
+.pdf-page-container span:active {
   background: orange; /* Background color while holding click */
 }
 
@@ -612,19 +634,19 @@ span:active {
 }
 
 .container-view-pdf label {
-  font-family: "Source Sans Pro";
+  font-family: "Roboto";
   font-weight: 900;
   font-size: 38px;
 }
 
 .text-large-bold {
-  font-family: "Source Sans Pro";
+  font-family: "Roboto";
   font-weight: 900;
   font-size: 42px;
 }
 
 .text-ssp label {
-  font-family: "Source Sans Pro";
+  font-family: "Roboto";
   font-weight: lighter;
   font-size: 24px;
 }
@@ -641,7 +663,7 @@ span:active {
 }
 
 .upload-container p {
-  font-family: "Source Sans Pro";
+  font-family: "Roboto";
 }
 
 .panda-upload {
@@ -770,7 +792,7 @@ body.dark-mode .choose-file-button:hover {
   padding: 5px;
   width: max-content;
   opacity: 0;
-  white-space: nowrap; 
+  white-space: nowrap;
   -webkit-transition: opacity 0.75s ease-in-out; /* Chrome, Safari */
   -moz-transition: opacity 0.75s ease-in-out; /* Firefox */
   -o-transition: opacity 0.75s ease-in-out; /* Opera */
@@ -802,17 +824,17 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  
+
   > div {
     display: inline-block;
     width: 3px;
     height: 100px;
     margin: 0 7px;
     background: currentColor;
-    transform: scaleY( .5 );
-    opacity: .25;
+    transform: scaleY(0.5);
+    opacity: 0.25;
   }
-  
+
   &.error {
     color: #f7451d;
     min-width: 20em;

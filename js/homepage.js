@@ -1040,7 +1040,7 @@ function microphoneMenu() {
     "Microphone",
     getCommandfromResponse
   );
-  const helpButton = createButton(null, "help", "Help");
+  const helpButton = createButton("helpbtn", "help", "Help");
 
   const liveWordsSpan = document.createElement("span");
   liveWordsSpan.id = "liveWords";

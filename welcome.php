@@ -39,6 +39,8 @@ if ($isLoggedIn) {
             <img src="Resources/pndf-logo.png" id="pndf-logo" alt="PNDF Reader"
                 onclick="window.location.href = 'welcome.php';">
             <div class="nav-right">
+                <button id="docs" class="docsbtn" onclick="window.location.href='mydocs.php'"
+                    title="Open your saved documents. Shortcut: M">My Documents</button>
                 <button onclick="window.location.href='index.php'" class="pdfbtn">Upload File</button>
                 <div class="dropdown">
                     <button class="dropbtn">Tools
@@ -75,8 +77,7 @@ if ($isLoggedIn) {
         <!-- New Welcome Page Content -->
         <div class="pndf-reader-container">
             <section class="hero-section">
-                <img src="Resources/panda-read2.png"
-                    alt="PNDF Reader Hero Background" class="hero-image" />
+                <img src="Resources/panda-read2.png" alt="PNDF Reader Hero Background" class="hero-image" />
                 <h1 class="hero-title"><?php
                 if ($isLoggedIn) {
                     echo "Welcome to Pndf Reader, " . htmlspecialchars($username) . "!";
@@ -92,24 +93,21 @@ if ($isLoggedIn) {
                 <div class="features-container">
                     <article class="feature-column">
                         <div class="feature-item" onclick="window.location.href = 'index.php'">
-                            <img src="Resources/feature1.png"
-                                alt="Upload PDFs Icon" class="feature-icon" />
+                            <img src="Resources/feature1.png" alt="Upload PDFs Icon" class="feature-icon" />
                             <h2 class="feature-title">Upload PDFs</h2>
                             <p class="feature-description">Easily upload any PDF from your computer.</p>
                         </div>
                     </article>
                     <article class="feature-column">
                         <div class="feature-item" onclick="window.location.href = 'mydocs.php'">
-                            <img src="Resources/feature2.png"
-                                alt="Organize PDFs Icon" class="feature-icon" />
+                            <img src="Resources/feature2.png" alt="Organize PDFs Icon" class="feature-icon" />
                             <h2 class="feature-title">Organize your PDFs</h2>
                             <p class="feature-description">Create folders to organize your PDFs.</p>
                         </div>
                     </article>
                     <article class="feature-column">
                         <div class="feature-item" onclick="window.location.href = 'index.php'">
-                            <img src="Resources/feature3.png"
-                                alt="Read with Ease Icon" class="feature-icon" />
+                            <img src="Resources/feature3.png" alt="Read with Ease Icon" class="feature-icon" />
                             <h2 class="feature-title">Read with ease</h2>
                             <p class="feature-description">Enjoy a simple and beautiful reading experience.</p>
                         </div>

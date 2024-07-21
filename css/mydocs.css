@@ -42,7 +42,7 @@
   width: 275px;
   height: 350px;
   flex-direction: column;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
   padding: 20px;
   margin: 20px;
@@ -50,6 +50,7 @@
   border: 1px solid #ddd;
   border-radius: 20px;
   transition: ease-in-out 0.3s, box-shadow 0.3s;
+  position: relative; /* Ensure it is the containing block for absolutely positioned elements */
 }
 
 .document-item:hover {
@@ -79,17 +80,22 @@
 
 .doc-canvas {
   border-radius: 20px;
+  width: 200px;
+  height: 200px;
 }
 
 button.delete-button {
+  position: absolute; /* Absolute positioning */
+  bottom: 20px; /* Adjust as needed to position correctly */
+  right: 20px; /* Adjust as needed to position correctly */
   background-color: #cd3e3e;
-    color: white;
-    border: none;
-    padding: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    font-size: 14px;
-    box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.1);
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  box-shadow: 0px 0px 10px 1px rgba(0, 0, 0, 0.1);
 }
 
 button.delete-button:hover {
@@ -156,11 +162,13 @@ body.dark-mode .document-item span {
 
 body.dark-mode .document-item button {
   color: white;
-  background-color: transparent;
+  background-color: #9b0000;
+  transition: ease-in-out 0.3s, color 0.3s;
 }
 
 body.dark-mode .document-item button:hover {
-  background-color: #555;
+  background-color: #7d0101;
+  transform: scale(1.1);
 }
 
 body.dark-mode .no-documents p {

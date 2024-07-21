@@ -319,6 +319,7 @@
   font-feature-settings: "dlig" on;
   letter-spacing: -1px;
   font: 800 36px/45px Newsreader, sans-serif;
+  user-select: none;
 }
 
 .cta-description {
@@ -326,6 +327,7 @@
   font-family: Newsreader, sans-serif;
   font-weight: 400;
   margin-top: 8px;
+  user-select: none;
 }
 
 .cta-button {

@@ -55,13 +55,17 @@ export async function fetchDocuments() {
         const div = document.createElement('div');
         div.className = 'document-item';
         div.innerHTML = `
-          <canvas class="doc-canvas" id="pdf-${doc.id}"></canvas>
-          <span class="doc-file-txt">${doc.file_name}</span>
-          <div>
-            <button onclick="viewDocument(${doc.id})">View</button>
-            <button class="delete-button" onclick="confirmDeleteDocument(${doc.id})">Delete</button>
+          <div class="canvas-container" id="canvas-container-${doc.id}" style="position: relative;">
+            <canvas class="doc-canvas" id="pdf-${doc.id}"></canvas>
+            <button class="delete-button" onclick="confirmDeleteDocument(event, ${doc.id})">
+              <i class="fas fa-trash"></i>
+            </button>
           </div>
+          <span class="doc-file-txt">${doc.file_name}</span>
         `;
+        div.addEventListener('click', () => {
+          viewDocument(doc.id);
+        });
         documentList.appendChild(div);
         renderPDFPage(`php/uploads/${doc.username}/${doc.file_name}`, `pdf-${doc.id}`);
       });
@@ -93,10 +97,11 @@ export async function deleteDocument(id) {
   }
 }
 
-function confirmDeleteDocument(id) {
+function confirmDeleteDocument(event, id) {
   if (confirm('Are you sure you want to delete this document?')) {
     deleteDocument(id);
   }
+  event.stopPropagation();
 }
 
 export { confirmDeleteDocument };
@@ -108,33 +113,37 @@ async function renderPDFPage(url, canvasId) {
   loadingTask.promise.then(function (pdf) {
     pdf.getPage(1).then(function (page) {
       const viewport = page.getViewport({ scale: 1 });
-      const scale = Math.max(200 / viewport.width, 200 / viewport.height);
-      const scaledViewport = page.getViewport({ scale: scale });
-
       const canvas = document.getElementById(canvasId);
       const context = canvas.getContext('2d');
-      canvas.height = 200;
-      canvas.width = 200;
 
-      // Clear the canvas
-      context.clearRect(0, 0, canvas.width, canvas.height);
+      // Define the desired canvas size
+      const canvasSize = { width: 400, height: 400 }; // You can adjust this size as needed
+
+      // Determine the scale to fit the page within the canvas
+      const scale = Math.min(canvasSize.width / viewport.width, canvasSize.height / viewport.height);
+      const scaledViewport = page.getViewport({ scale: scale });
+
+      // Resize the canvas to fit the scaled viewport
+      canvas.width = scaledViewport.width;
+      canvas.height = scaledViewport.height;
 
       const renderContext = {
         canvasContext: context,
         viewport: scaledViewport
       };
 
-      // Center the page in the canvas
-      const translateX = (canvas.width - scaledViewport.width) / 2;
-      const translateY = (canvas.height - scaledViewport.height) / 2;
-      context.translate(translateX, translateY);
+      // Clear the canvas
+      context.clearRect(0, 0, canvas.width, canvas.height);
 
       page.render(renderContext).promise.then(() => {
-        // Reset the transform after rendering
-        context.setTransform(1, 0, 0, 1, 0, 0);
+        console.log('PDF page rendered successfully');
       });
     });
   }).catch(function (error) {
     console.error('Error rendering PDF page:', error);
   });
+}
+
+function viewDocument(id) {
+  window.location.href = `index.php?doc_id=${id}`;
 }

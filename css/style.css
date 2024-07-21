@@ -6,7 +6,7 @@ body {
   height: 100vh;
   margin: 0;
   background-color: #f4f4f4;
-  font-family: "Comic Sans MS";
+  font-family: "Roboto";
 }
 
 .container {
@@ -105,6 +105,7 @@ body {
 
 #header-text {
   font-size: 42px;
+  font-weight: bold;
 }
 
 #body-text {
@@ -150,7 +151,7 @@ body {
   font-size: 20px;
   margin: 15px;
 
-  font-family: "Comic Sans MS";
+  font-family: "Roboto";
 
   border-radius: 20px;
   border: 1px solid transparent;
@@ -171,7 +172,7 @@ body {
   border-radius: 20px;
   cursor: pointer;
   font-size: 22px;
-  font-family: "Comic Sans MS";
+  font-family: "Roboto";
 }
 
 p {
@@ -207,19 +208,19 @@ p {
 }
 
 .container-view-pdf label {
-  font-family: "Source Sans Pro";
+  font-family: "Roboto";
   font-weight: 900;
   font-size: 38px;
 }
 
 .text-large-bold {
-  font-family: "Source Sans Pro";
+  font-family: "Roboto";
   font-weight: 900;
   font-size: 42px;
 }
 
 .text-ssp label {
-  font-family: "Source Sans Pro";
+  font-family: "Roboto";
   font-weight: lighter;
   font-size: 24px;
 }
@@ -236,7 +237,7 @@ p {
 }
 
 .upload-container p {
-  font-family: "Source Sans Pro";
+  font-family: "Roboto";
 }
 
 .panda-upload {

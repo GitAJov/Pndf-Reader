@@ -27,7 +27,9 @@ $conn->close();
   <title>My Documents</title>
   <link rel="stylesheet" href="css/mydocs.css">
   <link rel="stylesheet" href="css/homepage.css">
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.mjs" type="module"></script>
   <script type="module">
     import { fetchDocuments, confirmDeleteDocument } from './js/mydocs.js';
@@ -46,7 +48,7 @@ $conn->close();
         <button onclick="window.location.href='index.php'" class="pdfbtn">Upload File</button>
         <div class="dropdown">
           <button class="dropbtn">Tools
-          <i class="material-symbols-outlined" style="font-size: 36px"> arrow_drop_down </i>
+            <i class="material-symbols-outlined" style="font-size: 36px"> arrow_drop_down </i>
           </button>
           <div class="dropdown-content">
             <a href="#" id="theme-toggle-item">Toggle Theme</a>

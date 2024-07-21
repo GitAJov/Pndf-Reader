@@ -216,17 +216,15 @@ if ($isLoggedIn) {
       <div id="pdf">
         <div>
           <div id="navigate">
-            <div>
-              <button id="prev" title="Go to the previous page. Shortcut: ','" acceskey=",">Previous</button>
-              <span>Page:
-                <span><input type="text" id="pageInput" value="1" /></span>
-                /
-                <span id="page_count">-</span>
-              </span>
-            </div>
-            <button id="next" title="Go to the next page. Shortcut: '.'">Next</button>
-            &nbsp; &nbsp;
-            <br />
+            <button id="prev" title="Go to the previous page. Shortcut: ','" acceskey=","><i
+                class="material-symbols-outlined"> chevron_left </i> Previous</button>
+            <span>Page:
+              <span><input type="text" id="pageInput" value="1" /></span>
+              /
+              <span id="page_count">-</span>
+            </span>
+            <button id="next" title="Go to the next page. Shortcut: '.'">Next<i
+            class="material-symbols-outlined"> chevron_right </i></button>
           </div>
           <div class="before-canvas-container">
             <div id="canvas-container">
