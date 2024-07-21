@@ -9,6 +9,7 @@
 
 #headerTxt {
   font-size: 30px;
+  font-weight: bold;
 }
 
 .fileUpload {
@@ -50,7 +51,8 @@
   border: 1px solid #ddd;
   border-radius: 20px;
   transition: ease-in-out 0.3s, box-shadow 0.3s;
-  position: relative; /* Ensure it is the containing block for absolutely positioned elements */
+  position: relative;
+  overflow-wrap: anywhere;
 }
 
 .document-item:hover {
@@ -82,6 +84,8 @@
   border-radius: 20px;
   width: 200px;
   height: 200px;
+  border: solid 1.5px;
+  border-color: #777;
 }
 
 button.delete-button {

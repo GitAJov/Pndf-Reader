@@ -73,7 +73,7 @@ body {
   background-color: #ffffff;
   border: none;
   cursor: pointer;
-  font-size: 16px;
+  font-size: 20px;
   padding: 10px;
   display: flex;
   align-items: center;
@@ -235,6 +235,7 @@ body.dark-mode #helpbtn:hover {
   align-items: center;
   justify-content: space-between;
   margin-top: 10px;
+  margin-bottom: 10px;
   width: 100%; /* Ensure it takes the full width */
   transition: top 0.3s;
 }
@@ -256,7 +257,8 @@ body.dark-mode #helpbtn:hover {
   margin: 10px;
   border-radius: 10px;
   border-color: transparent;
-  background-color: #f4f4f4; /* Light mode button */
+  background-color: white;
+  box-shadow: 2px 2px 6px 1px rgba(0, 0, 0, 0.1);
   color: #333; /* Light mode text color */
   transition: background-color 0.3s, color 0.3s;
   cursor: pointer;
@@ -587,7 +589,7 @@ body.speedread-active {
   display: flex;
   flex-direction: column;
   align-items: center;
-  border: 1px solid #ccc; /* Optional: add a border for better visibility */
+  box-shadow: 2px 2px 16px 0px rgba(0, 0, 0, 0.2);
   overflow-y: auto;
   height: 70vh;
   max-width: 80vw;
