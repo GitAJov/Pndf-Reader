@@ -66,21 +66,21 @@ if ($isLoggedIn) {
     href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@40,400,0,0" />
 
   <script type="module">
-      import {initializeGemini} from './js/gemini.js';
-      import {initializePDF, onNextPage, onPrevPage} from './js/homepage.js';  // Import initializePDF function
-      const apiKey = "<?php echo htmlspecialchars($api_key); ?>";
+    import { initializeGemini } from './js/gemini.js';
+    import { initializePDF, onNextPage, onPrevPage } from './js/homepage.js';  // Import initializePDF function
+    const apiKey = "<?php echo htmlspecialchars($api_key); ?>";
 
-      function getParameterByName(name, url = window.location.href) {
-        name = name.replace(/[\[\]]/g, '\\$&');
+    function getParameterByName(name, url = window.location.href) {
+      name = name.replace(/[\[\]]/g, '\\$&');
       let regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
-      results = regex.exec(url);
+        results = regex.exec(url);
       if (!results) return null;
       if (!results[2]) return '';
       return decodeURIComponent(results[2].replace(/\+/g, ' '));
     }
 
-      window.onload = function () {
-        let successMessage = getParameterByName('success');
+    window.onload = function () {
+      let successMessage = getParameterByName('success');
       if (successMessage) {
         alert(successMessage);
       }
@@ -89,10 +89,10 @@ if ($isLoggedIn) {
       if (filePath) {
         initializePDF(filePath);
 
-      // Hide main menu, show mainContent and show footbar if doc_id is present
-      document.getElementById('mainMenu').style.display = 'none';
-      document.getElementById('mainContent').style.display = 'flex';
-      document.getElementById('footbar').style.display = 'flex';
+        // Hide main menu, show mainContent and show footbar if doc_id is present
+        document.getElementById('mainMenu').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'flex';
+        document.getElementById('footbar').style.display = 'flex';
       }
     };
 
@@ -111,24 +111,24 @@ if ($isLoggedIn) {
 
       startButton.addEventListener('click', () => {
         startButton.style.display = 'none';
-      pauseButton.style.display = 'inline-block';
+        pauseButton.style.display = 'inline-block';
         // voicesSelect.style.display = 'inline-block';
       });
 
       pauseButton.addEventListener('click', () => {
         pauseButton.style.display = 'none';
-      resumeButton.style.display = 'inline-block';
+        resumeButton.style.display = 'inline-block';
       });
 
       resumeButton.addEventListener('click', () => {
         resumeButton.style.display = 'none';
-      pauseButton.style.display = 'inline-block';
+        pauseButton.style.display = 'inline-block';
       });
 
       cancelButton.addEventListener('click', () => {
         startButton.style.display = 'inline-block';
-      pauseButton.style.display = 'none';
-      resumeButton.style.display = 'none';
+        pauseButton.style.display = 'none';
+        resumeButton.style.display = 'none';
       });
     });
   </script>
@@ -232,24 +232,25 @@ if ($isLoggedIn) {
             <div id="canvas-container">
             </div> <br />
           </div>
-          <div id="footbar">
-            <div class="texttospeech-nav">
-              <button id="speak" style="display:inline-block;"
-                title="Let the website read the text out loud for you. Shortcut: 1 "><i
-                  class="material-icons">headphones</i></button>
-              <button id="start" style="display:none;" title="Start the text-to-speech. Shortcut: 2"><i
-                  class="material-icons">play_arrow</i></button>
-              <button id="pause" style="display:none;" title="Pause the text-to-speech. Shortcut: 3"><i
-                  class="material-icons">pause</i></button>
-              <button id="resume" style="display:none;" title="Resume the text-to-speech. Shortcut: 4"><i
-                  class="material-icons">play_arrow</i></button>
-              <button id="cancel" style="display:none;" title="Stop the text-to-speech. Shortcut: 5"><i
-                  class="material-icons">stop</i></button>
-              <button id="mic" title="Speak the commands you want the website to run. Shortcut: S"><i
-                  class="material-icons">mic</i></button>
-            </div>
-          </div>
         </div>
+      </div>
+    </div>
+
+    <div id="footbar">
+      <div class="texttospeech-nav">
+        <button id="speak" style="display:inline-block;"
+          title="Let the website read the text out loud for you. Shortcut: 1 "><i
+            class="material-icons">headphones</i></button>
+        <button id="start" style="display:none;" title="Start the text-to-speech. Shortcut: 2"><i
+            class="material-icons">play_arrow</i></button>
+        <button id="pause" style="display:none;" title="Pause the text-to-speech. Shortcut: 3"><i
+            class="material-icons">pause</i></button>
+        <button id="resume" style="display:none;" title="Resume the text-to-speech. Shortcut: 4"><i
+            class="material-icons">play_arrow</i></button>
+        <button id="cancel" style="display:none;" title="Stop the text-to-speech. Shortcut: 5"><i
+            class="material-icons">stop</i></button>
+        <button id="mic" title="Speak the commands you want the website to run. Shortcut: S"><i
+            class="material-icons">mic</i></button>
       </div>
     </div>
   </div>

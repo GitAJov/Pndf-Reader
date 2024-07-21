@@ -1,6 +1,6 @@
 /* Base Styles */
 body {
-  background-color: #ffffff;
+  background-color: #f1f2f2;
   font-family: "Comic Sans MS";
   margin: 0;
   transition: background-color 0.3s, color 0.3s;
@@ -80,6 +80,7 @@ body {
   margin: 0;
   height: 100%;
   transition: background-color 0.3s, color 0.3s;
+  font-family: 'sans-serif';
 }
 
 .drop-icon {
