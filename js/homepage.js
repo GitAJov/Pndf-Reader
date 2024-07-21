@@ -61,7 +61,7 @@ async function initializePDF(url) {
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
 
     if (doc_id !== null) {
-      docTitle = url.split('/').pop(); // Extract the filename from the URL
+      docTitle = url.split("/").pop(); // Extract the filename from the URL
       document.getElementById("pdf-title").textContent = docTitle;
       fetchBookmark(); // Only fetch bookmark if doc_id is not null
     } else {
@@ -102,7 +102,7 @@ function reset() {
   document.getElementById("pageInput").value = pageNum;
   document.getElementById("page_count").textContent = "-";
 
-  clearInGrayOverlay();
+  clearTextMenu();
   document.getElementById("speedreadText").innerHTML = "";
   document.getElementById("paragraphContainer").innerHTML = "";
 
@@ -371,6 +371,7 @@ function toggleOverlay() {
 function clickOverlay() {
   let overlay = document.getElementById("grayOverlay");
   if (overlayActive) {
+    console.log("clicking overlay");
     overlay.click();
   }
 }
@@ -383,7 +384,7 @@ function exitOverlay(event) {
   blurPage(false);
   hideGrayOverlay();
   resetSpeedreadText();
-  clearInGrayOverlay();
+  clearTextMenu();
   mode = "";
   document.getElementById("paragraphContainer").innerHTML = "";
   // Show text menu buttons
@@ -412,7 +413,16 @@ function hideGrayOverlay() {
   }
 }
 
-document.getElementById('grayOverlay').addEventListener('click', exitOverlay);
+function clearTextMenu() {
+  const textMenu = document.getElementById("textMenu");
+  while (textMenu.firstChild) {
+    textMenu.removeChild(textMenu.firstChild);
+  }
+  // const speedreadContainer = document.getElementById("speedreadContainer");
+  // while (speedreadContainer.firstChild) {
+  //   speedreadContainer.removeChild(speedreadContainer.firstChild);
+  // }
+}
 
 function resetSpeedreadText() {
   const speedreadTextElement = document.getElementById("speedreadText");
@@ -831,17 +841,6 @@ async function displayDyslexiaText() {
   }
 }
 
-function clearInGrayOverlay() {
-  const textMenu = document.getElementById("textMenu");
-  while (textMenu.firstChild) {
-    textMenu.removeChild(textMenu.firstChild);
-  }
-  // const speedreadContainer = document.getElementById("speedreadContainer");
-  // while (speedreadContainer.firstChild) {
-  //   speedreadContainer.removeChild(speedreadContainer.firstChild);
-  // }
-}
-
 // TEXT TO SPEECH FUNCTIONS ================================
 async function handleTextToSpeech() {
   try {
@@ -1051,7 +1050,8 @@ function microphoneMenu() {
   const speedreadContainer = document.getElementById("speedreadContainer");
 
   // Hide text menu buttons
-  const textMenuButtons = document.getElementsByClassName("textMenu-buttons")[0];
+  const textMenuButtons =
+    document.getElementsByClassName("textMenu-buttons")[0];
   textMenuButtons.style.display = "none";
 
   // Create and configure main elements
@@ -1073,7 +1073,7 @@ function microphoneMenu() {
   // Append elements
   textMenu.appendChild(helpButton);
   // Add event listener to the help button
-  helpButton.addEventListener('click', showHelp);
+  helpButton.addEventListener("click", showHelp);
 
   const micDiv = document.createElement("div");
   micDiv.id = "micDiv";
@@ -1141,7 +1141,7 @@ function showHelp() {
   document.body.appendChild(helpOverlay);
 
   // Add an event listener to close the help overlay when clicking outside the help content
-  helpOverlay.addEventListener('click', function (event) {
+  helpOverlay.addEventListener("click", function (event) {
     if (event.target === helpOverlay) {
       closeHelp();
     }
@@ -1194,8 +1194,7 @@ async function getCommandfromResponse() {
       clickOverlay();
       if (document.getElementById("speak").style.display == "none") {
         document.getElementById("start").click();
-      }
-      else {
+      } else {
         document.getElementById("speak").click();
       }
       break;
@@ -1305,11 +1304,19 @@ function addEventListeners() {
         break;
       case "r":
         clickOverlay();
-        document.getElementById("speedread").click();
+        if (mode != "speedread") {
+          setTimeout(() => {
+            document.getElementById("speedread").click();
+          }, 1500);
+        }
         break;
       case "d":
         clickOverlay();
-        document.getElementById("dyslexia").click();
+        if (mode != "dyslexia") {
+          setTimeout(() => {
+            document.getElementById("dyslexia").click();
+          }, 1500);
+        }
         break;
       case "t":
         const themeToggle = document.getElementById("theme-toggle-item");
@@ -1351,7 +1358,11 @@ function addEventListeners() {
         break;
       case "s":
         clickOverlay();
-        document.getElementById("mic").click();
+        if (mode != "microphone") {
+          setTimeout(() => {
+            document.getElementById("mic").click();
+          }, 1500);
+        }
         break;
       default:
         break;
