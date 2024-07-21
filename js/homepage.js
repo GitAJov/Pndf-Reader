@@ -48,6 +48,10 @@ async function initializePDF(url) {
   let tempDoc = await loadPDF(url);
   pdfDoc = tempDoc;
   if (pdfDoc) {
+    // Set the document title
+    const docTitle = url.split('/').pop(); // Extract the filename from the URL
+    document.getElementById("pdf-title").textContent = docTitle;
+
     document.getElementById("page_count").textContent = pdfDoc.numPages;
     max = pdfDoc.numPages;
     await renderAllPages(pdfDoc, scale);

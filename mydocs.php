@@ -37,6 +37,7 @@ $conn->close();
     window.confirmDeleteDocument = confirmDeleteDocument;
   </script>
   <script src="js/dark-mode.js" type="module"></script>
+  <script src="js/homepage.js" type="module"></script>
 </head>
 
 <body>

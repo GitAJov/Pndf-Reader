@@ -215,6 +215,9 @@ if ($isLoggedIn) {
     <div id="mainContent">
       <div id="pdf">
         <div>
+          <div id="pdf-title">
+            Document Title
+          </div>
           <div id="navigate">
             <button id="prev" title="Go to the previous page. Shortcut: ','" acceskey=","><i
                 class="material-symbols-outlined"> chevron_left </i> Previous</button>
@@ -223,8 +226,8 @@ if ($isLoggedIn) {
               /
               <span id="page_count">-</span>
             </span>
-            <button id="next" title="Go to the next page. Shortcut: '.'">Next<i
-            class="material-symbols-outlined"> chevron_right </i></button>
+            <button id="next" title="Go to the next page. Shortcut: '.'">Next<i class="material-symbols-outlined">
+                chevron_right </i></button>
           </div>
           <div class="before-canvas-container">
             <div id="canvas-container">

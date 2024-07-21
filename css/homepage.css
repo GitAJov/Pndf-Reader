@@ -227,6 +227,13 @@ body.dark-mode #helpbtn:hover {
   background-color: #181818;
 }
 
+#pdf-title {
+  text-align: center;
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 16px;
+}
+
 /* Navigation Styles */
 #navigate {
   color: #253237;
@@ -234,7 +241,6 @@ body.dark-mode #helpbtn:hover {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
   margin-bottom: 10px;
   width: 100%; /* Ensure it takes the full width */
   transition: top 0.3s;
@@ -873,23 +879,43 @@ main {
 }
 
 @keyframes fadeIn {
-  0% { opacity: 0; }
-  100% { opacity: 1; }
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }
 
 @keyframes fadeOut {
-  0% { opacity: 1; }
-  100% { opacity: 0; }
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
 }
 
 @keyframes slideIn {
-  0% { transform: translateY(-100px); opacity: 0; }
-  100% { transform: translateY(0); opacity: 1; }
+  0% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 @keyframes slideOut {
-  0% { transform: translateY(0); opacity: 1; }
-  100% { transform: translateY(-100px); opacity: 0; }
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-100px);
+    opacity: 0;
+  }
 }
 
 .fade-in {

@@ -5,7 +5,7 @@ var { pdfjsLib } = globalThis;
 pdfjsLib.GlobalWorkerOptions.workerSrc =
   "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.3.136/pdf.worker.mjs";
 
-let documentList = document.getElementById('documentList');
+const documentList = document.getElementById('documentList');
 
 document.getElementById('fileInput').addEventListener('change', async function () {
   const file = this.files[0];
@@ -50,8 +50,8 @@ export async function fetchDocuments() {
       `;
       documentList.appendChild(div);
     } else {
-      documentList.style.justifyContent = 'none';
       documents.forEach(doc => {
+        documentList.style.justifyContent = 'flex-start';
         const div = document.createElement('div');
         div.className = 'document-item';
         div.innerHTML = `
