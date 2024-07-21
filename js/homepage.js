@@ -1098,6 +1098,7 @@ function showHelp() {
   helpContent.style.padding = "20px";
   helpContent.style.borderRadius = "10px";
   helpContent.style.maxWidth = "80%";
+  helpContent.style.border = "white 1px solid";
   helpContent.style.textAlign = "left";
   helpContent.classList.add("slide-in");
 
