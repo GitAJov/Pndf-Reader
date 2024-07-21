@@ -284,6 +284,8 @@ body.dark-mode #helpbtn:hover {
   width: 40px;
   text-align: right;
   font-family: "Roboto";
+  border-radius: 4px;
+  box-shadow: 0px 0px 2px 1px;
 }
 
 .clickable-word {
@@ -682,7 +684,7 @@ body.speedread-active {
 
 .text-ssp label {
   font-family: "Roboto";
-  font-weight: lighter;
+  font-weight: 500;
   font-size: 24px;
 }
 
