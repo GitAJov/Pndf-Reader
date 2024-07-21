@@ -75,9 +75,9 @@ export async function RecognizeandVisualize() {
   speechRecognitionList.addFromString(grammar, 1);
 
   recognition.grammars = speechRecognitionList;
-  recognition.continuous = true; // Keep listening continuously
+  recognition.continuous = false;
   recognition.lang = "en-US";
-  recognition.interimResults = true; // Get interim results
+  recognition.interimResults = false;
   recognition.maxAlternatives = 1;
 
   async function voiceRecognition() {
@@ -98,16 +98,13 @@ export async function RecognizeandVisualize() {
           liveWordsSpan.textContent = transcript;
         }
 
-        // Check if the result is final
-        if (event.results[0].isFinal) {
-          try {
-            const intent = await getIntent(transcript);
-            console.log("Command recognized:", intent);
-            resolve(intent);
-          } catch (error) {
-            console.error("Error getting intent:", error);
-            reject(error);
-          }
+        try {
+          const intent = await getIntent(transcript);
+          console.log("Command recognized:", intent);
+          resolve(intent);
+        } catch (error) {
+          console.error("Error getting intent:", error);
+          reject(error);
         }
       };
 
