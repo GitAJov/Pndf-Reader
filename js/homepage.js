@@ -1,6 +1,6 @@
 import { formatText } from "../js/gemini.js";
 import { formatDisplayText } from "../js/gemini.js";
-import { voiceRecognition } from "./voiceRecognition.js";
+import { RecognizeandVisualize } from "./voiceRecognition.js";
 
 // PDF.JS CONFIGURATION ====================================
 var { pdfjsLib } = globalThis;
@@ -73,7 +73,7 @@ async function initializePDF(url) {
   clearTimeout(loadingTimeout);
   loadingTimeout = setTimeout(() => {
     hideLoadingOverlay();
-  }, 3000);
+  }, 50);
 }
 
 function reset() {
@@ -95,7 +95,7 @@ function reset() {
   document.getElementById("pageInput").value = pageNum;
   document.getElementById("page_count").textContent = "-";
 
-  clearTextMenu();
+  clearInGrayOverlay();
   document.getElementById("speedreadText").innerHTML = "";
   document.getElementById("paragraphContainer").innerHTML = "";
 
@@ -350,34 +350,81 @@ function toggleOverlay() {
     grayOverlay.style.display = "block";
     // Trigger reflow to restart the animation
     grayOverlay.offsetHeight; // No need to store this value, the reading forces a reflow
-    grayOverlay.classList.add('show');
+    grayOverlay.classList.add("show");
   } else {
     // Add an event listener to hide the overlay after the animation ends
-    grayOverlay.addEventListener('animationend', function handleAnimationEnd() {
+    grayOverlay.addEventListener("animationend", function handleAnimationEnd() {
       grayOverlay.style.display = "none";
-      grayOverlay.removeEventListener('animationend', handleAnimationEnd);
+      grayOverlay.removeEventListener("animationend", handleAnimationEnd);
     });
-    grayOverlay.classList.remove('show');
+    grayOverlay.classList.remove("show");
   }
 }
 
+function clickOverlay() {
+  let overlay = document.getElementById("grayOverlay");
+  if (overlayActive) {
+    overlay.click();
+  }
+}
 
 function exitOverlay(event) {
-  if (event.target.id === "grayOverlay") {
-    overlayActive = false;
-    blurPage(false);
-    let grayOverlay = document.getElementById("grayOverlay");
-    grayOverlay.style.display = "none";
-    let speedreadTextElement = document.getElementById("speedreadText");
-    speedreadTextElement.style.letterSpacing = "";
-    clearTextMenu();
-    mode = "";
-    const buttonPrev = document.getElementById("prevPage");
-    buttonPrev.removeEventListener("click", pressPrev);
+  if (event.target.id !== "grayOverlay") return;
 
-    const buttonNext = document.getElementById("nextPage");
-    buttonNext.removeEventListener("click", pressNext);
-  }
+  // Reset overlay state
+  overlayActive = false;
+  blurPage(false);
+  hideGrayOverlay();
+  resetSpeedreadText();
+  clearInGrayOverlay();
+  mode = "";
+  document.getElementById("paragraphContainer").innerHTML = "";
+  // Show text menu buttons
+  toggleTextMenuButtons(true);
+
+  // Remove microphone menu if present
+  removeMicMenu();
+
+  // Remove event listeners from navigation buttons
+  removeNavEventListeners();
+}
+
+function hideGrayOverlay() {
+  const grayOverlay = document.getElementById("grayOverlay");
+  grayOverlay.style.display = "none";
+}
+
+function resetSpeedreadText() {
+  const speedreadTextElement = document.getElementById("speedreadText");
+  speedreadTextElement.textContent = "";
+  speedreadTextElement.style = "";
+}
+
+function toggleTextMenuButtons(visible) {
+  const textMenuButtons =
+    document.getElementsByClassName("textMenu-buttons")[0];
+  textMenuButtons.style.display = visible ? "flex" : "none";
+}
+
+function removeMicMenu() {
+  const micDiv = document.getElementById("micDiv");
+  if (micDiv) micDiv.remove();
+}
+
+function removeNavEventListeners() {
+  const buttonPrev = document.getElementById("prevPage");
+  const buttonNext = document.getElementById("nextPage");
+
+  if (buttonPrev) buttonPrev.removeEventListener("click", pressPrev);
+  if (buttonNext) buttonNext.removeEventListener("click", pressNext);
+}
+
+function createButton(id, icon, text, onClick = null) {
+  const button = document.createElement("button");
+  if (id) button.id = id;
+  button.innerHTML = `<i class="material-icons">${icon}</i> ${text}`;
+  if (onClick) button.onclick = onClick;
+  return button;
 }
 
 // TEXT RELATED FUNCTIONS ==================================
@@ -761,11 +808,15 @@ async function displayDyslexiaText() {
   }
 }
 
-function clearTextMenu() {
+function clearInGrayOverlay() {
   const textMenu = document.getElementById("textMenu");
   while (textMenu.firstChild) {
     textMenu.removeChild(textMenu.firstChild);
   }
+  // const speedreadContainer = document.getElementById("speedreadContainer");
+  // while (speedreadContainer.firstChild) {
+  //   speedreadContainer.removeChild(speedreadContainer.firstChild);
+  // }
 }
 
 // TEXT TO SPEECH FUNCTIONS ================================
@@ -963,9 +1014,58 @@ function hideLoadingOverlay() {
 export { initializePDF, onNextPage, onPrevPage };
 
 // VOICE RECOGNITION ========================================
+async function microphone() {
+  microphoneMenu();
+  toggleOverlay();
+  if (overlayActive) {
+    mode = "microphone";
+    getCommandfromResponse();
+  }
+}
+
+function microphoneMenu() {
+  const textMenu = document.getElementById("textMenu");
+  const speedreadContainer = document.getElementById("speedreadContainer");
+
+  // Hide text menu buttons
+  const textMenuButtons =
+    document.getElementsByClassName("textMenu-buttons")[0];
+  textMenuButtons.style.display = "none";
+
+  // Create and configure main elements
+  const main = document.createElement("main");
+  const commandButton = createButton(
+    "commandButton",
+    "mic",
+    "Microphone",
+    getCommandfromResponse
+  );
+  const helpButton = createButton(null, "help", "Help");
+
+  const liveWordsSpan = document.createElement("span");
+  liveWordsSpan.id = "liveWords";
+
+  const commandStatusSpan = document.createElement("span");
+  commandStatusSpan.id = "commandStatus";
+
+  // Append elements
+  textMenu.appendChild(helpButton);
+
+  const micDiv = document.createElement("div");
+  micDiv.id = "micDiv";
+  micDiv.appendChild(commandButton);
+  micDiv.appendChild(main);
+  micDiv.appendChild(liveWordsSpan);
+  micDiv.appendChild(document.createElement("br"));
+  micDiv.appendChild(commandStatusSpan);
+
+  speedreadContainer.appendChild(micDiv);
+}
+
 async function getCommandfromResponse() {
-  const intent = await voiceRecognition();
-  let navigateCheck = intent.split(" ");
+  const userCommand = await RecognizeandVisualize();
+  let commandStatus = document.getElementById("commandStatus");
+  let navigateCheck = userCommand.split(" ");
   if (
     navigateCheck[0] == "navigate" ||
     navigateCheck[0] == "jump" ||
@@ -978,89 +1078,119 @@ async function getCommandfromResponse() {
     if (!isNaN(pageNum) && pageNum <= max && pageNum >= 1) {
       document.getElementById("pageInput").value = pageNum;
       pageInput();
+      return;
     }
   }
-  switch (intent) {
+  commandStatus.textContent = "Command found: " + userCommand;
+  switch (userCommand) {
     case "text to speech":
     case "speak":
-      handleTextToSpeech();
+    case "speak speak":
+      clickOverlay();
+      document.getElementById("speak").click();
       break;
     case "pause":
+      clickOverlay();
       document.getElementById("pause").click();
       break;
     case "start":
-      document.getElementById("start").click();
+      clickOverlay();
+      if(document.getElementById("speak").style.display == "none"){
+        document.getElementById("start").click();
+      }
+      else{
+        document.getElementById("speak").click();
+      }
       break;
     case "cancel":
     case "stop":
     case "exit":
+      clickOverlay();
       document.getElementById("cancel").click();
       break;
     case "resume":
+      clickOverlay();
       document.getElementById("resume").click();
       break;
     case "speedread":
+      clickOverlay();
       speedread();
       break;
     case "dyslexia":
+      clickOverlay();
       dyslexia();
       break;
     case "change":
+      clickOverlay();
       chooseFile();
       break;
     case "dark mode":
     case "night mode":
     case "light mode":
+      clickOverlay();
       document.getElementById("theme-toggle-item").click(); // Trigger the theme toggle
       break;
     default:
-      console.log("No matching intent found");
+      commandStatus.textContent =
+        "Command not recognized. Please click the button again.";
+      getCommandfromResponse();
   }
 }
 
 // EVENT LISTENERS =========================================
 function addEventListeners() {
-  document.getElementById("speedread").addEventListener("click", speedread);
-  document.getElementById("grayOverlay").addEventListener("click", exitOverlay);
-  document.getElementById("choosefile").addEventListener("click", chooseFile);
-  document.getElementById("file").addEventListener("click", chooseFile);
-  document.getElementById("dyslexia").addEventListener("click", dyslexia);
-  document.getElementById("prev").addEventListener("click", onPrevPage);
-  document.getElementById("next").addEventListener("click", onNextPage);
-  // Event listener for the page input field
-  let pageInputElement = document.getElementById("pageInput");
-  pageInputElement.addEventListener("keypress", function (event) {
+  // Utility function to add click event listeners
+  function addClickListener(id, handler) {
+    document.getElementById(id).addEventListener("click", handler);
+  }
+
+  // Add click event listeners
+  addClickListener("speedread", speedread);
+  addClickListener("grayOverlay", exitOverlay);
+  addClickListener("choosefile", chooseFile);
+  addClickListener("file", chooseFile);
+  addClickListener("dyslexia", dyslexia);
+  addClickListener("prev", onPrevPage);
+  addClickListener("next", onNextPage);
+  addClickListener("mic", microphone);
+
+  // Page input field event listeners
+  const pageInputElement = document.getElementById("pageInput");
+
+  pageInputElement.addEventListener("keypress", (event) => {
     if (event.key === "Enter") {
       pageInput();
     }
   });
-  pageInputElement.addEventListener("focusout", function (event) {
-    let pageInputValue = pageInputElement.value;
+
+  pageInputElement.addEventListener("focusout", () => {
+    const pageInputValue = pageInputElement.value;
     if (!isNaN(pageInputValue)) {
       pageInput();
     } else {
-      pageInputValue = pageNum;
+      pageInputElement.value = pageNum;
     }
   });
-  pageInputElement.addEventListener("input", function (event) {
-    let input = event.target.value.trim();
+
+  pageInputElement.addEventListener("input", (event) => {
+    const input = event.target.value.trim();
     event.target.value = input.replace(/\D/g, "");
   });
-  pageInputElement.addEventListener("focus", function (event) {
+
+  pageInputElement.addEventListener("focus", (event) => {
     event.target.setSelectionRange(0, event.target.value.length);
   });
-  document
-    .getElementById("mic")
-    .addEventListener("click", getCommandfromResponse);
 
-  document.getElementById("speak").addEventListener("click", function () {
+  // Speak button event listener
+  document.getElementById("speak").addEventListener("click", () => {
     handleTextToSpeech();
     document.getElementById("start").style.display = "inline-block";
     document.getElementById("cancel").style.display = "inline-block";
     document.getElementById("speak").style.display = "none";
   });
 
-  document.addEventListener("keydown", function (event) {
+  // Global keydown event listener
+  document.addEventListener("keydown", (event) => {
     const key = event.key.toLowerCase(); // Convert key to lowercase
 
     switch (key) {
@@ -1068,41 +1198,29 @@ function addEventListeners() {
         console.log("You pressed a");
         break;
       case "f":
-        window.location.href = "mydocs.php"; // Navigate to My Documents page on 'f' key press
+        window.location.href = "mydocs.php"; // Navigate to My Documents page
         break;
       case "m":
-        window.location.href = "welcome.php"; // Navigate to homepage on 'm' key press
+        window.location.href = "welcome.php"; // Navigate to homepage
         break;
       case "r":
-        // Toggle Speedread functionality visibility
-        const speedreadLink = document.getElementById("speedread");
-        let overlay = document.getElementById("grayOverlay");
-        if (overlayActive) {
-          overlay.click();
-        }
-        speedreadLink.click();
+        clickOverlay();
+        document.getElementById("speedread").click();
         break;
       case "d":
-        // Toggle Dyslexia functionality visibility
-        const dyslexiaLink = document.getElementById("dyslexia");
-        if (overlayActive) {
-          overlay.click();
-        }
-        dyslexiaLink.click();
+        clickOverlay();
+        document.getElementById("dyslexia").click();
         break;
       case "t":
-        // Toggle dark mode
         const themeToggle = document.getElementById("theme-toggle-item");
         if (themeToggle) {
           themeToggle.click();
         }
         break;
       case ",":
-        // Navigate to previous page
         onPrevPage();
         break;
       case ".":
-        // Navigate to next page
         onNextPage();
         break;
       case "1":
@@ -1121,7 +1239,9 @@ function addEventListeners() {
         document.getElementById("cancel").click();
         break;
       case "s":
+        clickOverlay();
         document.getElementById("mic").click();
+        break;
       default:
         break;
     }
