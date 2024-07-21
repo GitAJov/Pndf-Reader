@@ -1,5 +1,6 @@
 <?php
 require 'database.php';
+session_start();
 
 // Handle form submission
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
@@ -26,15 +27,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if ($result_username->num_rows > 0 && $result_email->num_rows > 0) {
         // Both username and email already exist
-        header('Location: ../register.php?error=Username dan Email sudah terdaftar, silakan gunakan yang lain!');
+        header('Location: ../register.php?error=Username dan Email sudah terdaftar');
         exit();
     } elseif ($result_username->num_rows > 0) {
         // Username already exists
-        header('Location: ../register.php?error=Username sudah terdaftar, silakan gunakan yang lain!');
+        header('Location: ../register.php?error=Username sudah terdaftar');
         exit();
     } elseif ($result_email->num_rows > 0) {
         // Email already exists
-        header('Location: ../register.php?error=Email sudah terdaftar, silakan gunakan yang lain!');
+        header('Location: ../register.php?error=Email sudah terdaftar');
         exit();
     } else {
         // Insert the new user into the database
