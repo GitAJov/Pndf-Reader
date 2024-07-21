@@ -83,8 +83,7 @@ body {
   font-family: "Roboto";
 }
 
-#helpbtn,
-#commandButton {
+#helpbtn {
   border-radius: 10px;
   background-color: #ffffff;
   border: solid 1px;
@@ -96,6 +95,36 @@ body {
   margin: 0;
   transition: background-color 0.3s, color 0.3s;
   font-family: "Roboto";
+}
+
+#micImgDiv {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+#commandButton {
+  border: none;
+  background-color: transparent;
+}
+
+#commandButton img {
+  width: 40%;
+  height: 40%;
+  border: none;
+  outline: none;
+  transition: transform 0.2s ease, filter 0.2s ease;
+}
+
+#commandButton img:hover {
+  transform: scale(1.1);
+  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.4));
+}
+
+#commandButton img:active {
+  transform: scale(0.95);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.4));
 }
 
 .drop-icon {

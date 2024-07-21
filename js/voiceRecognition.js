@@ -82,7 +82,8 @@ export async function RecognizeandVisualize() {
   async function voiceRecognition() {
     return new Promise((resolve, reject) => {
       recognition.start();
-
+      let commandStatus = document.getElementById("commandStatus");
+      commandStatus.textContent = "Listening..."; 
       recognition.onresult = async (event) => {
         let transcript = "";
         for (let i = 0; i < event.results.length; i++) {

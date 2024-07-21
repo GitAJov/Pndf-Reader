@@ -1055,12 +1055,28 @@ function microphoneMenu() {
 
   // Create and configure main elements
   const main = document.createElement("main");
-  const commandButton = createButton(
-    "commandButton",
-    "mic",
-    "Microphone",
-    getCommandfromResponse
-  );
+
+function createImageButton(id, src, alt, onClickHandler) {
+  const button = document.createElement("button");
+  button.id = id;
+
+  const image = document.createElement("img");
+  image.src = src;
+  image.alt = alt;
+
+  button.appendChild(image);
+  button.addEventListener("click", onClickHandler);
+
+  return button;
+}
+
+// Usage
+const commandButton = createImageButton(
+  "commandButton",
+  "Resources/mic-icon.png", // Path to your image
+  "Microphone", // Alt text for accessibility
+  getCommandfromResponse
+);
   const helpButton = createButton("helpbtn", "help", "Help");
 
   const liveWordsSpan = document.createElement("span");
@@ -1074,9 +1090,13 @@ function microphoneMenu() {
   // Add event listener to the help button
   helpButton.addEventListener("click", showHelp);
 
+  const micImgDiv = document.createElement("div");
+  micImgDiv.id = "micImgDiv";
+  micImgDiv.appendChild(commandButton);
+
   const micDiv = document.createElement("div");
   micDiv.id = "micDiv";
-  micDiv.appendChild(commandButton);
+  micDiv.appendChild(micImgDiv);
   micDiv.appendChild(main);
   micDiv.appendChild(liveWordsSpan);
   micDiv.appendChild(document.createElement("br"));
@@ -1112,23 +1132,17 @@ function showHelp() {
   helpContent.classList.add("slide-in");
 
   const helpText = `
-    <h2>Available Commands</h2>
+    <h2>Instructions</h2>
     <ul>
       <li>navigate to [page number]</li>
-      <li>jump to [page number]</li>
       <li>text to speech</li>
-      <li>speak</li>
       <li>pause</li>
-      <li>start</li>
-      <li>cancel</li>
-      <li>stop</li>
-      <li>exit</li>
       <li>resume</li>
+      <li>stop</li>
       <li>speedread</li>
       <li>dyslexia</li>
-      <li>change</li>
+      <li>change document</li>
       <li>dark mode</li>
-      <li>night mode</li>
       <li>light mode</li>
     </ul>
   `;
@@ -1221,7 +1235,6 @@ async function getCommandfromResponse() {
     default:
       commandStatus.textContent =
         "Command not recognized. Please click the button again.";
-      getCommandfromResponse();
   }
 }
 
