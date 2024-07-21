@@ -47,9 +47,10 @@ async function initializePDF(url) {
   document.getElementById("dyslexia").style.display = "block";
   let tempDoc = await loadPDF(url);
   pdfDoc = tempDoc;
+
   if (pdfDoc) {
-    // Set the document title
-    const docTitle = url.split('/').pop(); // Extract the filename from the URL
+    // Set the document title from the file name
+    let docTitle = selectedFileName;
     document.getElementById("pdf-title").textContent = docTitle;
 
     document.getElementById("page_count").textContent = pdfDoc.numPages;
@@ -60,6 +61,8 @@ async function initializePDF(url) {
     canvasContainer.addEventListener("scroll", updatePageNumBasedOnScroll);
 
     if (doc_id !== null) {
+      docTitle = url.split('/').pop(); // Extract the filename from the URL
+      document.getElementById("pdf-title").textContent = docTitle;
       fetchBookmark(); // Only fetch bookmark if doc_id is not null
     } else {
       document.getElementById("pageInput").value = 1; // Reset page input to 1
@@ -478,6 +481,8 @@ function chooseFont() {
   speedreadTextElement.style.fontSize = size + "px";
 }
 
+let selectedFileName = "";
+
 function chooseFile() {
   const inputElement = document.createElement("input");
   inputElement.type = "file";
@@ -488,10 +493,11 @@ function chooseFile() {
     const files = event.target.files;
     if (files.length > 0) {
       const file = files[0];
+      selectedFileName = file.name; // Store the file name
       pdfDoc = URL.createObjectURL(file);
       doc_id = null; // Set doc_id to null to indicate a new file is chosen
       if (!renderingPdf) {
-        initializePDF(pdfDoc);
+        initializePDF(pdfDoc, selectedFileName);
       }
     }
   });
@@ -1135,7 +1141,7 @@ function showHelp() {
   document.body.appendChild(helpOverlay);
 
   // Add an event listener to close the help overlay when clicking outside the help content
-  helpOverlay.addEventListener('click', function(event) {
+  helpOverlay.addEventListener('click', function (event) {
     if (event.target === helpOverlay) {
       closeHelp();
     }
@@ -1186,10 +1192,10 @@ async function getCommandfromResponse() {
       break;
     case "start":
       clickOverlay();
-      if(document.getElementById("speak").style.display == "none"){
+      if (document.getElementById("speak").style.display == "none") {
         document.getElementById("start").click();
       }
-      else{
+      else {
         document.getElementById("speak").click();
       }
       break;
@@ -1280,6 +1286,9 @@ function addEventListeners() {
     document.getElementById("speak").style.display = "none";
   });
 
+  // Variable to track if case 1 is active
+  let isCase1Active = false;
+
   // Global keydown event listener
   document.addEventListener("keydown", (event) => {
     const key = event.key.toLowerCase(); // Convert key to lowercase
@@ -1315,19 +1324,30 @@ function addEventListeners() {
         onNextPage();
         break;
       case "1":
-        document.getElementById("speak").click();
+        if (!isCase1Active) {
+          document.getElementById("speak").click();
+          isCase1Active = true;
+        }
         break;
       case "2":
-        document.getElementById("start").click();
+        if (isCase1Active) {
+          document.getElementById("start").click();
+        }
         break;
       case "3":
-        document.getElementById("pause").click();
+        if (isCase1Active) {
+          document.getElementById("pause").click();
+        }
         break;
       case "4":
-        document.getElementById("resume").click();
+        if (isCase1Active) {
+          document.getElementById("resume").click();
+        }
         break;
       case "5":
-        document.getElementById("cancel").click();
+        if (!isCase1Active) {
+          document.getElementById("cancel").click();
+        }
         break;
       case "s":
         clickOverlay();
