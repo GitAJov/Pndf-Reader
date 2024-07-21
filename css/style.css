@@ -278,7 +278,7 @@ p {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(0,0,0,0.8);
+  background: rgba(0, 0, 0, 0.8);
   display: none;
   justify-content: center;
   align-items: center;
@@ -302,5 +302,116 @@ p {
 }
 
 #logo-hov:hover {
+  cursor: pointer;
+}
+
+/* Style for OTP Popup */
+#otp-popup {
+  display: none;
+  position: fixed;
+  z-index: 999;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.4);
+  justify-content: center;
+  align-items: center;
+}
+
+#otp-popup-content {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+  max-width: 400px; /* Max width for larger screens */
+  text-align: center; /* Center text */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Add shadow */
+}
+
+/* Close button style */
+#otp-close {
+  width: 100%;
+  cursor: pointer;
+}
+
+#otp-popup .close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+#otp-popup .close:hover,
+#otp-popup .close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+/* OTP Input Field */
+#otp-popup input[type="text"] {
+  width: 100%;
+  padding: 10px;
+  box-sizing: border-box;
+  font-size: 20px;
+  margin: 15px;
+
+  font-family: "Roboto";
+
+  border-radius: 15px;
+  border: 1px solid transparent;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+/* Verify Button */
+#otp-popup button {
+  background-color: #4caf50;
+  color: white;
+  padding: 15px 50px;
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+  width: 100%;
+  margin-bottom: 24px;
+}
+
+#otp-popup button:hover {
+  background-color: #45a049;
+}
+
+#otp-content {
+  display: flex;
+  position: fixed;
+  padding: 30px;
+  background: #f1f2f2;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  border-radius: 20px;
+  box-shadow: 0px 0 8px 0px;
+}
+
+#otp-content label {
+  font-size: 24px;
+}
+
+/* Close button style */
+#otp-popup .close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+#otp-popup .close:hover,
+#otp-popup .close:focus {
+  color: black;
+  text-decoration: none;
   cursor: pointer;
 }
