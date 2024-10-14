@@ -57,6 +57,7 @@ This is a web-based PDF reader designed to assist users with accessibility chall
     localhost/PNDF-reader
     ```
 3. Upload a PDF file or open an existing one.
-4. Use the customization options to adjust the reading view.
-5. Enable text-to-speech to have the content read aloud.
-6. Utilize voice commands for hands-free navigation.
+4. Sign-in locally to manage bookmarks.
+5. Use the tools options for various features. 
+6. Enable text-to-speech to have the content read aloud.
+7. Utilize voice commands for hands-free navigation.
