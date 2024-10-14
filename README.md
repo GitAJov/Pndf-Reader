@@ -26,11 +26,11 @@ This is a web-based PDF reader designed to assist users with accessibility chall
 
 1. Clone the repository:
     ```bash
-    git clone https://github.com/yourusername/your-repo.git
+    git clone https://github.com/GitAJov/Pndf-Reader.git
     ```
 2. Navigate to the project directory:
     ```bash
-    cd your-repo
+    cd Pndf-Reader
     ```
 3. Install dependencies using Composer:
     ```bash
